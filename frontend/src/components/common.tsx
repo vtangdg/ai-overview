@@ -7,7 +7,7 @@ interface NavLinkProps {
   icon: React.ReactNode;
   label: string;
   active?: boolean;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent) => void;
 }
 
 export const NavLink: React.FC<NavLinkProps> = ({
@@ -187,10 +187,20 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
 interface LayoutProps {
   children: React.ReactNode;
+  onNavClick?: (page: string) => void;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, onNavClick }) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
+
+  // 处理导航点击
+  const handleNavClick = (page: string, event?: React.MouseEvent) => {
+    event?.preventDefault();
+    setSidebarOpen(false);
+    if (onNavClick) {
+      onNavClick(page);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -225,11 +235,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           {/* Sidebar */}
           <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
             <nav className="space-y-1">
-              <NavLink href="/" icon={<Globe size={20} />} label="首页" active={true} />
-              <NavLink href="/concepts" icon={<Book size={20} />} label="概念库" />
-              <NavLink href="/tools" icon={<Wrench size={20} />} label="AI工具箱" />
-              <NavLink href="/notes" icon={<Edit3 size={20} />} label="学习笔记" />
-              <NavLink href="/demos" icon={<Grid size={20} />} label="应用Demo" />
+              <NavLink href="#" icon={<Globe size={20} />} label="首页" active={true} onClick={(e) => handleNavClick('home', e)} />
+              <NavLink href="#" icon={<Book size={20} />} label="概念库" onClick={(e) => handleNavClick('concepts', e)} />
+              <NavLink href="#" icon={<Wrench size={20} />} label="AI工具箱" onClick={(e) => handleNavClick('tools', e)} />
+              <NavLink href="#" icon={<Edit3 size={20} />} label="知识笔记" onClick={(e) => handleNavClick('notes', e)} />
+              <NavLink href="#" icon={<Grid size={20} />} label="应用广场" onClick={(e) => handleNavClick('demos', e)} />
             </nav>
           </Sidebar>
 

@@ -1,5 +1,5 @@
-import SimplifiedApp from './simplified-app';
+import AppContent from './app-content';
 
 export default function Home() {
-  return <SimplifiedApp />;
+  return <AppContent />;
 }

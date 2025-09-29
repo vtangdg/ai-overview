@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { Layout } from '../components/common';
 import { ConceptsPage } from '../components/concepts/concepts-page';
@@ -14,6 +16,31 @@ const AppContent: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [selectedTermId, setSelectedTermId] = useState<string>('');
   const [selectedToolId, setSelectedToolId] = useState<string>('');
+
+  // 处理导航点击
+  const handleNavClick = (page: string) => {
+    switch (page) {
+      case 'home':
+        setCurrentPage('home');
+        break;
+      case 'concepts':
+        setCurrentPage('concepts');
+        break;
+      case 'tools':
+        setCurrentPage('tools');
+        break;
+      case 'notes':
+        // 笔记功能尚未完全实现，显示提示信息
+        alert('知识笔记功能即将推出');
+        break;
+      case 'demos':
+        // 应用广场功能尚未完全实现，显示提示信息
+        alert('应用广场功能即将推出');
+        break;
+      default:
+        setCurrentPage('home');
+    }
+  };
 
   // 处理概念点击
   const handleTermClick = (id: string) => {
@@ -140,14 +167,14 @@ const AppContent: React.FC = () => {
                 <div className="bg-muted border border-border/50 rounded-xl p-6 opacity-80">
                   <div className="flex items-center gap-2 mb-4">
                     <div className="w-2 h-2 rounded-full bg-muted-foreground animate-pulse" />
-                    <h3 className="text-xl font-semibold">我的学习笔记</h3>
+                    <h3 className="text-xl font-semibold">知识笔记</h3>
                   </div>
                   <p className="text-muted-foreground">记录和整理你的AI学习过程，支持笔记编辑和分类管理。</p>
                 </div>
                 <div className="bg-muted border border-border/50 rounded-xl p-6 opacity-80">
                   <div className="flex items-center gap-2 mb-4">
                     <div className="w-2 h-2 rounded-full bg-muted-foreground animate-pulse" />
-                    <h3 className="text-xl font-semibold">应用Demo广场</h3>
+                    <h3 className="text-xl font-semibold">应用广场</h3>
                   </div>
                   <p className="text-muted-foreground">展示和体验AI应用示例，包含Demo名称、描述、交互界面和技术细节。</p>
                 </div>
@@ -159,7 +186,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <Layout onNavClick={handleNavClick}>
       {renderContent()}
     </Layout>
   );
