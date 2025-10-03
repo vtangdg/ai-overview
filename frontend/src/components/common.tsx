@@ -48,11 +48,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div
       className={cn(
-        'fixed inset-y-0 left-0 z-50 w-64 bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0',
+        'fixed inset-y-0 left-0 z-30 w-64 bg-background border-r border-border transform transition-transform duration-300 ease-in-out',
         isOpen ? 'translate-x-0' : '-translate-x-full'
       )}
     >
-      <div className="p-4 border-b border-sidebar-border flex items-center justify-between md:hidden">
+      <div className="p-4 border-b border-border flex items-center justify-between">
         <h2 className="text-xl font-bold">AI 知识库</h2>
         <button
           className="p-2 rounded-md hover:bg-muted transition-colors"
@@ -192,20 +192,31 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children, onNavClick }) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [activePage, setActivePage] = React.useState('home'); // 跟踪当前激活的菜单项
 
   // 处理导航点击
   const handleNavClick = (page: string, event?: React.MouseEvent) => {
     event?.preventDefault();
+    setActivePage(page); // 更新当前激活的菜单项
     setSidebarOpen(false);
     if (onNavClick) {
       onNavClick(page);
     }
   };
 
+  // 创建菜单项，确保激活状态一致
+  const navLinks = [
+    { id: 'home', icon: <Globe size={20} />, label: '首页' },
+    { id: 'concepts', icon: <Book size={20} />, label: '概念库' },
+    { id: 'tools', icon: <Wrench size={20} />, label: 'AI工具箱' },
+    { id: 'notes', icon: <Edit3 size={20} />, label: '知识笔记' },
+    { id: 'demos', icon: <Grid size={20} />, label: '应用广场' }
+  ];
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+    <div className="flex flex-col h-screen overflow-hidden bg-background text-foreground">
+      {/* Header - 固定在顶部，不随内容滚动 */}
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
@@ -216,9 +227,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick }) => {
             </button>
             <h1 className="text-xl font-bold">AI 知识库</h1>
           </div>
-          <div className="hidden md:block max-w-md w-full">
-            <SearchBar placeholder="搜索概念、工具..." value="" onChange={() => {}} />
-          </div>
+
         </div>
       </header>
 
@@ -230,22 +239,50 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick }) => {
         />
       )}
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex gap-6">
-          {/* Sidebar */}
-          <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
+      {/* 主内容区域 - 占据剩余空间，实现独立滚动 */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* 桌面设备侧边栏 - 固定位置，仅在内容超出时滚动 */}
+        <div className="hidden md:block w-64 border-r border-border h-[calc(100vh-64px)]">
+          <div className="p-4 h-full overflow-y-auto">
             <nav className="space-y-1">
-              <NavLink href="#" icon={<Globe size={20} />} label="首页" active={true} onClick={(e) => handleNavClick('home', e)} />
-              <NavLink href="#" icon={<Book size={20} />} label="概念库" onClick={(e) => handleNavClick('concepts', e)} />
-              <NavLink href="#" icon={<Wrench size={20} />} label="AI工具箱" onClick={(e) => handleNavClick('tools', e)} />
-              <NavLink href="#" icon={<Edit3 size={20} />} label="知识笔记" onClick={(e) => handleNavClick('notes', e)} />
-              <NavLink href="#" icon={<Grid size={20} />} label="应用广场" onClick={(e) => handleNavClick('demos', e)} />
+              {navLinks.map(link => (
+                <NavLink 
+                  key={link.id} 
+                  href="#" 
+                  icon={link.icon} 
+                  label={link.label} 
+                  active={activePage === link.id} 
+                  onClick={(e) => handleNavClick(link.id, e)} 
+                />
+              ))}
             </nav>
-          </Sidebar>
-
-          {/* Main content */}
-          <main className="flex-1">{children}</main>
+          </div>
         </div>
+
+        {/* 移动设备侧边栏 */}
+        {sidebarOpen && (
+          <div className="md:hidden">
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
+              <nav className="space-y-1">
+                {navLinks.map(link => (
+                  <NavLink 
+                    key={link.id} 
+                    href="#" 
+                    icon={link.icon} 
+                    label={link.label} 
+                    active={activePage === link.id} 
+                    onClick={(e) => handleNavClick(link.id, e)} 
+                  />
+                ))}
+              </nav>
+            </Sidebar>
+          </div>
+        )}
+
+        {/* 右侧内容区域 - 可独立滚动 */}
+        <main className="flex-1 overflow-auto p-4" style={{ overflowAnchor: 'none' }}>
+          {children}
+        </main>
       </div>
     </div>
   );
