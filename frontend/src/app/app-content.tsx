@@ -15,7 +15,7 @@ const AppContent: React.FC = () => {
   // 页面状态管理
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [selectedTermId, setSelectedTermId] = useState<string>('');
-  const [selectedToolId, setSelectedToolId] = useState<string>('');
+  const [selectedToolId, setSelectedToolId] = useState<number>(0);
 
   // 处理导航点击
   const handleNavClick = (page: string) => {
@@ -49,7 +49,7 @@ const AppContent: React.FC = () => {
   };
 
   // 处理工具点击
-  const handleToolClick = (id: string) => {
+  const handleToolClick = (id: number) => {
     setSelectedToolId(id);
     setCurrentPage('tool-detail');
   };
