@@ -188,11 +188,17 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 interface LayoutProps {
   children: React.ReactNode;
   onNavClick?: (page: string) => void;
+  currentPage?: string;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, onNavClick }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPage = 'home' }) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const [activePage, setActivePage] = React.useState('home'); // 跟踪当前激活的菜单项
+  const [activePage, setActivePage] = React.useState(currentPage); // 跟踪当前激活的菜单项
+
+  // 当外部currentPage变化时，更新内部activePage状态
+  React.useEffect(() => {
+    setActivePage(currentPage);
+  }, [currentPage]);
 
   // 处理导航点击
   const handleNavClick = (page: string, event?: React.MouseEvent) => {

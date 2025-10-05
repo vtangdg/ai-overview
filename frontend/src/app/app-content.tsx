@@ -105,7 +105,7 @@ const AppContent: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div
                   className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group"
-                  onClick={() => setCurrentPage('concepts')}
+                  onClick={() => handleNavClick('concepts')}
                 >
                   <div className="bg-primary/10 p-3 rounded-lg w-fit mb-4 group-hover:bg-primary/20 transition-colors">
                     <BookOpen size={24} className="text-primary" />
@@ -124,7 +124,7 @@ const AppContent: React.FC = () => {
                 
                 <div
                   className="bg-gradient-to-br from-secondary/10 to-secondary/5 border border-secondary/20 rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group"
-                  onClick={() => setCurrentPage('tools')}
+                  onClick={() => handleNavClick('tools')}
                 >
                   <div className="bg-secondary/10 p-3 rounded-lg w-fit mb-4 group-hover:bg-secondary/20 transition-colors">
                     <Wrench size={24} className="text-foreground" />
@@ -186,7 +186,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <Layout onNavClick={handleNavClick}>
+    <Layout onNavClick={handleNavClick} currentPage={currentPage}>
       {renderContent()}
     </Layout>
   );
