@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { getToolById } from '../../lib/tools';
 import { Card, Tag } from '../common';
+import { MarkdownRenderer } from '../common/markdown/MarkdownRenderer';
 import { ArrowLeft } from 'lucide-react';
 
 interface ToolDetailProps {
@@ -12,7 +13,38 @@ export const ToolDetail: React.FC<ToolDetailProps> = ({
   toolId, 
   onBack 
 }) => {
+  const [markdownContent, setMarkdownContent] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const tool = getToolById(toolId);
+
+  // 读取markdown文件
+  useEffect(() => {
+    const fetchMarkdownContent = async () => {
+      if (!tool) return;
+      
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        const filePath = `/lib/tools/${tool.name}.md`;
+        const response = await fetch(filePath);
+        
+        if (!response.ok) {
+          throw new Error('暂无详细介绍');
+        }
+        
+        const content = await response.text();
+        setMarkdownContent(content);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '加载失败');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchMarkdownContent();
+  }, [toolId, tool]);
 
   if (!tool) {
     return (
@@ -43,19 +75,26 @@ export const ToolDetail: React.FC<ToolDetailProps> = ({
           {tool.name}
         </h1>
       </div>
-
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Tag>类别: {tool.categoryName || tool.categoryId}</Tag>
+        <Tag>子类别: {tool.subcategoryName || tool.subcategoryId}</Tag>
+      </div>
       <Card className="border-l-4 border-l-primary">
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold">工具介绍</h2>
-        </div>
-        <p className="text-lg leading-relaxed whitespace-pre-line">
-          {tool.breifDesc}
-        </p>
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Tag>类别ID: {tool.categoryId}</Tag>
-          <Tag>子类别ID: {tool.subcategoryId}</Tag>
-        </div>
-      </Card>
+         {isLoading && (
+           <p className="text-muted-foreground">加载中...</p>
+         )}
+         {error && (
+           <p className="text-destructive">{error}</p>
+         )}
+         {!isLoading && !error && markdownContent && (
+           <div className="markdown-content">
+             <MarkdownRenderer content={markdownContent} />
+           </div>
+         )}
+         {!isLoading && !error && !markdownContent && (
+           <p className="text-muted-foreground">暂无详细介绍</p>
+         )}
+       </Card>
     </div>
   );
 };

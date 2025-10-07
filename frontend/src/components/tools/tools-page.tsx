@@ -1,115 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { SearchBar, Card } from '../common';
 import { ToolCard } from './tool-card';
-import { AITool, aiTools, searchTools } from '../../lib/tools';
+import { AITool, Category, SubCategory, aiTools, searchTools, mockCategories, getToolsByCategoryName, getAllCategories } from '../../lib/tools';
 import { Wrench, X } from 'lucide-react';
 
 interface ToolsPageProps {
   onToolClick: (id: number) => void;
 }
 
-interface SubCategory {
-  id: number;
-  name: string;
-}
-
-interface Category {
-  id: number;
-  name: string;
-  icon: string;
-  subcategories: SubCategory[];
-}
-
-// Mock分类数据
-const mockCategories: Category[] = [
-  {
-    id: 1,
-    name: "AI写作工具",
-    icon: "✍️",
-    subcategories: [
-      { id: 101, name: "论文写作" },
-      { id: 102, name: "营销文案" },
-      { id: 103, name: "创意写作" }
-    ]
-  },
-  {
-    id: 2,
-    name: "AI图像工具",
-    icon: "🖼️",
-    subcategories: [
-      { id: 201, name: "插画生成" },
-      { id: 202, name: "背景移除" },
-      { id: 203, name: "图像修复" }
-    ]
-  },
-  {
-    id: 3,
-    name: "AI语音工具",
-    icon: "🔊",
-    subcategories: [
-      { id: 301, name: "语音合成" },
-      { id: 302, name: "语音识别" },
-      { id: 303, name: "语音转写" }
-    ]
-  },
-  {
-    id: 4,
-    name: "AI编程工具",
-    icon: "💻",
-    subcategories: [
-      { id: 401, name: "代码生成" },
-      { id: 402, name: "代码审查" },
-      { id: 403, name: "代码注释" }
-    ]
-  },
-  {
-    id: 5,
-    name: "AI数据分析工具",
-    icon: "📊",
-    subcategories: [
-      { id: 501, name: "数据可视化" },
-      { id: 502, name: "数据清洗" },
-      { id: 503, name: "数据挖掘" }
-    ]
-  },
-  {
-    id: 6,
-    name: "AI翻译工具",
-    icon: "🌐",
-    subcategories: [
-      { id: 601, name: "文档翻译" },
-      { id: 602, name: "实时翻译" },
-      { id: 603, name: "本地化" }
-    ]
-  }
-];
-
-// 根据分类名称获取工具（模拟实现）
-const getToolsByCategoryName = (categoryName: string): AITool[] => {
-  if (categoryName === '全部') {
-    return aiTools;
-  }
-  // 根据分类名称查找对应的分类ID
-  const category = mockCategories.find(cat => 
-    cat.name.toLowerCase() === categoryName.toLowerCase()
-  );
-  // 如果找到分类，返回该分类下的工具
-  if (category) {
-    return aiTools.filter(tool => tool.categoryId === category.id);
-  }
-  return [];
-};
-
 export const ToolsPage: React.FC<ToolsPageProps> = ({ onToolClick }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('全部');
   const [filteredTools, setFilteredTools] = useState<AITool[]>(aiTools);
 
-  // 合并所有分类（添加"全部"选项）
-  const allCategories = [
-    { id: 0, name: '全部', icon: '🔍' },
-    ...mockCategories
-  ];
+  // 获取所有分类（包含"全部"选项）
+  const allCategories = getAllCategories();
 
   const filterTools = useCallback(() => {
     let results = getToolsByCategoryName(selectedCategory);
