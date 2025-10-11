@@ -17,5 +17,10 @@
   ],
   "installCommand": "pnpm install",
   "buildCommand": "pnpm run build",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "nodeVersion": "18.x",
+  "packageManager": {
+    "type": "pnpm",
+    "version": "latest"
+  }
 }
