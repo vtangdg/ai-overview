@@ -1,0 +1,1 @@
+> 将 concept.json 中的名词概念，生成符合 concepts.ts 中AITerm的对象，并进行覆盖，维基百科链接为中文链接

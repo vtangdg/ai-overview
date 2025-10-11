@@ -33,6 +33,9 @@ export const ConceptsPage: React.FC<ConceptsPageProps> = ({ onTermClick }) => {
       results = getTermsByCategory(selectedCategory);
     }
 
+    // 按照name字段排序
+    results = [...results].sort((a, b) => a.name.localeCompare(b.name));
+
     setFilteredTerms(results);
   };
 
@@ -153,7 +156,12 @@ export const ConceptsPage: React.FC<ConceptsPageProps> = ({ onTermClick }) => {
       {filteredTerms.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredTerms.map((term) => (
-            <TermCard key={term.id} term={term} onClick={onTermClick} />
+            <TermCard 
+              key={term.id} 
+              term={term} 
+              onClick={onTermClick} 
+              showLinks={true} // 可以根据需求设置为false来隐藏百科链接
+            />
           ))}
         </div>
       ) : (
