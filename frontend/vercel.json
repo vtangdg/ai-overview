@@ -3,7 +3,10 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/next"
+      "use": "@vercel/next",
+      "config": {
+        "node_version": "18.x"
+      }
     }
   ],
   "routes": [
@@ -16,11 +19,5 @@
     }
   ],
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm run build",
-  "outputDirectory": ".next",
-  "nodeVersion": "18.x",
-  "packageManager": {
-    "type": "pnpm",
-    "version": "latest"
-  }
+  "buildCommand": "pnpm run build"
 }
