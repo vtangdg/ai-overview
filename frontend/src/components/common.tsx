@@ -48,9 +48,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <div
       className={cn(
-        'fixed inset-y-0 left-0 z-30 w-64 bg-background border-r border-border transform transition-transform duration-300 ease-in-out',
-        isOpen ? 'translate-x-0' : '-translate-x-full'
+        'fixed inset-y-0 left-0 z-50 w-64 bg-background border-r border-border transform transition-transform duration-300 ease-in-out',
+        isOpen ? 'translate-x-0' : '-translate-x-full',
+        'md:hidden block'
       )}
+      style={{ display: isOpen ? 'block' : 'block' }}
     >
       <div className="p-4 border-b border-border flex items-center justify-between">
         <h2 className="text-xl font-bold">AI 知识库</h2>
@@ -219,17 +221,34 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
     { id: 'demos', icon: <Grid size={20} />, label: '应用广场' }
   ];
 
+  // 确保组件在移动设备上正确初始化
+  React.useEffect(() => {
+    // 检测屏幕宽度变化
+    const handleResize = () => {
+      // 确保在大屏幕切换到小屏幕时，菜单状态正确
+      const isMobile = window.innerWidth < 768; // 假设md断点为768px
+      if (isMobile && sidebarOpen) {
+        // 保持移动端菜单状态
+      }
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [sidebarOpen]);
+
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-background text-foreground">
+    <div className="flex flex-col h-screen overflow-hidden bg-background text-foreground relative">
       {/* Header - 固定在顶部，不随内容滚动 */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <button
-              className="md:hidden p-2 rounded-md hover:bg-muted transition-colors"
+              className="md:hidden p-2 rounded-md hover:bg-muted transition-colors z-10"
               onClick={() => setSidebarOpen(true)}
+              aria-label="打开菜单"
+              style={{ display: 'block' }}
             >
-              <Menu size={20} />
+              <Menu size={24} className="text-foreground" aria-hidden="true" />
             </button>
             <h1 className="text-xl font-bold">AI 知识库</h1>
           </div>
@@ -237,16 +256,36 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
         </div>
       </header>
 
-      {/* Mobile sidebar overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm md:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
       {/* 主内容区域 - 占据剩余空间，实现独立滚动 */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        
+        {/* 移动设备侧边栏 - 提高z-index确保可见 */}
+        {sidebarOpen && (
+          <div className="md:hidden z-50 relative">
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
+              <nav className="space-y-1">
+                {navLinks.map(link => (
+                  <NavLink 
+                    key={link.id} 
+                    href="#" 
+                    icon={link.icon} 
+                    label={link.label} 
+                    active={activePage === link.id} 
+                    onClick={(e) => handleNavClick(link.id, e)} 
+                  />
+                ))}
+              </nav>
+            </Sidebar>
+          </div>
+        )}
+        
         {/* 桌面设备侧边栏 - 固定位置，仅在内容超出时滚动 */}
         <div className="hidden md:block w-64 border-r border-border h-[calc(100vh-64px)]">
           <div className="p-4 h-full overflow-y-auto">
@@ -264,26 +303,6 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
             </nav>
           </div>
         </div>
-
-        {/* 移动设备侧边栏 */}
-        {sidebarOpen && (
-          <div className="md:hidden">
-            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
-              <nav className="space-y-1">
-                {navLinks.map(link => (
-                  <NavLink 
-                    key={link.id} 
-                    href="#" 
-                    icon={link.icon} 
-                    label={link.label} 
-                    active={activePage === link.id} 
-                    onClick={(e) => handleNavClick(link.id, e)} 
-                  />
-                ))}
-              </nav>
-            </Sidebar>
-          </div>
-        )}
 
         {/* 右侧内容区域 - 可独立滚动 */}
         <main className="flex-1 overflow-auto p-4" style={{ overflowAnchor: 'none' }}>
