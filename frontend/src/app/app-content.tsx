@@ -94,8 +94,8 @@ const AppContent: React.FC = () => {
           <div className="space-y-12">
             <div className="space-y-6">
               <div className="max-w-3xl space-y-4">
-                <h1 className="text-4xl font-bold tracking-tight">
-                  AI 知识库
+                <h1 className="sm:text-3xl font-bold">
+                  简介
                 </h1>
                 <p className="text-xl text-muted-foreground">
                   探索人工智能的世界，从概念学习到工具应用，一站式AI知识平台
@@ -104,10 +104,10 @@ const AppContent: React.FC = () => {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div
-                  className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group"
+                  className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50"
                   onClick={() => handleNavClick('concepts')}
                 >
-                  <div className="bg-primary/10 p-3 rounded-lg w-fit mb-4 group-hover:bg-primary/20 transition-colors">
+                  <div className="p-3 rounded-lg w-fit mb-4">
                     <BookOpen size={24} className="text-primary" />
                   </div>
                   <h2 className="text-2xl font-bold mb-2">AI 概念库</h2>
@@ -123,19 +123,19 @@ const AppContent: React.FC = () => {
                 </div>
                 
                 <div
-                  className="bg-gradient-to-br from-secondary/10 to-secondary/5 border border-secondary/20 rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group"
+                  className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50"
                   onClick={() => handleNavClick('tools')}
                 >
-                  <div className="bg-secondary/10 p-3 rounded-lg w-fit mb-4 group-hover:bg-secondary/20 transition-colors">
-                    <Wrench size={24} className="text-foreground" />
+                  <div className="p-3 rounded-lg w-fit mb-4">
+                    <Wrench size={24} className="text-primary" />
                   </div>
                   <h2 className="text-2xl font-bold mb-2">AI 工具箱</h2>
                   <p className="text-muted-foreground mb-4">
                     发现各种实用的AI工具，从写作助手到设计工具，提升你的工作效率和创造力。
                   </p>
-                  <div className="flex items-center text-foreground font-medium">
+                  <div className="flex items-center text-primary font-medium">
                     <span>浏览工具箱</span>
-                    <div className="ml-2 w-5 h-5 rounded-full bg-foreground flex items-center justify-center text-background text-xs">
+                    <div className="ml-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs">
                       &gt;
                     </div>
                   </div>

@@ -21,7 +21,7 @@ export const NavLink: React.FC<NavLinkProps> = ({
     <a
       href={href}
       className={cn(
-        'flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200',
+        'flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap',
         active
           ? 'bg-primary text-primary-foreground'
           : 'text-muted-foreground hover:text-foreground hover:bg-muted'
@@ -214,7 +214,6 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
 
   // 创建菜单项，确保激活状态一致
   const navLinks = [
-    { id: 'home', icon: <Globe size={20} />, label: '首页' },
     { id: 'concepts', icon: <Book size={20} />, label: '概念库' },
     { id: 'tools', icon: <Wrench size={20} />, label: 'AI工具箱' },
     { id: 'notes', icon: <Edit3 size={20} />, label: '知识笔记' },
@@ -237,27 +236,66 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
   }, [sidebarOpen]);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-background text-foreground relative">
-      {/* Header - 固定在顶部，不随内容滚动 */}
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+    <div className="flex flex-col bg-background text-foreground">
+      {/* Header - 固定在顶部，包含顶部导航菜单 */}
+      <header className="sticky top-0 z-50 bg-gray-100 backdrop-blur-sm border-b border-border">
+        <div className="container mx-auto px-4 py-3">
+          {/* 移动端布局：左侧菜单按钮，中间标题 */}
+          <div className="md:hidden flex items-center justify-between">
             <button
-              className="md:hidden p-2 rounded-md hover:bg-muted transition-colors z-10"
+              className="p-2 rounded-md hover:bg-muted transition-colors z-10"
               onClick={() => setSidebarOpen(true)}
               aria-label="打开菜单"
               style={{ display: 'block' }}
             >
               <Menu size={24} className="text-foreground" aria-hidden="true" />
             </button>
-            <h1 className="text-xl font-bold">AI 知识库</h1>
+            
+            <a 
+              href="#" 
+              className="text-xl font-bold"
+              onClick={(e) => handleNavClick('home', e)}
+            >
+              AI 知识库
+            </a>
+            
+            {/* 空div用于平衡布局 */}
+            <div className="w-10"></div>
           </div>
-
+          
+          {/* 桌面端布局：标题在左侧，菜单在中间 */}
+          <div className="hidden md:flex items-center space-x-4">
+            {/* 标题放在左侧 */}
+            <a 
+              href="#" 
+              className="text-xl font-bold mr-auto"
+              onClick={(e) => handleNavClick('home', e)}
+            >
+              AI 知识库
+            </a>
+            
+            {/* 菜单放在中间位置 */}
+            <nav className="flex justify-center space-x-1 overflow-x-auto flex-1 max-w-3xl mx-auto">
+              {navLinks.map(link => (
+                <NavLink 
+                  key={link.id} 
+                  href="#" 
+                  icon={link.icon} 
+                  label={link.label} 
+                  active={activePage === link.id} 
+                  onClick={(e) => handleNavClick(link.id, e)} 
+                />
+              ))}
+            </nav>
+            
+            {/* 右侧占位，确保菜单居中 */}
+            <div className="w-32"></div>
+          </div>
         </div>
       </header>
 
       {/* 主内容区域 - 占据剩余空间，实现独立滚动 */}
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1">
         {/* Mobile sidebar overlay */}
         {sidebarOpen && (
           <div
@@ -285,27 +323,9 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
             </Sidebar>
           </div>
         )}
-        
-        {/* 桌面设备侧边栏 - 固定位置，仅在内容超出时滚动 */}
-        <div className="hidden md:block w-64 border-r border-border h-[calc(100vh-64px)]">
-          <div className="p-4 h-full overflow-y-auto">
-            <nav className="space-y-1">
-              {navLinks.map(link => (
-                <NavLink 
-                  key={link.id} 
-                  href="#" 
-                  icon={link.icon} 
-                  label={link.label} 
-                  active={activePage === link.id} 
-                  onClick={(e) => handleNavClick(link.id, e)} 
-                />
-              ))}
-            </nav>
-          </div>
-        </div>
 
-        {/* 右侧内容区域 - 可独立滚动 */}
-        <main className="flex-1 overflow-auto p-4" style={{ overflowAnchor: 'none' }}>
+        {/* 主内容区域 - 确保可以正常滚动 */}
+        <main className="p-4">
           {children}
         </main>
       </div>

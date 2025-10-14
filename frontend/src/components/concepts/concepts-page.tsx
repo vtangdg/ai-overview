@@ -23,14 +23,14 @@ export const ConceptsPage: React.FC<ConceptsPageProps> = ({ onTermClick }) => {
   const filterTerms = () => {
     let results = aiTerms;
 
-    // 应用搜索过滤
+    // 先应用搜索过滤
     if (searchQuery) {
       results = searchTerms(searchQuery);
     }
 
-    // 应用分类过滤
+    // 然后在搜索结果的基础上应用分类过滤
     if (selectedCategory && selectedCategory !== '全部') {
-      results = getTermsByCategory(selectedCategory);
+      results = results.filter(term => term.category === selectedCategory);
     }
 
     // 按照name字段排序
@@ -67,84 +67,43 @@ export const ConceptsPage: React.FC<ConceptsPageProps> = ({ onTermClick }) => {
         </div>
       </div>
 
-      {/* 搜索和过滤区域 - 桌面版 */}
-      <div className="hidden md:flex gap-4">
-        <div className="flex-1">
-          <SearchBar
-            placeholder="搜索概念..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onSearch={handleSearch}
-          />
-        </div>
-        <div className="relative">
-          <button
-            className="flex items-center gap-2 px-4 py-2 border border-input rounded-lg bg-background hover:bg-muted transition-colors"
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-          >
-            <Filter size={18} />
-            <span>分类: {selectedCategory}</span>
-          </button>
-          {isFilterOpen && (
-            <div className="absolute right-0 mt-2 w-48 rounded-lg bg-card border border-border shadow-lg z-10 py-2">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-muted transition-colors ${selectedCategory === category ? 'bg-primary/10 text-primary font-medium' : ''}`}
-                  onClick={() => {
-                    setSelectedCategory(category);
-                    setIsFilterOpen(false);
-                  }}
-                >
-                  {category}
-                </button>
-              ))}
-              <div className="border-t border-border mt-2 pt-2 px-4">
-                <button
-                  className="flex items-center gap-2 w-full text-left px-2 py-1 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
-                  onClick={clearFilters}
-                >
-                  <X size={16} />
-                  <span>清除筛选</span>
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+      {/* 搜索区域 - 桌面版 */}
+      <div className="hidden md:block">
+        <SearchBar
+          placeholder="搜索概念..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onSearch={handleSearch}
+        />
       </div>
 
-      {/* 筛选条 - 移动版 */}
-      <div className="md:hidden space-y-4">
-        <div className="flex items-center justify-between px-4 py-2 border border-input rounded-lg bg-muted">
-          <span className="text-sm">分类: {selectedCategory}</span>
-          <button
-            className="flex items-center gap-1 text-sm text-primary"
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-          >
-            <Filter size={16} />
-            <span>{isFilterOpen ? '收起' : '筛选'}</span>
-          </button>
-        </div>
-        {isFilterOpen && (
-          <div className="border border-input rounded-lg bg-card p-4 space-y-2">
+      {/* 固定横向导航栏 - 分类标签 */}
+      <div className="sticky top-0 z-30 bg-background border-b border-border py-3">
+        <div className="overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide">
+          <div className="inline-flex gap-2 px-1">
             {categories.map((category) => (
               <button
                 key={category}
-                className={`w-full text-left px-4 py-2 rounded-md transition-colors ${selectedCategory === category ? 'bg-primary/10 text-primary font-medium' : 'hover:bg-muted'}`}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm transition-all ${selectedCategory === category ? 'bg-primary text-primary-foreground font-medium' : 'bg-muted hover:bg-muted/80'}`}
                 onClick={() => setSelectedCategory(category)}
+                aria-label={`选择${category}分类`}
               >
-                {category}
+                <span>{category}</span>
               </button>
             ))}
-            <button
-              className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
-              onClick={clearFilters}
-            >
-              <X size={16} />
-              <span>清除筛选</span>
-            </button>
           </div>
-        )}
+        </div>
+      </div>
+
+      {/* 清除筛选按钮 - 移动版 */}
+      <div className="md:hidden flex justify-center mb-2">
+        <button
+          className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+          onClick={clearFilters}
+        >
+          <X size={16} />
+          <span>清除筛选</span>
+        </button>
       </div>
 
       {/* 结果统计 */}
@@ -154,7 +113,7 @@ export const ConceptsPage: React.FC<ConceptsPageProps> = ({ onTermClick }) => {
 
       {/* 概念列表 */}
       {filteredTerms.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredTerms.map((term) => (
             <TermCard 
               key={term.id} 
