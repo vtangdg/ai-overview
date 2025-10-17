@@ -1,231 +1,119 @@
 'use client';
 
-import { useState } from 'react';
 import { Layout } from '../components/common';
-import { ConceptsPage } from '../components/concepts/concepts-page';
-import { ToolsPage } from '../components/tools/tools-page';
-import { TermDetail } from '../components/concepts/term-detail';
-import { ToolDetail } from '../components/tools/tool-detail';
-import { DemosPage } from '../components/demos/demos-page';
-
-import { ConceptExplainer } from '../components/demos/concept-explainer';
 import { Globe, BookOpen, Wrench } from 'lucide-react';
 
-// 定义页面类型
-type PageType = 'home' | 'concepts' | 'concept-detail' | 'tools' | 'tool-detail' | 'demos' | 'demo-detail';
-
 const AppContent: React.FC = () => {
-  // 页面状态管理
-  const [currentPage, setCurrentPage] = useState<PageType>('home');
-  const [selectedTermId, setSelectedTermId] = useState<string>('');
-  const [selectedToolId, setSelectedToolId] = useState<number>(0);
-  const [selectedDemoId, setSelectedDemoId] = useState<string>('');
-
-  // 处理导航点击
-  const handleNavClick = (page: string) => {
-    switch (page) {
-      case 'home':
-        setCurrentPage('home');
-        break;
-      case 'concepts':
-        setCurrentPage('concepts');
-        break;
-      case 'tools':
-        setCurrentPage('tools');
-        break;
-      case 'notes':
-        // 笔记功能尚未完全实现，显示提示信息
-        alert('知识笔记功能即将推出');
-        break;
-      case 'demos':
-        setCurrentPage('demos');
-        break;
-      default:
-        setCurrentPage('home');
-    }
-  };
-
-  // 处理概念点击
-  const handleTermClick = (id: string) => {
-    setSelectedTermId(id);
-    setCurrentPage('concept-detail');
-  };
-
-  // 处理工具点击
-  const handleToolClick = (id: number) => {
-    setSelectedToolId(id);
-    setCurrentPage('tool-detail');
-  };
-
-  // 返回上一页
-  const handleBack = () => {
-    if (currentPage === 'concept-detail') {
-      setCurrentPage('concepts');
-    } else if (currentPage === 'tool-detail') {
-      setCurrentPage('tools');
-    } else {
-      setCurrentPage('home');
-    }
-  };
-
-  // 处理相关概念点击
-  const handleRelatedTermClick = (id: string) => {
-    setSelectedTermId(id);
-    // 保持在概念详情页，但更新显示的概念
-  };
-
-  // 处理Demo点击
-  const handleDemoClick = (demoId: string) => {
-    setSelectedDemoId(demoId);
-    setCurrentPage('demo-detail');
-  };
-
-  // 根据当前页面渲染内容
-  const renderContent = () => {
-    switch (currentPage) {
-      case 'demos':
-        return <DemosPage />;
-      case 'demo-detail':
-        if (selectedDemoId === 'qwen-chat') {
-          return (
-            <QwenChatDemo
-              onBack={() => setCurrentPage('demos')}
-            />
-          );
-        } else if (selectedDemoId === 'concept-explainer') {
-          return (
-            <ConceptExplainer
-              onBack={() => setCurrentPage('demos')}
-            />
-          );
-        } else {
-          return <div className="text-center py-12">演示应用不存在</div>;
-        }
-      case 'concept-detail':
-        return (
-          <TermDetail
-            termId={selectedTermId}
-            onBack={handleBack}
-            onRelatedTermClick={handleRelatedTermClick}
-          />
-        );
-      case 'tools':
-        return <ToolsPage onToolClick={handleToolClick} />;
-      case 'tool-detail':
-        return <ToolDetail toolId={selectedToolId} onBack={handleBack} />;
-      case 'home':
-      default:
-        return (
-          <div className="space-y-12">
-            <div className="space-y-6">
-              <div className="max-w-3xl space-y-4">
-                <h1 className="sm:text-3xl font-bold">
-                  简介
-                </h1>
-                <p className="text-xl text-muted-foreground">
-                  探索人工智能的世界，从概念学习到工具应用，一站式AI知识平台
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div
-                  className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50"
-                  onClick={() => handleNavClick('concepts')}
-                >
-                  <div className="p-3 rounded-lg w-fit mb-4">
-                    <BookOpen size={24} className="text-primary" />
-                  </div>
-                  <h2 className="text-2xl font-bold mb-2">AI 概念库</h2>
-                  <p className="text-muted-foreground mb-4">
-                    探索AI领域的核心概念，建立完整的知识体系。每个概念包含简明定义和相关概念链接，帮助你形成知识网络。
-                  </p>
-                  <div className="flex items-center text-primary font-medium">
-                    <span>浏览概念库</span>
-                    <div className="ml-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs">
-                      &gt;
-                    </div>
-                  </div>
-                </div>
-                
-                <div
-                  className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50"
-                  onClick={() => handleNavClick('tools')}
-                >
-                  <div className="p-3 rounded-lg w-fit mb-4">
-                    <Wrench size={24} className="text-primary" />
-                  </div>
-                  <h2 className="text-2xl font-bold mb-2">AI 工具箱</h2>
-                  <p className="text-muted-foreground mb-4">
-                    发现各种实用的AI工具，从写作助手到设计工具，提升你的工作效率和创造力。
-                  </p>
-                  <div className="flex items-center text-primary font-medium">
-                    <span>浏览工具箱</span>
-                    <div className="ml-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs">
-                      &gt;
-                    </div>
-                  </div>
-                </div>
+  // 首页内容，其他页面通过路由直接渲染
+  const homeContent = () => (
+    <div className="space-y-12">
+      <div className="space-y-6">
+        <div className="max-w-3xl space-y-4">
+          <h1 className="sm:text-3xl font-bold">
+            简介
+          </h1>
+          <p className="text-xl text-muted-foreground">
+            探索人工智能的世界，从概念学习到工具应用，一站式AI知识平台
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <a
+            href="/concepts"
+            className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50 no-underline"
+          >
+            <div className="p-3 rounded-lg w-fit mb-4">
+              <BookOpen size={24} className="text-primary" />
+            </div>
+            <h2 className="text-2xl font-bold mb-2">AI 概念库</h2>
+            <p className="text-muted-foreground mb-4">
+              探索AI领域的核心概念，建立完整的知识体系。每个概念包含简明定义和相关概念链接，帮助你形成知识网络。
+            </p>
+            <div className="flex items-center text-primary font-medium">
+              <span>浏览概念库</span>
+              <div className="ml-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs">
+                &gt;
               </div>
             </div>
-
-            <div className="space-y-6 pt-6 border-t border-border">
-              <h2 className="text-2xl font-bold">热门资源</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all cursor-pointer" onClick={() => handleTermClick('ai')}>
-                  <h3 className="font-semibold mb-1">人工智能 (AI)</h3>
-                  <p className="text-sm text-muted-foreground">了解人工智能的基础概念和发展历程</p>
-                </div>
-                <div className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all cursor-pointer" onClick={() => handleTermClick('deep-learning')}>
-                  <h3 className="font-semibold mb-1">深度学习</h3>
-                  <p className="text-sm text-muted-foreground">探索深度学习算法和应用场景</p>
-                </div>
-                <div className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all cursor-pointer" onClick={() => handleTermClick('generative-ai')}>
-                  <h3 className="font-semibold mb-1">生成式AI</h3>
-                  <p className="text-sm text-muted-foreground">了解AI如何创造文本、图像等内容</p>
-                </div>
+          </a>
+          
+          <a
+            href="/tools"
+            className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50 no-underline"
+          >
+            <div className="p-3 rounded-lg w-fit mb-4">
+              <Wrench size={24} className="text-primary" />
+            </div>
+            <h2 className="text-2xl font-bold mb-2">AI 工具箱</h2>
+            <p className="text-muted-foreground mb-4">
+              发现各种实用的AI工具，从写作助手到设计工具，提升你的工作效率和创造力。
+            </p>
+            <div className="flex items-center text-primary font-medium">
+              <span>浏览工具箱</span>
+              <div className="ml-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs">
+                &gt;
               </div>
             </div>
-
-            <div className="space-y-6 pt-6 border-t border-border">
-              <h2 className="text-2xl font-bold">即将推出</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div className="bg-muted border border-border/50 rounded-xl p-6 opacity-80">
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-2 h-2 rounded-full bg-muted-foreground animate-pulse" />
-                    <h3 className="text-xl font-semibold">知识笔记</h3>
-                  </div>
-                  <p className="text-muted-foreground">记录和整理你的AI学习过程，支持笔记编辑和分类管理。</p>
-                </div>
-                <div
-                  className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50"
-                  onClick={() => handleNavClick('demos')}
-                >
-                  <div className="flex items-center gap-2 mb-4">
-                    <Globe size={24} className="text-primary" />
-                    <h3 className="text-xl font-semibold">应用广场</h3>
-                  </div>
-                  <p className="text-muted-foreground mb-4">
-                    展示和体验AI应用示例，包含Demo名称、描述、交互界面和技术细节。
-                  </p>
-                  <div className="flex items-center text-primary font-medium">
-                    <span>立即探索</span>
-                    <div className="ml-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs">
-                      &gt;
-                    </div>
-                  </div>
-                </div>
+          </a>
+          
+          <a
+            href="/demos"
+            className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50 no-underline"
+          >
+            <div className="p-3 rounded-lg w-fit mb-4">
+              <Globe size={24} className="text-primary" />
+            </div>
+            <h2 className="text-2xl font-bold mb-2">应用广场</h2>
+            <p className="text-muted-foreground mb-4">
+              展示和体验AI应用示例，包含Demo名称、描述、交互界面和技术细节。
+            </p>
+            <div className="flex items-center text-primary font-medium">
+              <span>立即探索</span>
+              <div className="ml-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs">
+                &gt;
               </div>
             </div>
+          </a>
+        </div>
+      </div>
+
+      <div className="space-y-6 pt-6 border-t border-border">
+        <h2 className="text-2xl font-bold">热门资源</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <a href="/concepts/ai" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
+            <h3 className="font-semibold mb-1">人工智能 (AI)</h3>
+            <p className="text-sm text-muted-foreground">了解人工智能的基础概念和发展历程</p>
+          </a>
+          <a href="/concepts/deep-learning" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
+            <h3 className="font-semibold mb-1">深度学习</h3>
+            <p className="text-sm text-muted-foreground">探索深度学习算法和应用场景</p>
+          </a>
+          <a href="/concepts/generative-ai" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
+            <h3 className="font-semibold mb-1">生成式AI</h3>
+            <p className="text-sm text-muted-foreground">了解AI如何创造文本、图像等内容</p>
+          </a>
+        </div>
+      </div>
+
+      <div className="space-y-6 pt-6 border-t border-border">
+        <h2 className="text-2xl font-bold">即将推出</h2>
+        <div className="bg-muted border border-border/50 rounded-xl p-6 opacity-80 max-w-md">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-2 h-2 rounded-full bg-muted-foreground animate-pulse" />
+            <h3 className="text-xl font-semibold">知识笔记</h3>
           </div>
-        );
-    }
-  };
+          <p className="text-muted-foreground">记录和整理你的AI学习过程，支持笔记编辑和分类管理。</p>
+        </div>
+      </div>
+    </div>
+  );
+
 
   return (
-    <Layout onNavClick={handleNavClick} currentPage={currentPage}>
-      {renderContent()}
-    </Layout>
-  );
-};
+      <Layout>
+        {homeContent()}
+      </Layout>
+    );
+  };
 
 export default AppContent;

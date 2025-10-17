@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { SearchBar, Card } from '../common';
 import { TermCard } from './term-card';
 import { AITerm, aiTerms, getCategories, searchTerms, getTermsByCategory } from '../../lib/concepts';
@@ -11,16 +11,15 @@ interface ConceptsPageProps {
 export const ConceptsPage: React.FC<ConceptsPageProps> = ({ onTermClick }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('全部');
-  const [categories, setCategories] = useState<string[]>([]);
-  const [filteredTerms, setFilteredTerms] = useState<AITerm[]>(aiTerms);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  useEffect(() => {
-    setCategories(['全部', ...getCategories()]);
-    filterTerms();
-  }, [searchQuery, selectedCategory]);
+  // 只在组件挂载时计算一次分类列表
+  const categories = useMemo(() => {
+    return ['全部', ...getCategories()];
+  }, []);
 
-  const filterTerms = () => {
+  // 使用useMemo缓存过滤后的结果，避免不必要的计算
+  const filteredTerms = useMemo(() => {
     let results = aiTerms;
 
     // 先应用搜索过滤
@@ -34,13 +33,16 @@ export const ConceptsPage: React.FC<ConceptsPageProps> = ({ onTermClick }) => {
     }
 
     // 按照name字段排序
-    results = [...results].sort((a, b) => a.name.localeCompare(b.name));
+    return [...results].sort((a, b) => a.name.localeCompare(b.name));
+  }, [searchQuery, selectedCategory]);
 
-    setFilteredTerms(results);
-  };
+  useEffect(() => {
+    // 这里可以放置其他需要在搜索或筛选变化时执行的逻辑
+  }, [searchQuery, selectedCategory]);
 
   const handleSearch = () => {
-    filterTerms();
+    // 由于使用了useMemo，这里不需要额外的过滤操作
+    // 当searchQuery变化时，filteredTerms会自动更新
   };
 
   const clearFilters = () => {

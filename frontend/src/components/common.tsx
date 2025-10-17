@@ -23,8 +23,8 @@ export const NavLink: React.FC<NavLinkProps> = ({
       className={cn(
         'flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap',
         active
-          ? 'bg-primary text-primary-foreground'
-          : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+          ? 'text-primary-foreground'
+          : 'text-muted-foreground hover:text-foreground'
       )}
       onClick={onClick}
     >
@@ -204,7 +204,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
 
   // 处理导航点击
   const handleNavClick = (page: string, event?: React.MouseEvent) => {
-    event?.preventDefault();
+    // 不再阻止默认行为，让链接正常跳转
     setActivePage(page); // 更新当前激活的菜单项
     setSidebarOpen(false);
     if (onNavClick) {
@@ -212,12 +212,12 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
     }
   };
 
-  // 创建菜单项，确保激活状态一致
+  // 创建菜单项，为每个链接添加正确的href值
   const navLinks = [
-    { id: 'concepts', icon: <Book size={20} />, label: '概念库' },
-    { id: 'tools', icon: <Wrench size={20} />, label: 'AI工具箱' },
-    { id: 'notes', icon: <Edit3 size={20} />, label: '知识笔记' },
-    { id: 'demos', icon: <Grid size={20} />, label: '应用广场' }
+    { id: 'concepts', icon: <Book size={20} />, label: '概念库', href: '/concepts' },
+    { id: 'tools', icon: <Wrench size={20} />, label: 'AI工具箱', href: '/tools' },
+    { id: 'notes', icon: <Edit3 size={20} />, label: '知识笔记', href: '/notes' },
+    { id: 'demos', icon: <Grid size={20} />, label: '应用广场', href: '/demos' }
   ];
 
   // 确保组件在移动设备上正确初始化
@@ -252,7 +252,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
             </button>
             
             <a 
-              href="#" 
+              href="/" 
               className="text-xl font-bold"
               onClick={(e) => handleNavClick('home', e)}
             >
@@ -267,7 +267,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
           <div className="hidden md:flex items-center space-x-4">
             {/* 标题放在左侧 */}
             <a 
-              href="#" 
+              href="/" 
               className="text-xl font-bold mr-auto"
               onClick={(e) => handleNavClick('home', e)}
             >
@@ -279,7 +279,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
               {navLinks.map(link => (
                 <NavLink 
                   key={link.id} 
-                  href="#" 
+                  href={link.href} 
                   icon={link.icon} 
                   label={link.label} 
                   active={activePage === link.id} 
@@ -312,7 +312,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
                 {navLinks.map(link => (
                   <NavLink 
                     key={link.id} 
-                    href="#" 
+                    href={link.href} 
                     icon={link.icon} 
                     label={link.label} 
                     active={activePage === link.id} 
