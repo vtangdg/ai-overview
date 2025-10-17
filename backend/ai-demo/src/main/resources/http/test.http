@@ -1,0 +1,9 @@
+POST http://localhost:8081/api/concept-explainer/explain
+Content-Type: application/json
+
+{
+    "conceptName": "MCP"
+}
+
+###
+GET http://localhost:8081/api/concept-explainer/test

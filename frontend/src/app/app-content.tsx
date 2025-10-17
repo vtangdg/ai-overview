@@ -6,16 +6,20 @@ import { ConceptsPage } from '../components/concepts/concepts-page';
 import { ToolsPage } from '../components/tools/tools-page';
 import { TermDetail } from '../components/concepts/term-detail';
 import { ToolDetail } from '../components/tools/tool-detail';
+import { DemosPage } from '../components/demos/demos-page';
+
+import { ConceptExplainer } from '../components/demos/concept-explainer';
 import { Globe, BookOpen, Wrench } from 'lucide-react';
 
 // 定义页面类型
-type PageType = 'home' | 'concepts' | 'concept-detail' | 'tools' | 'tool-detail';
+type PageType = 'home' | 'concepts' | 'concept-detail' | 'tools' | 'tool-detail' | 'demos' | 'demo-detail';
 
 const AppContent: React.FC = () => {
   // 页面状态管理
   const [currentPage, setCurrentPage] = useState<PageType>('home');
   const [selectedTermId, setSelectedTermId] = useState<string>('');
   const [selectedToolId, setSelectedToolId] = useState<number>(0);
+  const [selectedDemoId, setSelectedDemoId] = useState<string>('');
 
   // 处理导航点击
   const handleNavClick = (page: string) => {
@@ -34,8 +38,7 @@ const AppContent: React.FC = () => {
         alert('知识笔记功能即将推出');
         break;
       case 'demos':
-        // 应用广场功能尚未完全实现，显示提示信息
-        alert('应用广场功能即将推出');
+        setCurrentPage('demos');
         break;
       default:
         setCurrentPage('home');
@@ -71,11 +74,33 @@ const AppContent: React.FC = () => {
     // 保持在概念详情页，但更新显示的概念
   };
 
+  // 处理Demo点击
+  const handleDemoClick = (demoId: string) => {
+    setSelectedDemoId(demoId);
+    setCurrentPage('demo-detail');
+  };
+
   // 根据当前页面渲染内容
   const renderContent = () => {
     switch (currentPage) {
-      case 'concepts':
-        return <ConceptsPage onTermClick={handleTermClick} />;
+      case 'demos':
+        return <DemosPage />;
+      case 'demo-detail':
+        if (selectedDemoId === 'qwen-chat') {
+          return (
+            <QwenChatDemo
+              onBack={() => setCurrentPage('demos')}
+            />
+          );
+        } else if (selectedDemoId === 'concept-explainer') {
+          return (
+            <ConceptExplainer
+              onBack={() => setCurrentPage('demos')}
+            />
+          );
+        } else {
+          return <div className="text-center py-12">演示应用不存在</div>;
+        }
       case 'concept-detail':
         return (
           <TermDetail
@@ -171,12 +196,23 @@ const AppContent: React.FC = () => {
                   </div>
                   <p className="text-muted-foreground">记录和整理你的AI学习过程，支持笔记编辑和分类管理。</p>
                 </div>
-                <div className="bg-muted border border-border/50 rounded-xl p-6 opacity-80">
+                <div
+                  className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50"
+                  onClick={() => handleNavClick('demos')}
+                >
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-2 h-2 rounded-full bg-muted-foreground animate-pulse" />
+                    <Globe size={24} className="text-primary" />
                     <h3 className="text-xl font-semibold">应用广场</h3>
                   </div>
-                  <p className="text-muted-foreground">展示和体验AI应用示例，包含Demo名称、描述、交互界面和技术细节。</p>
+                  <p className="text-muted-foreground mb-4">
+                    展示和体验AI应用示例，包含Demo名称、描述、交互界面和技术细节。
+                  </p>
+                  <div className="flex items-center text-primary font-medium">
+                    <span>立即探索</span>
+                    <div className="ml-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs">
+                      &gt;
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
