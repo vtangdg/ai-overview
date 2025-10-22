@@ -79,7 +79,7 @@ const AppContent: React.FC = () => {
 
       <div className="space-y-6 pt-6 border-t border-border">
         <h2 className="text-2xl font-bold">热门资源</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <a href="/concepts/ai" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
             <h3 className="font-semibold mb-1">人工智能 (AI)</h3>
             <p className="text-sm text-muted-foreground">了解人工智能的基础概念和发展历程</p>
@@ -91,6 +91,10 @@ const AppContent: React.FC = () => {
           <a href="/concepts/generative-ai" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
             <h3 className="font-semibold mb-1">生成式AI</h3>
             <p className="text-sm text-muted-foreground">了解AI如何创造文本、图像等内容</p>
+          </a>
+          <a href={process.env.NEXT_PUBLIC_SPRING_AI_ALIBABA_URL || '#'} target="_blank" rel="noopener noreferrer" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
+            <h3 className="font-semibold mb-1">Spring AI Alibaba Playground</h3>
+            <p className="text-sm text-muted-foreground">体验智能对话、图像生成、文档总结等AI功能</p>
           </a>
         </div>
       </div>

@@ -29,6 +29,15 @@ export const DemosPage: React.FC<DemosPageProps> = () => {
       url: '/demos/concept-explainer' // 添加对应的URL路径
     },
     {
+      id: 'spring-ai-alibaba',
+      title: 'Spring AI Alibaba Playground',
+      description: '探索Spring AI Alibaba框架的强大功能，包括智能对话、图像生成、文档总结、Tool Calling、RAG和MCP等。',
+      icon: <BookOpen className="w-12 h-12 text-primary" />,
+      available: true,
+      tags: ['Spring AI', 'Spring AI Alibaba'],
+      url: process.env.NEXT_PUBLIC_SPRING_AI_ALIBABA_URL || '#'
+    },
+    {
       id: 'more-apps',
       title: '更多应用',
       description: '我们正在开发更多AI应用，敬请期待！',
