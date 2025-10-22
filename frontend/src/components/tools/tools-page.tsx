@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { SearchBar, Card } from '../common';
 import { ToolCard } from './tool-card';
-import { AITool, Category, SubCategory, aiTools, searchTools, mockCategories, getToolsByCategoryName, getAllCategories } from '../../lib/tools';
+import { AITool, aiTools, searchTools, mockCategories, getToolsByCategoryName, getAllCategories } from '../../lib/tools';
 import { Wrench, X } from 'lucide-react';
 
 interface ToolsPageProps {

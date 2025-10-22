@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Globe, Book, Wrench, Edit3, Grid, Menu, X, Search } from 'lucide-react';
+import { Book, Wrench, Edit3, Grid, Menu, X, Search } from 'lucide-react';
+import Link from 'next/link';
 
 interface NavLinkProps {
   href: string;
@@ -203,7 +204,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
   }, [currentPage]);
 
   // 处理导航点击
-  const handleNavClick = (page: string, event?: React.MouseEvent) => {
+  const handleNavClick = (page: string) => {
     // 不再阻止默认行为，让链接正常跳转
     setActivePage(page); // 更新当前激活的菜单项
     setSidebarOpen(false);
@@ -251,13 +252,13 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
               <Menu size={24} className="text-foreground" aria-hidden="true" />
             </button>
             
-            <a 
+            <Link 
               href="/" 
               className="text-xl font-bold"
-              onClick={(e) => handleNavClick('home', e)}
+              onClick={() => handleNavClick('home')}
             >
               AI 知识库
-            </a>
+            </Link>
             
             {/* 空div用于平衡布局 */}
             <div className="w-10"></div>
@@ -266,13 +267,13 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
           {/* 桌面端布局：标题在左侧，菜单在中间 */}
           <div className="hidden md:flex items-center space-x-4">
             {/* 标题放在左侧 */}
-            <a 
+            <Link 
               href="/" 
               className="text-xl font-bold mr-auto"
-              onClick={(e) => handleNavClick('home', e)}
+              onClick={() => handleNavClick('home')}
             >
               AI 知识库
-            </a>
+            </Link>
             
             {/* 菜单放在中间位置 */}
             <nav className="flex justify-center space-x-1 overflow-x-auto flex-1 max-w-3xl mx-auto">
@@ -283,7 +284,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
                   icon={link.icon} 
                   label={link.label} 
                   active={activePage === link.id} 
-                  onClick={(e) => handleNavClick(link.id, e)} 
+                  onClick={() => handleNavClick(link.id)} 
                 />
               ))}
             </nav>
@@ -316,7 +317,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
                     icon={link.icon} 
                     label={link.label} 
                     active={activePage === link.id} 
-                    onClick={(e) => handleNavClick(link.id, e)} 
+                    onClick={() => handleNavClick(link.id)} 
                   />
                 ))}
               </nav>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { SearchBar, Card } from '../common';
 import { TermCard } from './term-card';
-import { AITerm, aiTerms, getCategories, searchTerms, getTermsByCategory } from '../../lib/concepts';
-import { BookOpen, Filter, X } from 'lucide-react';
+import { aiTerms, getCategories, searchTerms } from '../../lib/concepts';
+import { BookOpen, X } from 'lucide-react';
 
 interface ConceptsPageProps {
   onTermClick: (id: string) => void;
@@ -11,7 +11,7 @@ interface ConceptsPageProps {
 export const ConceptsPage: React.FC<ConceptsPageProps> = ({ onTermClick }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('全部');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  // 移除未使用的筛选器状态
 
   // 只在组件挂载时计算一次分类列表
   const categories = useMemo(() => {
@@ -48,7 +48,6 @@ export const ConceptsPage: React.FC<ConceptsPageProps> = ({ onTermClick }) => {
   const clearFilters = () => {
     setSearchQuery('');
     setSelectedCategory('全部');
-    setIsFilterOpen(false);
   };
 
   return (

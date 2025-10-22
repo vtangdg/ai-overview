@@ -1,5 +1,5 @@
 import React from 'react';
-import { AITerm, getTermById } from '../../lib/concepts';
+import {getTermById } from '../../lib/concepts';
 import { Card, Tag } from '../common';
 import { BookOpen, Link, ArrowLeft } from 'lucide-react';
 

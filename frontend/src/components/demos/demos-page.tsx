@@ -12,11 +12,7 @@ interface DemoCardData {
   url?: string; // 添加URL字段用于新页面打开
 }
 
-interface DemosPageProps {
-  // 移除onDemoClick属性，使用新页面打开方式
-}
-
-export const DemosPage: React.FC<DemosPageProps> = () => {
+export const DemosPage: React.FC = () => {
   // 示例Demo数据
   const demos: DemoCardData[] = [
     {

@@ -1,41 +1,15 @@
 import React, { useState } from 'react';
-import { BookOpen, Send, Loader2, X } from 'lucide-react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
-import rehypeSanitize from 'rehype-sanitize';
+import { BookOpen, Send, Loader2 } from 'lucide-react';
+// 使用MarkdownRenderer替代ReactMarkdown
 import { MarkdownRenderer } from '../common/markdown/MarkdownRenderer';
 
-interface ConceptExplainerProps {
-  onBack: () => void;
-}
-
-export const ConceptExplainer: React.FC<ConceptExplainerProps> = ({ onBack }) => {
+export const ConceptExplainer: React.FC = () => {
   const [conceptName, setConceptName] = useState('');
   const [explanation, setExplanation] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // 解析并格式化解释内容 - 使用Markdown格式
-  const parseExplanation = (text: string) => {
-    try {
-      // 直接渲染后端返回的Markdown内容，并应用完整的prose样式
-      return (
-        <div className="prose prose-sm max-w-none">
-          <ReactMarkdown 
-            remarkPlugins={[remarkGfm]} 
-            rehypePlugins={[rehypeRaw, rehypeSanitize]}
-          >
-            {text}
-          </ReactMarkdown>
-        </div>
-      );
-    } catch (e) {
-      console.error('Markdown解析错误:', e);
-      // 解析失败时，回退到原始文本显示
-      return <div className="whitespace-pre-line">{text}</div>;
-    }
-  };
+  // 使用MarkdownRenderer直接渲染解释内容
 
   const handleExplainConcept = async () => {
     if (!conceptName.trim() || isLoading) return;
