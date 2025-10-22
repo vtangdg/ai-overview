@@ -1,6 +1,7 @@
 'use client';
 
 import { Layout } from '../components/common';
+import Link from 'next/link';
 import { Globe, BookOpen, Wrench } from 'lucide-react';
 
 const AppContent: React.FC = () => {
@@ -18,7 +19,7 @@ const AppContent: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <a
+          <Link
             href="/concepts"
             className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50 no-underline"
           >
@@ -35,9 +36,9 @@ const AppContent: React.FC = () => {
                 &gt;
               </div>
             </div>
-          </a>
+          </Link>
           
-          <a
+          <Link
             href="/tools"
             className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50 no-underline"
           >
@@ -54,9 +55,9 @@ const AppContent: React.FC = () => {
                 &gt;
               </div>
             </div>
-          </a>
+          </Link>
           
-          <a
+          <Link
             href="/demos"
             className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50 no-underline"
           >
@@ -73,25 +74,25 @@ const AppContent: React.FC = () => {
                 &gt;
               </div>
             </div>
-          </a>
+          </Link>
         </div>
       </div>
 
       <div className="space-y-6 pt-6 border-t border-border">
         <h2 className="text-2xl font-bold">热门资源</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <a href="/concepts/ai" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
+          <Link href="/concepts/ai" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
             <h3 className="font-semibold mb-1">人工智能 (AI)</h3>
             <p className="text-sm text-muted-foreground">了解人工智能的基础概念和发展历程</p>
-          </a>
-          <a href="/concepts/deep-learning" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
+          </Link>
+          <Link href="/concepts/deep-learning" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
             <h3 className="font-semibold mb-1">深度学习</h3>
             <p className="text-sm text-muted-foreground">探索深度学习算法和应用场景</p>
-          </a>
-          <a href="/concepts/generative-ai" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
+          </Link>
+          <Link href="/concepts/generative-ai" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
             <h3 className="font-semibold mb-1">生成式AI</h3>
             <p className="text-sm text-muted-foreground">了解AI如何创造文本、图像等内容</p>
-          </a>
+          </Link>
           <a href={process.env.NEXT_PUBLIC_SPRING_AI_ALIBABA_URL || '#'} target="_blank" rel="noopener noreferrer" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
             <h3 className="font-semibold mb-1">Spring AI Alibaba Playground</h3>
             <p className="text-sm text-muted-foreground">体验智能对话、图像生成、文档总结等AI功能</p>
