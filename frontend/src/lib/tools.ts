@@ -28,278 +28,267 @@ export interface AITool {
 export const mockCategories: Category[] = [
   {
     id: 1,
-    name: "AI写作工具",
-    icon: "✍️",
-    subcategories: [
-      { id: 101, name: "论文写作" },
-      { id: 102, name: "营销文案" },
-      { id: 103, name: "创意写作" }
-    ]
+    name: "AI对话聊天",
+    icon: "💬",
+    subcategories: []
   },
   {
     id: 2,
-    name: "AI图像工具",
-    icon: "🖼️",
-    subcategories: [
-      { id: 201, name: "插画生成" },
-      { id: 202, name: "背景移除" },
-      { id: 203, name: "图像修复" }
-    ]
+    name: "AI提示词",
+    icon: "📝",
+    subcategories: []
   },
   {
     id: 3,
-    name: "AI语音工具",
-    icon: "🔊",
-    subcategories: [
-      { id: 301, name: "语音合成" },
-      { id: 302, name: "语音识别" },
-      { id: 303, name: "语音转写" }
-    ]
+    name: "AI写作工具",
+    icon: "✍️",
+    subcategories: []
   },
   {
     id: 4,
-    name: "AI编程工具",
-    icon: "💻",
+    name: "AI图像工具",
+    icon: "🖼️",
     subcategories: [
-      { id: 401, name: "代码生成" },
-      { id: 402, name: "代码审查" },
-      { id: 403, name: "代码注释" }
+      { id: 401, name: "插画生成" },
+      { id: 402, name: "背景移除" }
     ]
   },
   {
     id: 5,
-    name: "AI数据分析工具",
-    icon: "📊",
-    subcategories: [
-      { id: 501, name: "数据可视化" },
-      { id: 502, name: "数据清洗" },
-      { id: 503, name: "数据挖掘" }
-    ]
+    name: "AI语音工具",
+    icon: "🔊",
+    subcategories: []
   },
   {
     id: 6,
-    name: "AI翻译工具",
-    icon: "🌐",
+    name: "AI视频工具",
+    icon: "🎬",
     subcategories: [
-      { id: 601, name: "文档翻译" },
-      { id: 602, name: "实时翻译" },
-      { id: 603, name: "本地化" }
+      { id: 601, name: "视频生成" }
     ]
+  },
+  {
+    id: 7,
+    name: "AI编程工具",
+    icon: "💻",
+    subcategories: []
+  },
+  {
+    id: 8,
+    name: "AI开发平台",
+    icon: "🚀",
+    subcategories: []
+  },
+  {
+    id: 9,
+    name: "AI办公",
+    icon: "🏢",
+    subcategories: []
   }
 ];
 
 // 示例AI工具数据（完整版本，包含所有一级类目）
 export const aiTools: AITool[] = [
-  // AI写作工具 (categoryId: 1)
+  // AI对话聊天 (categoryId: 1)
   {
     id: 1001,
-    name: '星月写作',
+    name: 'DeepSeek',
     categoryId: 1,
-    subcategoryId: 101,
+    subcategoryId: 0,
+    icon: '💬',
+    breifDesc: '高性能大语言模型，提供智能对话和编程辅助。'
+  },
+  {
+    id: 1002,
+    name: '豆包',
+    categoryId: 1,
+    subcategoryId: 0,
+    icon: '🧠',
+    breifDesc: '字节跳动开发的智能对话助手，支持多轮对话和任务执行。'
+  },
+  {
+    id: 1003,
+    name: '腾讯元宝',
+    categoryId: 1,
+    subcategoryId: 0,
+    icon: '💰',
+    breifDesc: '腾讯推出的智能助手，提供生活和工作辅助。'
+  },
+  {
+    id: 1004,
+    name: 'ChatGPT',
+    categoryId: 1,
+    subcategoryId: 0,
+    icon: '🤖',
+    breifDesc: 'OpenAI开发的强大语言模型，支持多领域对话和内容生成。'
+  },
+  {
+    id: 1005,
+    name: 'Kimi',
+    categoryId: 1,
+    subcategoryId: 0,
+    icon: '🚀',
+    breifDesc: '月之暗面开发的大语言模型，支持长文本处理。'
+  },
+  {
+    id: 1006,
+    name: '通义千问',
+    categoryId: 1,
+    subcategoryId: 0,
+    icon: '🔍',
+    breifDesc: '阿里云开发的大语言模型，提供智能问答和创意生成。'
+  },
+  {
+    id: 1007,
+    name: '文心一言',
+    categoryId: 1,
+    subcategoryId: 0,
+    icon: '💡',
+    breifDesc: '百度开发的智能对话助手，支持多模态交互。'
+  },
+  
+  // AI提示词 (categoryId: 2)
+  {
+    id: 2001,
+    name: 'PromptPilot',
+    categoryId: 2,
+    subcategoryId: 0,
+    icon: '✈️',
+    breifDesc: '提示词优化和管理工具，帮助用户创建高质量的AI提示。'
+  },
+  
+  // AI写作工具 (categoryId: 3)
+  {
+    id: 3001,
+    name: '星月写作',
+    categoryId: 3,
+    subcategoryId: 0,
     icon: '✍️',
     breifDesc: '专注于学术论文和英文写作的AI写作助手。'
   },
   {
-    id: 1002,
-    name: '蛙蛙写作',
-    categoryId: 1,
-    subcategoryId: 101,
-    icon: '✏️',
-    breifDesc: '支持多种文体生成的AI写作工具。'
-  },
-  {
-    id: 1003,
-    name: '笔灵AI论文',
-    categoryId: 1,
-    subcategoryId: 102,
-    icon: '📝',
-    breifDesc: '国内全能型论文写作助手，帮助用户快速完成学术论文。'
-  },
-  {
-    id: 1004,
-    name: '66AI论文',
-    categoryId: 1,
-    subcategoryId: 102,
-    icon: '📄',
-    breifDesc: '专业的AI论文写作工具，提供学术论文全流程支持。'
-  },
-  {
-    id: 1005,
-    name: '笔王AI论文',
-    categoryId: 1,
-    subcategoryId: 102,
-    icon: '📑',
-    breifDesc: '专注于提高写作效率的AI论文写作工具。'
-  },
-  {
-    id: 1006,
-    name: '茅亭论文写作',
-    categoryId: 1,
-    subcategoryId: 102,
-    icon: '🎓',
-    breifDesc: '提供从选题到定稿全流程服务的AI论文写作平台。'
-  },
-  {
-    id: 1007,
-    name: '讯飞文书',
-    categoryId: 1,
-    subcategoryId: 101,
-    icon: '📋',
-    breifDesc: '基于大模型的智能文书生成工具，适用于多种场景。'
-  },
-  {
-    id: 1008,
+    id: 3002,
     name: '讯飞绘文',
-    categoryId: 1,
-    subcategoryId: 101,
+    categoryId: 3,
+    subcategoryId: 0,
     icon: '🎨',
     breifDesc: '一站式AIGC内容生成平台，支持多种内容形式。'
   },
-  
-  // AI图像工具 (categoryId: 2)
   {
-    id: 2001,
+    id: 3003,
+    name: 'aibiye',
+    categoryId: 3,
+    subcategoryId: 0,
+    icon: '📝',
+    breifDesc: 'AI辅助写作工具，提供文案创作和内容生成服务。'
+  },
+  
+  // AI图像工具 (categoryId: 4)
+  {
+    id: 4001,
     name: 'Midjourney',
-    categoryId: 2,
-    subcategoryId: 201,
+    categoryId: 4,
+    subcategoryId: 401,
     icon: '🎨',
     breifDesc: '生成高质量艺术图像的AI创作平台。'
   },
   {
-    id: 2002,
-    name: 'DALL-E 3',
-    categoryId: 2,
-    subcategoryId: 201,
-    icon: '🖼️',
-    breifDesc: 'OpenAI开发的文本到图像生成模型。'
-  },
-  {
-    id: 2003,
+    id: 4002,
     name: 'Remove.bg',
-    categoryId: 2,
-    subcategoryId: 202,
+    categoryId: 4,
+    subcategoryId: 402,
     icon: '✂️',
     breifDesc: '一键移除图片背景的AI工具。'
   },
-  {
-    id: 2004,
-    name: 'PicsArt',
-    categoryId: 2,
-    subcategoryId: 203,
-    icon: '✎',
-    breifDesc: '提供图像编辑和修复功能的AI设计平台。'
-  },
   
-  // AI语音工具 (categoryId: 3)
-  {
-    id: 3001,
-    name: '讯飞语音合成',
-    categoryId: 3,
-    subcategoryId: 301,
-    icon: '🔊',
-    breifDesc: '将文字转换为自然流畅语音的AI服务。'
-  },
-  {
-    id: 3002,
-    name: 'Deepgram',
-    categoryId: 3,
-    subcategoryId: 302,
-    icon: '🎤',
-    breifDesc: '高精度语音识别和转写服务。'
-  },
-  {
-    id: 3003,
-    name: 'Otter.ai',
-    categoryId: 3,
-    subcategoryId: 303,
-    icon: '📝',
-    breifDesc: '自动记录和转写会议内容的AI助手。'
-  },
-  
-  // AI编程工具 (categoryId: 4)
-  {
-    id: 4001,
-    name: 'GitHub Copilot',
-    categoryId: 4,
-    subcategoryId: 401,
-    icon: '💻',
-    breifDesc: '实时代码生成和补全的AI编程助手。'
-  },
-  {
-    id: 4002,
-    name: 'CodeGeeX',
-    categoryId: 4,
-    subcategoryId: 401,
-    icon: '🚀',
-    breifDesc: '国产代码生成模型，支持多种编程语言。'
-  },
-  {
-    id: 4003,
-    name: 'SonarQube',
-    categoryId: 4,
-    subcategoryId: 402,
-    icon: '👁️',
-    breifDesc: '代码质量检查和安全漏洞扫描工具。'
-  },
-  {
-    id: 4004,
-    name: 'TabNine',
-    categoryId: 4,
-    subcategoryId: 403,
-    icon: '📝',
-    breifDesc: '智能代码注释和自动完成工具。'
-  },
-  
-  // AI数据分析工具 (categoryId: 5)
+  // AI语音工具 (categoryId: 5)
   {
     id: 5001,
-    name: 'Tableau',
+    name: '讯飞听见',
     categoryId: 5,
-    subcategoryId: 501,
-    icon: '📊',
-    breifDesc: '强大的数据可视化和商业智能工具。'
-  },
-  {
-    id: 5002,
-    name: 'Alteryx',
-    categoryId: 5,
-    subcategoryId: 502,
-    icon: '🧹',
-    breifDesc: '自动化数据清洗和准备的AI平台。'
-  },
-  {
-    id: 5003,
-    name: 'KNIME',
-    categoryId: 5,
-    subcategoryId: 503,
-    icon: '🔍',
-    breifDesc: '开源数据挖掘和分析平台。'
+    subcategoryId: 0,
+    icon: '👂',
+    breifDesc: '科大讯飞开发的语音识别和转写服务。'
   },
   
-  // AI翻译工具 (categoryId: 6)
+  // AI视频工具 (categoryId: 6)
   {
     id: 6001,
-    name: 'DeepL翻译',
+    name: 'Veo3',
     categoryId: 6,
     subcategoryId: 601,
-    icon: '📄',
-    breifDesc: '高精度文档翻译服务，支持多种格式。'
+    icon: '🎬',
+    breifDesc: 'AI视频生成工具，支持文本到视频的转换。'
   },
   {
     id: 6002,
-    name: '讯飞翻译',
+    name: 'Sora',
     categoryId: 6,
-    subcategoryId: 602,
-    icon: '🌐',
-    breifDesc: '提供实时语音和文本翻译的AI服务。'
+    subcategoryId: 601,
+    icon: '🌌',
+    breifDesc: 'OpenAI开发的视频生成模型，支持生成高质量视频内容。'
   },
   {
     id: 6003,
-    name: 'SDL Trados',
+    name: '即梦AI',
     categoryId: 6,
-    subcategoryId: 603,
-    icon: '🏢',
-    breifDesc: '专业的本地化和翻译管理系统。'
+    subcategoryId: 601,
+    icon: '🌟',
+    breifDesc: '国产AI视频生成工具，提供创意视频制作服务。'
+  },
+  
+  // AI编程工具 (categoryId: 7)
+  {
+    id: 7001,
+    name: 'Trae',
+    categoryId: 7,
+    subcategoryId: 0,
+    icon: '⚡',
+    breifDesc: 'AI驱动的开发工具，提供智能编程辅助和代码生成。'
+  },
+  {
+    id: 7002,
+    name: 'Cursor',
+    categoryId: 7,
+    subcategoryId: 0,
+    icon: '🖱️',
+    breifDesc: 'AI增强的代码编辑器，提供实时代码补全和分析。'
+  },
+  {
+    id: 7003,
+    name: 'Github Copilot',
+    categoryId: 7,
+    subcategoryId: 0,
+    icon: '✈️',
+    breifDesc: '实时代码生成和补全的AI编程助手。'
+  },
+  {
+    id: 7004,
+    name: '通义灵码',
+    categoryId: 7,
+    subcategoryId: 0,
+    icon: '💻',
+    breifDesc: '阿里云开发的智能编程助手，支持多种编程语言。'
+  },
+  
+  // AI开发平台 (categoryId: 8)
+  {
+    id: 8001,
+    name: 'Coze',
+    categoryId: 8,
+    subcategoryId: 0,
+    icon: '🛠️',
+    breifDesc: 'AI应用开发平台，支持快速构建和部署AI应用。'
+  },
+  
+  // AI办公 (categoryId: 9)
+  {
+    id: 9001,
+    name: '讯飞智文',
+    categoryId: 9,
+    subcategoryId: 0,
+    icon: '📋',
+    breifDesc: '智能办公助手，提供文档生成和会议纪要服务。'
   }
 ];
 

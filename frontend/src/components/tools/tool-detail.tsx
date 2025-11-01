@@ -77,7 +77,7 @@ export const ToolDetail: React.FC<ToolDetailProps> = ({
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         <Tag>类别: {tool.categoryName || tool.categoryId}</Tag>
-        <Tag>子类别: {tool.subcategoryName || tool.subcategoryId}</Tag>
+        {tool.subcategoryId !== 0 && <Tag>子类别: {tool.subcategoryName || tool.subcategoryId}</Tag>}
       </div>
       <Card className="border-l-4 border-l-primary">
          {isLoading && (

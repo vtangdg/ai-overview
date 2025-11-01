@@ -1,0 +1,1 @@
+读取tool-detail.md文件中的<data>标签里的内容，解析出具体的工具列表，然后过滤出frontend/src/components/tools/目录中不存在的工具，根据tool-detail.md文件中的内容，生成对应的工具详情介绍文件
