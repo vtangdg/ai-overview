@@ -2,7 +2,7 @@
 - 工具名称：Cursor
 - 一句话定位：专为开发者设计的AI驱动代码编辑器，提供智能代码生成、补全和协作功能。
 - 核心技术/模型：集成大语言模型技术，结合代码理解和生成能力。
-- 官网地址：[https://www.cursor.sh/](https://www.cursor.sh/)
+- 官网地址：[https://cursor.com/cn](https://cursor.com/cn)
 
 【核心功能与场景】
 - AI辅助编码：实时代码补全、生成和重构，提升编码效率。

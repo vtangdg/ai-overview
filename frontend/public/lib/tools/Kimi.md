@@ -2,7 +2,7 @@
 - 工具名称：Kimi
 - 一句话定位：月之暗面（Moonshot AI）开发的高性能对话式AI助手，专注于长文本理解和知识推理。
 - 核心技术/模型：基于自研的Moonshot大语言模型，专为处理长文本和复杂推理优化。
-- 官网地址：[https://kimi.moonshot.cn/](https://kimi.moonshot.cn/)
+- 官网地址：[https://www.kimi.com/](https://www.kimi.com/)
 
 【核心功能与场景】
 - 超长文本处理：支持处理超过100万字的文档，实现深入阅读和分析。

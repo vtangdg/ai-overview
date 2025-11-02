@@ -20,14 +20,15 @@ export const ConceptExplainer: React.FC = () => {
 
     try {
       // 使用环境变量中的API基础URL
+      console.log('API Base URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/concept-explainer/explain`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ conceptName: conceptName.trim() }),
-        credentials: 'include', // 处理跨域Cookie
-        mode: 'cors' // 启用跨域
+        // credentials: 'include', // 处理跨域Cookie
+        // mode: 'cors' // 启用跨域
       });
 
       if (response.ok) {

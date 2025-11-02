@@ -2,7 +2,7 @@
 - 工具名称：ChatGPT
 - 一句话定位：OpenAI开发的通用对话式AI助手，具备强大的自然语言理解与生成能力。
 - 核心技术/模型：基于GPT（Generative Pre-trained Transformer）大语言模型架构。
-- 官网地址：[https://chat.openai.com/](https://chat.openai.com/)
+- 官网地址：[https://openai.com/zh-Hans-CN/](https://openai.com/zh-Hans-CN/)
 
 【核心功能与场景】
 - 自然语言对话：支持复杂的多轮对话，理解上下文并提供连贯回应。

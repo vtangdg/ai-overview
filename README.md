@@ -13,16 +13,22 @@ ai-overview
 │   ├── src/               # 前端源代码
 │   ├── public/            # 静态资源
 │   ├── package.json       # 前端依赖配置
-│   ├── next.config.js     # Next.js配置
-│   └── tailwind.config.js # Tailwind CSS配置
+│   ├── next.config.ts     # Next.js配置
+│   ├── postcss.config.mjs # PostCSS配置
+│   └── components.json    # 组件配置
 ├── backend/               # 后端项目 (Spring Boot)
-│   ├── src/               # 后端源代码
-│   ├── pom.xml            # Maven依赖配置
+│   ├── ai-demo/           # 后端主应用
+│   │   ├── src/           # 后端源代码
+│   │   └── pom.xml        # Maven依赖配置
+│   ├── pom.xml            # 父级Maven配置
 │   └── Dockerfile         # 后端Docker配置
-├── docs/                  # 项目文档
+├── doc/                   # 项目文档
+│   ├── deploy.md          # 部署文档
+│   ├── prompt/            # 提示词相关文档
+│   └── tech/              # 技术相关文档
 ├── .gitignore             # Git忽略配置
 ├── README.md              # 项目总说明
-└── docker-compose.yml     # 本地开发环境配置
+└── vercel.json            # Vercel部署配置
 ```
 
 ## 技术栈
@@ -51,7 +57,7 @@ ai-overview
 ### 前提条件
 - 安装 [Docker](https://www.docker.com/get-started) 和 [Docker Compose](https://docs.docker.com/compose/install/)
 - 安装 [Node.js](https://nodejs.org/en/download/) (v18 或更高版本)
-- 安装 [Java JDK](https://www.oracle.com/java/technologies/downloads/) (v17 或更高版本)
+- 安装 [Java JDK](https://www.oracle.com/java/technologies/downloads/) (v21)
 - 安装 [Maven](https://maven.apache.org/download.cgi)
 
 ### 使用 Docker Compose 启动

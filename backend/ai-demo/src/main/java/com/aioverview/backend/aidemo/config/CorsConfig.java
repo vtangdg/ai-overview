@@ -13,11 +13,12 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:3000", "http://localhost:8080")
+                // 支持所有路径的CORS请求
+                registry.addMapping("/**")
+                        .allowedOriginPatterns("*")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true)
+                        .allowedHeaders("*")  // 修复这一行
+                        // .allowCredentials(true)
                         .maxAge(3600);
             }
         };

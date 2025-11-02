@@ -1,6 +1,6 @@
 # 服务器配置
 server:
-  port: 8081
+  port: 8090
 
 # Deepseek模型配置
 # 注意：API Key应该通过环境变量设置
@@ -21,4 +21,3 @@ spring:
 logging:
   level:
     root: INFO
-    com.aioverview.backend.aidemo: DEBUG

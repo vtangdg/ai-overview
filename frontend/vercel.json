@@ -12,8 +12,13 @@
   "routes": [
     {
       "handle": "filesystem"
+    },
+    {
+      "src": "/.*",
+      "dest": "/"
     }
   ],
   "installCommand": "pnpm install",
-  "buildCommand": "pnpm run build"
+  "buildCommand": "pnpm run build",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ."
 }

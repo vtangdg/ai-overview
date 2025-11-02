@@ -18,7 +18,7 @@ public class ConceptExplainer {
             "2. 核心原理\n" +
             "3. 实际应用场景\n" +
             "4. 相关技术关联\n" +
-            "请用中文回答，控制在300字以内，使用Markdown格式回复。",
+            "请用中文回答，控制在300字以内，使用Markdown格式回复，不需要在最外层加上```markdown标识。",
             conceptName
         );
         return chatClient.call(prompt);

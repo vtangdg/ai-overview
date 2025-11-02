@@ -1,20 +1,17 @@
-# 构建阶段
-FROM maven:3.9.6-eclipse-temurin-21 AS builder
-WORKDIR /app
-COPY pom.xml .
-COPY src ./src
-RUN mvn clean package -DskipTests
-
-# 运行阶段
+# 基础镜像
 FROM eclipse-temurin:21-jre-alpine
+
+# 设置工作目录
 WORKDIR /app
-COPY --from=builder /app/target/backend-0.0.1-SNAPSHOT.jar app.jar
+
+# 直接复制JAR文件到当前目录（构建上下文的根目录是backend）
+COPY ai-demo/target/backend-ai-demo-0.0.1-SNAPSHOT.jar app.jar
 
 # 设置环境变量
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
 
 # 暴露端口
-EXPOSE 8080
+EXPOSE 8090
 
 # 启动命令
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
