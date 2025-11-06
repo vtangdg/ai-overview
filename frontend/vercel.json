@@ -1,25 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "node_version": "18.x"
-      }
-    }
-  ],
-  "functions": {
-    "**/*.js": {
-      "maxDuration": 30
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/api/:path*",
-      "destination": "http://159.75.111.238:8090/api/:path*"
-    }
-  ],
   "installCommand": "pnpm install",
   "buildCommand": "pnpm run build",
   "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ."

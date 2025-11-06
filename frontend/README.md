@@ -61,4 +61,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 ### 注意事项
 - `.env`、`.env.local` 等环境变量文件已添加到 `.gitignore` 中，不会被提交到代码仓库
 - 请务必使用 `.env.example` 文件作为参考，确保所有必要的环境变量都已配置
-- 生产环境中，请使用正式的API端点，而不是本地开发服务器地址
+- 生产环境中，请使用正式的API端点，而不是本地开发服务器地址 

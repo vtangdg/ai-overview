@@ -13,15 +13,11 @@ const nextConfig: NextConfig = {
     console.log('=== 开发环境代理配置 ===');
     console.log('NEXT_PUBLIC_API_BASE_URL:', apiProxyTarget);
     console.log('==============================');
-    if (process.env.NODE_ENV === 'development') {
-      return [
+    return [
         {
           source: '/api/:path*',
           destination: `${apiProxyTarget}/api/:path*`,
-        },
-      ];
-    }
-    return [
+        }
     ];
   },
 };
