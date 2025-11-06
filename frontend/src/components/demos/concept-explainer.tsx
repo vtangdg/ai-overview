@@ -19,9 +19,8 @@ export const ConceptExplainer: React.FC = () => {
     setIsLoading(true);
 
     try {
-      // 使用环境变量中的API基础URL
-      console.log('API Base URL:', process.env.NEXT_PUBLIC_API_BASE_URL);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/concept-explainer/explain`, {
+      // 使用相对路径通过Next.js代理访问API
+      const response = await fetch(`/api/concept-explainer/explain`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

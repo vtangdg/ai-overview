@@ -1,4 +1,21 @@
-# name: Backend CD
+name: Backend CD
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Print hello world
+      run: echo "Hello, World!"
+
 
 # on:
 #   push:
