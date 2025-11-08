@@ -16,7 +16,7 @@ export const aiTerms: AITerm[] = [
     id: 'ai',
     name: 'AI',
     definition: '人工智能（Artificial Intelligence），1956年于Dartmouth学会上提出，一种旨在以类似人类思维方式模拟智能行为的计算机科学分支。它包括机器学习、自然语言处理、计算机视觉等多个子领域。',
-    relatedTerms: ['agi', 'ani', 'ml', 'nlp', 'cv'],
+    relatedTerms: ['agi', 'ani', 'machine-learning', 'nlp', 'cv'],
     category: '通识',
     baiduWiki: 'https://baike.baidu.com/item/人工智能/9180',
     wikiPedia: 'https://zh.wikipedia.org/wiki/人工智能'
@@ -25,7 +25,7 @@ export const aiTerms: AITerm[] = [
     id: 'agi',
     name: 'AGI',
     definition: '通用人工智能（Artificial General Intelligence），具备与人类同等智能、或超越人类的人工智能系统。它能够理解、学习并应用知识解决各种不同领域的问题，类似于人类的通用智能。',
-    relatedTerms: ['ai', 'ani', 'ml'],
+    relatedTerms: ['ai', 'ani', 'machine-learning'],
     category: '通识',
     baiduWiki: 'https://baike.baidu.com/item/通用人工智能/63076479',
     wikiPedia: 'https://zh.wikipedia.org/wiki/通用人工智能'
@@ -34,7 +34,7 @@ export const aiTerms: AITerm[] = [
     id: 'ani',
     name: 'ANI',
     definition: '狭义人工智能（Artificial Narrow Intelligence），指专注于单一任务的AI系统，如下围棋的AlphaGo、推荐系统、语音助手等。这类AI在特定领域表现出色，但无法跨领域应用。',
-    relatedTerms: ['ai', 'agi', 'ml'],
+    relatedTerms: ['ai', 'agi', 'machine-learning'],
     category: '通识'
   },
   {
@@ -50,7 +50,7 @@ export const aiTerms: AITerm[] = [
     id: 'agents',
     name: 'Agents',
     definition: '智能体，具有自主性、社会性、反应性和预动性的AI系统。它能够感知环境、做出决策并执行动作，以实现特定目标。',
-    relatedTerms: ['ai', 'ml', 'reinforcement-learning'],
+    relatedTerms: ['ai', 'machine-learning', 'reinforcement-learning'],
     category: '技术'
   },
   {
@@ -71,7 +71,7 @@ export const aiTerms: AITerm[] = [
     id: 'nlp',
     name: 'NLP',
     definition: '自然语言处理（Natural Language Processing），是人工智能的一个分支，研究如何使计算机理解、解释和生成人类语言。主要应用包括机器翻译、文本分类、情感分析、问答系统等。',
-    relatedTerms: ['ai', 'ml', 'llm', 'chatbot'],
+    relatedTerms: ['ai', 'machine-learning', 'llm', 'chatbot'],
     category: '技术'
   },
   {
@@ -85,7 +85,7 @@ export const aiTerms: AITerm[] = [
     id: 'cv',
     name: 'CV',
     definition: '计算机视觉（Computer Vision），人工智能的一个分支，研究如何使计算机理解和分析图像和视频数据。主要应用包括图像识别、目标检测、图像分割等。',
-    relatedTerms: ['ai', 'ml', 'cnn', 'neural-network'],
+    relatedTerms: ['ai', 'machine-learning', 'cnn', 'neural-network'],
     category: '技术'
   },
   {
@@ -106,21 +106,21 @@ export const aiTerms: AITerm[] = [
     id: 'deep-learning',
     name: 'Deep Learning',
     definition: '深度学习是机器学习的一个分支，基于人工神经网络，通过多层非线性变换对数据进行高级抽象。它在图像识别、语音识别、自然语言处理等领域取得了突破性进展。',
-    relatedTerms: ['ml', 'neural-network', 'cnn', 'rnn', 'transformer'],
+    relatedTerms: ['machine-learning', 'neural-network', 'cnn', 'transformer'],
     category: '技术'
   },
   {
     id: 'diffusion-models',
     name: 'Diffusion Models',
     definition: '扩散模型，一种生成式AI模型，通过逐步去噪过程生成高质量图像、音频等内容。例如DALL-E、Stable Diffusion等。',
-    relatedTerms: ['generative-ai', 'ai'],
+    relatedTerms: ['ai'],
     category: '技术'
   },
   {
     id: 'distillation',
     name: 'Distillation',
     definition: '模型蒸馏，一种将大型模型的知识转移到小型模型的技术，旨在保持性能的同时减少模型大小和计算需求。',
-    relatedTerms: ['ml', 'llm'],
+    relatedTerms: ['machine-learning', 'llm'],
     category: '技术'
   },
   {
@@ -134,7 +134,7 @@ export const aiTerms: AITerm[] = [
     id: 'inference',
     name: 'Inference',
     definition: '推理，指AI模型使用训练好的参数对新数据进行预测或生成输出的过程。与模型训练阶段相对。',
-    relatedTerms: ['ml', 'llm'],
+    relatedTerms: ['machine-learning', 'llm'],
     category: '技术'
   },
   {
@@ -148,28 +148,28 @@ export const aiTerms: AITerm[] = [
     id: 'neural-network',
     name: 'Neural Network',
     definition: '神经网络，一种模仿生物神经网络结构和功能的计算模型。它由大量的人工神经元通过连接权重相互连接而成，能够通过学习调整权重来解决复杂问题。',
-    relatedTerms: ['ai', 'ml', 'deep-learning', 'cnn', 'rnn', 'transformer'],
+    relatedTerms: ['ai', 'machine-learning', 'deep-learning', 'cnn', 'transformer'],
     category: '技术'
   },
   {
     id: 'reinforcement-learning',
     name: 'Reinforcement Learning',
     definition: '强化学习，一种机器学习范式，智能体通过与环境交互获得奖励或惩罚，学习最优策略以最大化累积奖励。',
-    relatedTerms: ['ml', 'ai', 'agents'],
+    relatedTerms: ['machine-learning', 'ai', 'agents'],
     category: '技术'
   },
   {
     id: 'supervised-learning',
     name: 'Supervised Learning',
     definition: '监督学习，一种机器学习范式，使用带标签的训练数据来训练模型。模型学习输入特征与输出标签之间的映射关系。',
-    relatedTerms: ['ml', 'ai', 'unsupervised-learning', 'reinforcement-learning'],
+    relatedTerms: ['machine-learning', 'ai', 'unsupervised-learning', 'reinforcement-learning'],
     category: '技术'
   },
   {
     id: 'unsupervised-learning',
     name: 'Unsupervised Learning',
     definition: '无监督学习，一种机器学习范式，使用无标签的数据进行训练。模型旨在发现数据中的模式、结构或分布。',
-    relatedTerms: ['ml', 'ai', 'supervised-learning', 'reinforcement-learning'],
+    relatedTerms: ['machine-learning', 'ai', 'supervised-learning', 'reinforcement-learning'],
     category: '技术'
   },
   {
@@ -199,7 +199,7 @@ export const aiTerms: AITerm[] = [
     id: 'aigc',
     name: 'AIGC',
     definition: '人工智能生成内容（AI Generated Content），是一种内容生产形式。例如AI文字续写、图像生成、音频生成等。主要应用于创意设计、内容创作、教育培训等领域。',
-    relatedTerms: ['ai', 'ml', 'generative-ai'],
+    relatedTerms: ['ai', 'machine-learning'],
     category: '商业',
     baiduWiki: 'https://baike.baidu.com/item/人工智能生成内容'
   },
