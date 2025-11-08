@@ -89,8 +89,8 @@ const AppContent: React.FC = () => {
             <h3 className="font-semibold mb-1">深度学习</h3>
             <p className="text-sm text-muted-foreground">探索深度学习算法和应用场景</p>
           </Link>
-          <Link href="/concepts/generative-ai" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
-            <h3 className="font-semibold mb-1">生成式AI</h3>
+          <Link href="/concepts/aigc" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
+            <h3 className="font-semibold mb-1">AIGC</h3>
             <p className="text-sm text-muted-foreground">了解AI如何创造文本、图像等内容</p>
           </Link>
           <a href={process.env.NEXT_PUBLIC_SPRING_AI_ALIBABA_URL || '#'} target="_blank" rel="noopener noreferrer" className="bg-card border border-border rounded-lg p-4 hover:shadow-sm transition-all hover:border-primary/50 no-underline">
