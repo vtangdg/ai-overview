@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { SearchBar, Card } from '../common';
 import { TermCard } from './term-card';

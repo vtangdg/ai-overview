@@ -17,6 +17,12 @@ spring:
     caffeine:
       spec: maximumSize=1000,expireAfterWrite=1h
 
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.aioverview.backend.aidemo.model
+  configuration:
+    map-underscore-to-camel-case: true
+
 # 日志配置
 logging:
   level:

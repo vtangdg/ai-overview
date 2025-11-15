@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist } from "next/font/google";
+import { PageTracker } from "../components/analytics/PageTracker";
 import "../styles/globals.css";
 
 const geistSans = Geist({
@@ -7,10 +8,6 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "AI 知识库",
@@ -22,11 +19,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
   return (
     <html lang="zh-CN">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={geistSans.className}
       >
+        {/* 页面访问统计追踪器 - 客户端组件 */}
+        <PageTracker />
         {children}
       </body>
     </html>

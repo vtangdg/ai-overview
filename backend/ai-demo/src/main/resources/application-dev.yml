@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:./ai-demo/db/visitor_stats.db
+    driverClassName: org.sqlite.JDBC
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+
+logging:
+  level:
+    org.mybatis: DEBUG
+    org.apache.ibatis: DEBUG
+    com.aioverview.backend.aidemo.dao: DEBUG

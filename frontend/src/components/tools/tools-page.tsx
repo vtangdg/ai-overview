@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { SearchBar, Card } from '../common';
 import { ToolCard } from './tool-card';

@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const apiProxyTarget = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8081';
+const apiProxyTarget = process.env.BACKEND_API_URL || 'http://localhost:8081';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
 
     console.log('=== 开发环境代理配置 ===');
-    console.log('NEXT_PUBLIC_API_BASE_URL:', apiProxyTarget);
+    console.log('BACKEND_API_URL:', apiProxyTarget);
     console.log('==============================');
     return [
         {

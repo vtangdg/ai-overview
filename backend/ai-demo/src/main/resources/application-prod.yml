@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    # 指向容器内通过Volume挂载的路径
+    url: jdbc:sqlite:/app/db/visitor_stats.db
+    driver-class-name: org.sqlite.JDBC
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql

@@ -80,3 +80,10 @@ target/
 
 # user
 .java-version
+# 忽略数据库文件
+*.db
+*.db-shm
+*.db-wal
+
+# 但可以提交空目录结构
+!db/

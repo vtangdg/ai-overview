@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aioverview.backend.aidemo.dao.VisitorStatsMapper">
+
+    <!-- 新增访问记录 -->
+    <insert id="insertVisit" parameterType="com.aioverview.backend.aidemo.model.VisitorStats">
+        INSERT INTO visitor_stats (
+            page_path,
+            page_name,
+            visit_time,
+            user_agent,
+            ip_address,
+            session_id,
+            referrer
+        ) VALUES (
+            #{pagePath},
+            #{pageName},
+            #{visitTime},
+            #{userAgent},
+            #{ipAddress},
+            #{sessionId},
+            #{referrer}
+        )
+    </insert>
+
+    <!-- 根据页面路径统计访问次数 -->
+    <select id="countByPagePath" resultType="java.util.Map">
+        SELECT 
+            page_path as pagePath,
+            page_name as pageName,
+            COUNT(*) as visitCount
+        FROM 
+            visitor_stats
+        WHERE 
+            visit_time BETWEEN #{startTime} AND #{endTime}
+        GROUP BY 
+            page_path, page_name
+        ORDER BY 
+            visitCount DESC
+    </select>
+
+    <!-- 获取最近的访问记录 -->
+    <select id="getRecentVisits" resultType="com.aioverview.backend.aidemo.model.VisitorStats">
+        SELECT 
+            id,
+            page_path as pagePath,
+            page_name as pageName,
+            visit_time as visitTime,
+            user_agent as userAgent,
+            ip_address as ipAddress,
+            session_id as sessionId,
+            referrer
+        FROM 
+            visitor_stats
+        ORDER BY 
+            visit_time DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 根据日期统计访问量 -->
+    <select id="countByDate" resultType="java.util.Map">
+        SELECT 
+            DATE(visit_time) as date,
+            COUNT(*) as visitCount
+        FROM 
+            visitor_stats
+        WHERE 
+            visit_time BETWEEN #{startDate} AND #{endDate}
+        GROUP BY 
+            DATE(visit_time)
+        ORDER BY 
+            date ASC
+    </select>
+
+    <!-- 获取总访问量 -->
+    <select id="getTotalVisits" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM visitor_stats
+    </select>
+
+</mapper>

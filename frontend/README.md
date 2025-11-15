@@ -37,7 +37,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## 配置项
 
-- `NEXT_PUBLIC_API_BASE_URL`：后端API的基础URL，默认值为 `http://localhost:8081/api`。
+- `BACKEND_API_URL`：后端API的基础URL，默认值为 `http://localhost:8081/api`。
 
 ## 环境变量配置
 
@@ -52,7 +52,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 1. 在Vercel控制台中打开您的项目
 2. 导航至 "Settings" > "Environment Variables"
 3. 添加所需的环境变量，例如：
-   - `NEXT_PUBLIC_API_BASE_URL`：设置为您的生产API基础URL
+   - `BACKEND_API_URL`：设置为您的生产API基础URL
 
 #### 其他部署方式
 1. 根据您使用的部署平台或CI/CD工具，设置相应的环境变量

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { getToolById } from '../../lib/tools';
 import { Card, Tag } from '../common';

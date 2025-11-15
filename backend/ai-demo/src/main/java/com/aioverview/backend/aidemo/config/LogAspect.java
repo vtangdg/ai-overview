@@ -28,7 +28,7 @@ public class LogAspect {
     /**
      * 定义切点，拦截所有controller层的方法
      */
-    @Pointcut("execution(* com.aioverview.backend.aidemo.controller.*.*(..))")
+    @Pointcut("execution(* com.aioverview.backend.aidemo.controller.*.*(..)) && !execution(* com.aioverview.backend.aidemo.controller.VisitorStatsController.*.*(..))")
     public void webLogPointCut() {}
 
     /**

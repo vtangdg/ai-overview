@@ -10,25 +10,24 @@ ai-overview
 │   ├── frontend-ci.yml    # 前端CI流程
 │   └── backend-cd.yml     # 后端部署流程
 ├── frontend/              # 前端项目 (Next.js)
-│   ├── src/               # 前端源代码
 │   ├── public/            # 静态资源
-│   ├── package.json       # 前端依赖配置
-│   ├── next.config.ts     # Next.js配置
-│   ├── postcss.config.mjs # PostCSS配置
-│   └── components.json    # 组件配置
+│   ├── src/               # 前端源代码
+│   │   ├── app/           # 应用组件
+│   │   ├── components/    # 通用组件
+│   │   ├── lib/           # 工具库
+│   │   └── styles/        # 样式文件
+│   ├── .env.example       # 环境变量示例
+│   ├── README.md          # 前端项目说明
 ├── backend/               # 后端项目 (Spring Boot)
+│   ├── .dockerignore      # Docker忽略配置
+│   ├── Dockerfile         # 后端Docker配置
+│   ├── Makefile           # 构建脚本
 │   ├── ai-demo/           # 后端主应用
-│   │   ├── src/           # 后端源代码
-│   │   └── pom.xml        # Maven依赖配置
-│   ├── pom.xml            # 父级Maven配置
-│   └── Dockerfile         # 后端Docker配置
+│   ├── doc/               # 后端文档
+│   └── pom.xml            # 父级Maven配置
 ├── doc/                   # 项目文档
-│   ├── deploy.md          # 部署文档
-│   ├── prompt/            # 提示词相关文档
-│   └── tech/              # 技术相关文档
 ├── .gitignore             # Git忽略配置
 ├── README.md              # 项目总说明
-└── vercel.json            # Vercel部署配置
 ```
 
 ## 技术栈
@@ -38,45 +37,37 @@ ai-overview
 - **构建工具**: Webpack, Babel
 - **样式**: Tailwind CSS 3
 - **类型检查**: TypeScript
-- **测试**: Jest
+- **包管理器**: pnpm
+- **代码规范**: ESLint
 
 ### 后端
 - **框架**: Spring Boot 3
-- **数据库**: PostgreSQL 15
-- **ORM**: Spring Data JPA
-- **认证**: Spring Security + JWT
+- **构建工具**: Maven
 - **容器化**: Docker
 
 ### 开发与部署
 - **版本控制**: Git
 - **CI/CD**: GitHub Actions
-- **容器编排**: Docker Compose
+- **前端部署**: Vercel
 
 ## 快速开始
 
 ### 前提条件
-- 安装 [Docker](https://www.docker.com/get-started) 和 [Docker Compose](https://docs.docker.com/compose/install/)
 - 安装 [Node.js](https://nodejs.org/en/download/) (v18 或更高版本)
+- 安装 [pnpm](https://pnpm.io/installation) 包管理器
 - 安装 [Java JDK](https://www.oracle.com/java/technologies/downloads/) (v21)
 - 安装 [Maven](https://maven.apache.org/download.cgi)
+- 可选：安装 [Docker](https://www.docker.com/get-started)（用于容器化部署）
 
-### 使用 Docker Compose 启动
+### 克隆仓库
 
-最简单的方式是使用 Docker Compose 启动整个项目：
+首先克隆项目代码：
 
 ```bash
 # 克隆仓库
 git clone https://github.com/yourusername/ai-overview.git
 cd ai-overview
-
-# 启动所有服务
-docker-compose up -d
 ```
-
-服务启动后，可以通过以下地址访问：
-- 前端: http://localhost:3000
-- 后端 API: http://localhost:8080
-- 数据库: localhost:5432
 
 ### 单独启动开发环境
 
@@ -84,8 +75,8 @@ docker-compose up -d
 
 ```bash
 cd frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 前端服务将在 http://localhost:3000 启动。
@@ -97,7 +88,7 @@ cd backend
 mvn spring-boot:run
 ```
 
-后端服务将在 http://localhost:8080 启动。
+后端服务将在 http://localhost:8090 启动。
 
 ## 功能特性
 
@@ -120,10 +111,6 @@ mvn spring-boot:run
 ### 代码规范
 - 前端: 遵循 ESLint 和 TypeScript 规范
 - 后端: 遵循 Spring Boot 最佳实践
-
-### 提交代码
-- 提交前运行测试: `npm test` (前端) 或 `mvn test` (后端)
-- 提交前运行格式化: `npm run format` (前端) 或 `mvn spotless:apply` (后端)
 
 ## CI/CD 流程
 
@@ -154,6 +141,4 @@ mvn spring-boot:run
 
 ## 联系方式
 
-如有任何问题或建议，请联系：
-- 邮箱: contact@aioverview.com
-- GitHub: https://github.com/yourusername/ai-overview/issues
+如有任何问题或建议，请提交GitHub Issue或联系项目维护者。
