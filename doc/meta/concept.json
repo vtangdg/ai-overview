@@ -1,0 +1,6 @@
+{
+  "通识": ["AI", "AGI", "ASI", "Artificial Intelligence Ethics", "Artificial Intelligence Safety", "Artificial Intelligence Alignment", "Algorithmic Bias", "XAI"],
+  "技术": ["ML", "DL", "Neural Network", "ANN", "CNN", "RNN", "LSTM", "GAN", "Transformer", "Attention Mechanism", "Self-Attention", "LLM", "NLP", "CV", "RL", "Transfer Learning", "Federated Learning", "Self-Supervised Learning", "Unsupervised Learning", "Semi-Supervised Learning", "Supervised Learning", "Classification", "Regression", "Clustering", "Dimensionality Reduction", "Feature Engineering", "Overfitting", "Underfitting", "Gradient Descent", "Backpropagation", "Loss Function", "Optimizer", "Embedding", "RAG", "Diffusion Model", "Pre-trained Model", "Fine-tuning", "CoT", "Embodied AI", "Multimodal Learning", "Prompt Engineering"],
+  "商业": ["Data Mining", "Pattern Recognition", "Expert System", "ASR", "TTS", "Machine Translation", "Image Recognition", "Object Detection", "Image Segmentation", "Semantic Segmentation", "Autonomous Driving", "AIGC", "Knowledge Graph", "Vector Database"],
+  "产品": ["Agent", "ChatGPT"]
+}

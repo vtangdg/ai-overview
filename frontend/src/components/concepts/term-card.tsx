@@ -14,9 +14,16 @@ export const TermCard: React.FC<TermCardProps> = ({ term, onClick, showLinks = t
   const renderCardContent = () => {
     return (
       <div className="flex flex-col h-full p-1">
-        {/* 标题部分 - 更大更醒目 */}
-        <div className="mb-3">
-          <h4 className="text-xl font-bold">{term.name}</h4>
+        {/* 标题部分 - 显示中文名称、简写和英文全称 */}
+        <div className="mb-3 space-y-1">
+          <h4 className="text-xl font-bold">
+            {term.name}
+            {term.abbr && 
+              <span>（{term.abbr}）</span>
+            }
+          </h4>
+          
+          <div className="text-sm text-gray-400">{term.enName}</div>
         </div>
         
         {/* 百科链接部分 - 带背景色突出显示 */}
@@ -28,6 +35,7 @@ export const TermCard: React.FC<TermCardProps> = ({ term, onClick, showLinks = t
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"
+                onClick={(e) => e.stopPropagation()}
               >
                 <span>百度百科</span>
                 <ExternalLink size={14} />
@@ -39,9 +47,10 @@ export const TermCard: React.FC<TermCardProps> = ({ term, onClick, showLinks = t
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 rounded-full text-sm font-medium hover:bg-red-100 transition-colors"
+                onClick={(e) => e.stopPropagation()}
               >
                 <span>维基百科</span>
-                
+                <ExternalLink size={14} />
               </a>
             )}
           </div>

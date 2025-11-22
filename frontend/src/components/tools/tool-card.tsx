@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { AITool } from '../../lib/tools';
 
@@ -30,7 +31,20 @@ export const ToolCard: React.FC<ToolCardProps> = ({ tool, onClick }) => {
       >
         {/* 左侧图标 */}
         <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl">
-          {tool.icon}
+          {tool.icon.includes('/tool-icon/') || tool.icon.includes('.png') || tool.icon.includes('.jpg') || tool.icon.includes('.svg') ? (
+            <div className="relative w-full h-full">
+              <Image 
+                src={tool.icon} 
+                alt={tool.name} 
+                width={48} 
+                height={48} 
+                className="object-cover rounded-full" 
+                style={{ width: '100%', height: '100%' }} 
+              />
+            </div>
+          ) : (
+            tool.icon
+          )}
         </div>
         
         {/* 右侧内容 */}

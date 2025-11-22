@@ -1,6 +1,11 @@
 # 基础镜像
 FROM eclipse-temurin:21-jre-alpine
 
+# 设置时区
+RUN apk add --no-cache tzdata && \
+    ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    echo "Asia/Shanghai" > /etc/timezone
+
 # 设置工作目录
 WORKDIR /app
 

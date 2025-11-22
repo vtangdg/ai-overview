@@ -34,8 +34,8 @@ export const ConceptsPage: React.FC<ConceptsPageProps> = ({ onTermClick }) => {
       results = results.filter(term => term.category === selectedCategory);
     }
 
-    // 按照name字段排序
-    return [...results].sort((a, b) => a.name.localeCompare(b.name));
+    // 按照enName字段排序
+    return [...results].sort((a, b) => a.enName.localeCompare(b.enName));
   }, [searchQuery, selectedCategory]);
 
   useEffect(() => {

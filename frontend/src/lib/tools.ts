@@ -95,7 +95,7 @@ export const aiTools: AITool[] = [
     name: 'DeepSeek',
     categoryId: 1,
     subcategoryId: 0,
-    icon: '💬',
+    icon: '/tool-icon/deepseek.png',
     breifDesc: '高性能大语言模型，提供智能对话和编程辅助。'
   },
   {
@@ -103,7 +103,7 @@ export const aiTools: AITool[] = [
     name: '豆包',
     categoryId: 1,
     subcategoryId: 0,
-    icon: '🧠',
+    icon: '/tool-icon/doubao.png',
     breifDesc: '字节跳动开发的智能对话助手，支持多轮对话和任务执行。'
   },
   {
@@ -111,7 +111,7 @@ export const aiTools: AITool[] = [
     name: '腾讯元宝',
     categoryId: 1,
     subcategoryId: 0,
-    icon: '💰',
+    icon: '/tool-icon/yuanbao.png',
     breifDesc: '腾讯推出的智能助手，提供生活和工作辅助。'
   },
   {
@@ -119,7 +119,7 @@ export const aiTools: AITool[] = [
     name: 'ChatGPT',
     categoryId: 1,
     subcategoryId: 0,
-    icon: '🤖',
+    icon: '/tool-icon/chatgpt.svg',
     breifDesc: 'OpenAI开发的强大语言模型，支持多领域对话和内容生成。'
   },
   {
@@ -127,7 +127,7 @@ export const aiTools: AITool[] = [
     name: 'Kimi',
     categoryId: 1,
     subcategoryId: 0,
-    icon: '🚀',
+    icon: '/tool-icon/kimi.png',
     breifDesc: '月之暗面开发的大语言模型，支持长文本处理。'
   },
   {
@@ -135,7 +135,7 @@ export const aiTools: AITool[] = [
     name: '通义千问',
     categoryId: 1,
     subcategoryId: 0,
-    icon: '🔍',
+    icon: '/tool-icon/qianwen.png',
     breifDesc: '阿里云开发的大语言模型，提供智能问答和创意生成。'
   },
   {
@@ -143,7 +143,7 @@ export const aiTools: AITool[] = [
     name: '文心一言',
     categoryId: 1,
     subcategoryId: 0,
-    icon: '💡',
+    icon: '/tool-icon/yiyan.png',
     breifDesc: '百度开发的智能对话助手，支持多模态交互。'
   },
   
@@ -153,7 +153,7 @@ export const aiTools: AITool[] = [
     name: 'PromptPilot',
     categoryId: 2,
     subcategoryId: 0,
-    icon: '✈️',
+    icon: '/tool-icon/promptpilot.png',
     breifDesc: '提示词优化和管理工具，帮助用户创建高质量的AI提示。'
   },
   
@@ -163,7 +163,7 @@ export const aiTools: AITool[] = [
     name: '星月写作',
     categoryId: 3,
     subcategoryId: 0,
-    icon: '✍️',
+    icon: '/tool-icon/xingyuexiezuo.png',
     breifDesc: '专注于学术论文和英文写作的AI写作助手。'
   },
   {
@@ -171,7 +171,7 @@ export const aiTools: AITool[] = [
     name: '讯飞绘文',
     categoryId: 3,
     subcategoryId: 0,
-    icon: '🎨',
+    icon: '/tool-icon/xfyun.png',
     breifDesc: '一站式AIGC内容生成平台，支持多种内容形式。'
   },
   {
@@ -197,7 +197,7 @@ export const aiTools: AITool[] = [
     name: 'Remove.bg',
     categoryId: 4,
     subcategoryId: 402,
-    icon: '✂️',
+    icon: '/tool-icon/removebg.png',
     breifDesc: '一键移除图片背景的AI工具。'
   },
   
@@ -207,7 +207,7 @@ export const aiTools: AITool[] = [
     name: '讯飞听见',
     categoryId: 5,
     subcategoryId: 0,
-    icon: '👂',
+    icon: '/tool-icon/iflyrec.png',
     breifDesc: '科大讯飞开发的语音识别和转写服务。'
   },
   
@@ -233,7 +233,7 @@ export const aiTools: AITool[] = [
     name: '即梦AI',
     categoryId: 6,
     subcategoryId: 601,
-    icon: '🌟',
+    icon: '/tool-icon/jimeng.png',
     breifDesc: '国产AI视频生成工具，提供创意视频制作服务。'
   },
   
@@ -243,7 +243,7 @@ export const aiTools: AITool[] = [
     name: 'Trae',
     categoryId: 7,
     subcategoryId: 0,
-    icon: '⚡',
+    icon: '/tool-icon/trae.png',
     breifDesc: 'AI驱动的开发工具，提供智能编程辅助和代码生成。'
   },
   {
@@ -251,7 +251,7 @@ export const aiTools: AITool[] = [
     name: 'Cursor',
     categoryId: 7,
     subcategoryId: 0,
-    icon: '🖱️',
+    icon: '/tool-icon/cursor.png',
     breifDesc: 'AI增强的代码编辑器，提供实时代码补全和分析。'
   },
   {
@@ -259,7 +259,7 @@ export const aiTools: AITool[] = [
     name: 'Github Copilot',
     categoryId: 7,
     subcategoryId: 0,
-    icon: '✈️',
+    icon: '/tool-icon/copilot.svg',
     breifDesc: '实时代码生成和补全的AI编程助手。'
   },
   {
@@ -267,7 +267,7 @@ export const aiTools: AITool[] = [
     name: '通义灵码',
     categoryId: 7,
     subcategoryId: 0,
-    icon: '💻',
+    icon: '/tool-icon/lingma.png',
     breifDesc: '阿里云开发的智能编程助手，支持多种编程语言。'
   },
   
@@ -277,7 +277,7 @@ export const aiTools: AITool[] = [
     name: 'Coze',
     categoryId: 8,
     subcategoryId: 0,
-    icon: '🛠️',
+    icon: '/tool-icon/coze.png',
     breifDesc: 'AI应用开发平台，支持快速构建和部署AI应用。'
   },
   
@@ -287,7 +287,7 @@ export const aiTools: AITool[] = [
     name: '讯飞智文',
     categoryId: 9,
     subcategoryId: 0,
-    icon: '📋',
+    icon: '/tool-icon/zhiwen.png',
     breifDesc: '智能办公助手，提供文档生成和会议纪要服务。'
   }
 ];

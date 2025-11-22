@@ -73,7 +73,7 @@ export const ToolDetail: React.FC<ToolDetailProps> = ({
           <ArrowLeft size={20} />
         </button>
         <h1 className="text-3xl font-bold">
-          <span className="text-2xl mr-2">{tool.icon}</span>
+          {/* <span className="text-2xl mr-2">{tool.icon}</span> */}
           {tool.name}
         </h1>
       </div>
