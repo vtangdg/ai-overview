@@ -14,10 +14,10 @@ const AppContent: React.FC = () => {
             简介
           </h1>
           <p className="text-xl text-muted-foreground">
-            探索人工智能的世界，从概念学习到工具应用，一站式AI知识平台
+            探索人工智能的世界，从概念学习到工具应用，一站式AI知识及应用平台
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <Link
             href="/concepts"
@@ -37,7 +37,7 @@ const AppContent: React.FC = () => {
               </div>
             </div>
           </Link>
-          
+
           <Link
             href="/tools"
             className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50 no-underline"
@@ -56,7 +56,7 @@ const AppContent: React.FC = () => {
               </div>
             </div>
           </Link>
-          
+
           <Link
             href="/demos"
             className="rounded-xl p-6 hover:shadow-md transition-all cursor-pointer group border border-border hover:border-primary/50 no-underline"

@@ -11,7 +11,7 @@ const geistSans = Geist({
 
 export const metadata: Metadata = {
   title: "AI 知识库",
-  description: "探索人工智能的世界，从概念学习到工具应用，一站式AI知识平台",
+  description: "探索人工智能的世界，从概念学习到工具应用，一站式AI知识及应用平台",
 };
 
 export default function RootLayout({

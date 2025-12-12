@@ -109,5 +109,5 @@ curl -X POST http://localhost:8081/api/concept-explainer/compare \
 
 - 确保已安装Java 21
 - API密钥应妥善保管，不要硬编码在代码中
-- 项目使用Deepseek-v3模型，如有需要可在application.properties文件中修改
+- 项目使用Deepseek-chat模型，如有需要可在application.properties文件中修改
 - API调用有频率限制，请合理使用缓存机制

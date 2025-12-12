@@ -48,11 +48,10 @@ export const searchTerms = (query: string): AITerm[] => {
   const lowercaseQuery = query.toLowerCase();
   return aiTerms.filter(
     (term) =>
-      term.name.toLowerCase().includes(lowercaseQuery) || // 中文名称
-      (term.abbr && term.abbr.toLowerCase().includes(lowercaseQuery)) || // 简写
-      term.enName.toLowerCase().includes(lowercaseQuery) || // 英文全称
-      term.definition.toLowerCase().includes(lowercaseQuery) ||
-      term.id.toLowerCase().includes(lowercaseQuery)
+      term.name.toLowerCase().includes(lowercaseQuery) ||
+      (term.abbr && term.abbr.toLowerCase().includes(lowercaseQuery)) || 
+      term.enName.toLowerCase().includes(lowercaseQuery) ||
+      term.definition.toLowerCase().includes(lowercaseQuery) 
   );
 };
 
