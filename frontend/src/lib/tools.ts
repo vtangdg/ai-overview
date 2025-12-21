@@ -280,6 +280,30 @@ export const aiTools: AITool[] = [
     icon: '/tool-icon/coze.png',
     breifDesc: 'AI应用开发平台，支持快速构建和部署AI应用。'
   },
+  {
+    id: 8002,
+    name: 'Dify',
+    categoryId: 8,
+    subcategoryId: 0,
+    icon: '/tool-icon/dify.svg',
+    breifDesc: '开源的LLM应用开发平台，让AI应用开发更简单。'
+  },
+  {
+    id: 8003,
+    name: 'n8n',
+    categoryId: 8,
+    subcategoryId: 0,
+    icon: '/tool-icon/n8n.png',
+    breifDesc: '开源的工作流自动化工具，连接各种应用和服务。'
+  },
+  {
+    id: 8004,
+    name: '阿里云百炼',
+    categoryId: 8,
+    subcategoryId: 0,
+    icon: '/tool-icon/bailian.svg',
+    breifDesc: '阿里云推出的一站式大模型应用开发平台，提供全链路AI开发服务。'
+  },
   
   // AI办公 (categoryId: 9)
   {
