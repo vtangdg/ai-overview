@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s  # 抓取间隔时间
+  evaluation_interval: 15s  # 规则评估间隔时间
+
+# 告警管理器配置
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# 规则文件配置
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# 抓取配置
+scrape_configs:
+  # 监控 Prometheus 自身
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # 监控后端服务
+  - job_name: 'ai-overview-backend'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['backend:8090']
+    scrape_interval: 5s

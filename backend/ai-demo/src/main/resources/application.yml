@@ -16,6 +16,24 @@ spring:
     type: caffeine
     caffeine:
       spec: maximumSize=1000,expireAfterWrite=1h
+  # 应用名称配置
+  application:
+    name: ai-overview-backend
+
+# Prometheus配置
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  # Actuator端点配置
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
 
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
