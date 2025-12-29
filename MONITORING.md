@@ -2,6 +2,11 @@
 
 本项目集成了 Prometheus 和 Grafana，用于监控后端服务的运行状态。
 
+## 版本信息
+
+- Prometheus: v3.8.0
+- Grafana: 12.3
+
 ## 配置说明
 
 ### 1. 后端配置

@@ -1,6 +1,6 @@
 import type { NextConfig } from "next";
 
-const apiProxyTarget = process.env.BACKEND_API_URL || 'http://localhost:8081';
+const apiProxyTarget = process.env.BACKEND_API_URL || 'http://localhost:8090';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,

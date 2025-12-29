@@ -2,14 +2,6 @@
 server:
   port: 8090
 
-# Deepseek模型配置
-# 注意：API Key应该通过环境变量设置
-deepseek:
-  api:
-    key: ${DEEPSEEK_API_KEY}
-    url: https://api.deepseek.com/v1/chat/completions
-    model: deepseek-chat
-
 # 缓存配置
 spring:
   cache:
@@ -19,6 +11,16 @@ spring:
   # 应用名称配置
   application:
     name: ai-overview-backend
+  # Spring AI 配置
+  ai:
+    openai:
+      api-key: ${DEEPSEEK_API_KEY}
+      base-url: https://api.deepseek.com
+      chat:
+        options:
+          model: deepseek-chat
+          temperature: 0.7
+          max-tokens: 1000
 
 # Prometheus配置
 management:

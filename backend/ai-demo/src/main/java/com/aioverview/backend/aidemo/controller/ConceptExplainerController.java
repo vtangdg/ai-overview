@@ -1,6 +1,8 @@
 package com.aioverview.backend.aidemo.controller;
 
-import com.aioverview.backend.aidemo.service.ConceptExplainer;
+import com.aioverview.backend.aidemo.service.Answer;
+import com.aioverview.backend.aidemo.service.ConceptExplainerService;
+import com.aioverview.backend.aidemo.service.Question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +15,7 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class ConceptExplainerController {
     @Autowired
-    private ConceptExplainer conceptExplainer;
+    private ConceptExplainerService conceptExplainerService;
     @GetMapping("/test")
     public ResponseEntity<String> test() {
         return ResponseEntity.ok("Concept Explainer Service is running!");
@@ -24,8 +26,8 @@ public class ConceptExplainerController {
         if (conceptName == null || conceptName.trim().isEmpty()) {
             return ResponseEntity.badRequest().body("概念名称不能为空");
         }
-        String explanation = conceptExplainer.explainConcept(conceptName);
-        return ResponseEntity.ok(explanation);
+        Answer answer = conceptExplainerService.askQuestion(new Question(conceptName));
+        return ResponseEntity.ok(answer.answer());
        /* String mockExplanation = "### 1. 简明定义\n" +
                 "**MCP**（Model Context Protocol，模型上下文协议）是一个开放标准，让AI模型（如ChatGPT）能安全、标准化地连接外部工具和数据源，像“插件”一样扩展能力。\n" +
                 "\n" +

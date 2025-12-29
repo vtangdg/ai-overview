@@ -47,7 +47,7 @@
 
 ## 访问地址
 
-- 前端应用: http://localhost:3000
+- 前端应用: http://localhost:3010
 - 后端API: http://localhost:8090
 - Prometheus: http://localhost:9090
 - Grafana: http://localhost:3000 (用户名/密码: admin/admin)
@@ -84,7 +84,7 @@ docker compose -f docker-compose-local.yml down
 1. 本地开发配置使用`host.docker.internal`来访问宿主机上的服务，这只在Docker Desktop环境中有效
 2. 如果您使用的是Linux系统，可能需要使用`--network="host"`模式或修改配置
 3. 确保本地后端服务在8090端口运行
-4. 确保没有其他服务占用3000端口（Grafana和前端默认都使用3000端口）
+4. 前端服务现在使用3010端口，避免与Grafana的3000端口冲突
 
 ## 生产环境部署
 

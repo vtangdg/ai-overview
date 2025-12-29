@@ -79,7 +79,7 @@ pnpm install
 pnpm run dev
 ```
 
-前端服务将在 http://localhost:3000 启动。
+前端服务将在 http://localhost:3010 启动。
 
 #### 后端开发
 
