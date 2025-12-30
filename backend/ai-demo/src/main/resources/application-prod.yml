@@ -7,3 +7,18 @@ spring:
     init:
       mode: always
       schema-locations: classpath:db/schema.sql
+
+# Prometheus配置，Spring Boot使用prod profile启动时，它通常会出于安全考虑默认禁用或限制Actuator端点，需要在这里明确指出
+management:
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  # Actuator端点配置
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
