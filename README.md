@@ -82,11 +82,31 @@ pnpm run dev
 前端服务将在 http://localhost:3010 启动。
 
 #### 后端开发
-
+切换到 backend 目录
 ```bash
 cd backend
-mvn spring-boot:run
+
 ```
+
+1. 首次使用项目
+
+```bash
+make env-init
+# 编辑 .env 文件设置 DEEPSEEK_API_KEY
+make check-env
+make docker-compose-up-build
+```
+
+2. 日常开发流程
+
+```bash
+# 修改代码后
+git add .
+git commit -m "修改说明"
+make docker-compose-up-build  # 智能构建并启动
+make docker-compose-status    # 检查服务状态
+make docker-compose-logs      # 查看日志
+
 
 后端服务将在 http://localhost:8090 启动。
 

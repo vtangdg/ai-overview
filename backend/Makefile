@@ -6,11 +6,7 @@ endif
 
 ## 变量定义
 DEEPSEEK_API_KEY ?= your_api_key_here_please_set_in_env_file
-IMAGE_NAME ?= ai-overview-backend
-IMAGE_TAG ?= latest
-CONTAINER_NAME ?= ai-overview-backend
-HOST_PORT ?= 8090
-CONTAINER_PORT ?= 8090
+DOCKER_COMPOSE_FILE ?= ../docker-compose.yml
 
 ## 初始化环境文件
 env-init:
@@ -31,42 +27,69 @@ check-env:
 	fi
 	@echo "✅ 环境变量检查通过"
 
-## Docker remove and build images (完整清理和构建)
-docker-remove-build:
-	@echo "=== 清理并重新构建镜像 ==="
-	@echo "1. 停止并删除现有容器..."
-	-@docker stop $(CONTAINER_NAME) 2>/dev/null || echo "无运行中的容器"
-	-@docker rm $(CONTAINER_NAME) 2>/dev/null || echo "无容器可删除"
-	@echo "2. 删除现有镜像..."
-	-@docker rmi $(IMAGE_NAME):$(IMAGE_TAG) 2>/dev/null || echo "无镜像可删除"
-	@echo "3. 构建新镜像..."
-	@docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .
-	@echo "✅ 镜像构建完成: $(IMAGE_NAME):$(IMAGE_TAG)"
+## Docker Compose 停止所有服务
+docker-compose-stop:
+	@echo "=== 停止所有服务 ==="
+	@docker compose -f $(DOCKER_COMPOSE_FILE) down
+	@echo "✅ 所有服务已停止"
 
-## Docker 构建镜像 (直接构建)
-docker-build:
-	@echo "=== 构建镜像 ==="
-	@docker build -t $(IMAGE_NAME):$(IMAGE_TAG) .
-	@echo "✅ 镜像构建完成: $(IMAGE_NAME):$(IMAGE_TAG)"
+## Docker Compose 清理容器和网络（保留卷）
+docker-compose-clean:
+	@echo "=== 清理容器和网络（保留卷） ==="
+	@docker compose -f $(DOCKER_COMPOSE_FILE) down --remove-orphans
+	@echo "✅ 容器和网络已清理，卷已保留"
 
-## Docker 运行容器
-docker-run: check-env
-	@echo "=== 启动容器 ==="
-	@echo "1. 清理现有容器..."
-	-@docker stop $(CONTAINER_NAME) 2>/dev/null || echo "无运行中的容器"
-	-@docker rm $(CONTAINER_NAME) 2>/dev/null || echo "无容器可删除"
-	@echo "2. 启动新容器..."
-	@docker run -d \
-		-p $(HOST_PORT):$(CONTAINER_PORT) \
-		-e DEEPSEEK_API_KEY=$(DEEPSEEK_API_KEY) \
-		--name $(CONTAINER_NAME) \
-		$(IMAGE_NAME):$(IMAGE_TAG)
-	@echo "✅ 容器启动成功!"
-	@echo "📊 查看日志: docker logs -f $(CONTAINER_NAME)"
-	@echo "🌐 访问地址: http://localhost:$(HOST_PORT)"
+## Docker Compose 完全清理所有资源（包括卷和网络）
+docker-compose-clean-full:
+	@echo "=== 完全清理所有资源（包括卷） ==="
+	@docker compose -f $(DOCKER_COMPOSE_FILE) down -v --remove-orphans
+	@echo "✅ 所有资源（包括卷）已清理"
 
-## 其他目标保持不变...
-docker-remove-build-run: docker-remove-build docker-run
-	@echo "✅ 完整流程执行完毕!"
+## Docker Compose 启动服务
+docker-compose-up:
+	@echo "=== 启动服务 ==="
+	@docker compose -f $(DOCKER_COMPOSE_FILE) up -d
+	@echo "✅ 所有服务已启动"
+	@echo "📊 查看日志: docker compose -f $(DOCKER_COMPOSE_FILE) logs -f"
+	@echo "🌐 后端访问地址: http://localhost:8090"
+	@echo "📈 Prometheus访问地址: http://localhost:9090"
+	@echo "📊 Grafana访问地址: http://localhost:3000"
 
-.PHONY: docker-remove-build docker-build  docker-run docker-remove-build-run check-env env-init
+## Docker Compose 构建并启动服务（一步完成）
+docker-compose-up-build:
+	@echo "=== 构建并启动服务（一步完成） ==="
+	@docker compose -f $(DOCKER_COMPOSE_FILE) up --build -d
+	@echo "✅ 所有服务已构建并启动"
+	@echo "📊 查看日志: docker compose -f $(DOCKER_COMPOSE_FILE) logs -f"
+	@echo "🌐 后端访问地址: http://localhost:8090"
+	@echo "📈 Prometheus访问地址: http://localhost:9090"
+	@echo "📊 Grafana访问地址: http://localhost:3000"
+
+## Docker Compose 查看日志
+docker-compose-logs:
+	@echo "=== 查看服务日志 ==="
+	@read -p "请输入要查看的服务名称（留空查看所有）: " service; \
+	if [ -n "$$service" ]; then \
+		docker compose -f $(DOCKER_COMPOSE_FILE) logs -f $$service; \
+	else \
+		docker compose -f $(DOCKER_COMPOSE_FILE) logs -f; \
+	fi
+
+## 查看所有容器状态
+docker-compose-status:
+	@echo "=== 容器状态 ==="
+	@docker compose -f $(DOCKER_COMPOSE_FILE) ps
+
+## 清理悬空 Docker 镜像（无标签且未使用）
+docker-clean-images-dangling:
+	@echo "=== 清理悬空镜像（无标签且未使用） ==="
+	@docker image prune -f
+	@echo "✅ 悬空镜像已清理"
+
+## 清理所有未使用的 Docker 镜像（不影响容器和卷）
+docker-clean-images-unused:
+	@echo "=== 清理所有未使用的镜像（不影响容器和卷） ==="
+	@docker image prune -af
+	@echo "✅ 未使用的镜像已清理"
+
+.PHONY: env-init check-env docker-compose-stop docker-compose-clean docker-compose-clean-full docker-compose-up docker-compose-up-build docker-compose-logs docker-compose-status docker-clean-images-dangling docker-clean-images-unused

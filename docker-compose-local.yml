@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Prometheus 服务
   prometheus:
