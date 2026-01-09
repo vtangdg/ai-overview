@@ -24,10 +24,10 @@ export const NavLink: React.FC<NavLinkProps> = ({
     <a
       href={href}
       className={cn(
-        'flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap',
+        'flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 whitespace-nowrap',
         active
-          ? 'text-primary-foreground'
-          : 'text-muted-foreground hover:text-foreground'
+          ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+          : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
       )}
       onClick={onClick}
     >
@@ -58,7 +58,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       style={{ display: isOpen ? 'block' : 'block' }}
     >
       <div className="p-4 border-b border-border flex items-center justify-between">
-        <h2 className="text-xl font-bold">AI 知识库</h2>
+        <h2 className="text-xl font-bold">AI探索者</h2>
         <button
           className="p-2 rounded-md hover:bg-muted transition-colors"
           onClick={onClose}
@@ -97,24 +97,24 @@ export const Card: React.FC<CardProps> = ({
   const CardContent = (
     <div
       className={cn(
-        'bg-card border border-border rounded-lg p-5 transition-all duration-300 hover:shadow-md hover:border-primary/50',
+        'bg-card border border-border rounded-xl p-6 transition-all duration-300 card-hover',
         className
       )}
     >
       {icon && (
-        <div className="mb-3 p-2 bg-primary/10 text-primary rounded-md inline-flex">
+        <div className="mb-4 p-3 bg-gradient-primary text-primary-foreground rounded-2xl inline-flex">
           {icon}
         </div>
       )}
-      {title && <h3 className="text-xl font-semibold mb-2">{title}</h3>}
-      {description && <p className="text-muted-foreground mb-4">{description}</p>}
+      {title && <h3 className="text-xl font-bold mb-2">{title}</h3>}
+      {description && <p className="text-muted-foreground mb-4 leading-relaxed">{description}</p>}
       {children}
       {tags.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="text-xs px-2 py-1 bg-secondary rounded-full text-secondary-foreground"
+              className="text-xs px-3 py-1.5 bg-secondary rounded-full text-secondary-foreground font-medium"
             >
               {tag}
             </span>
@@ -177,14 +177,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
+      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
       <input
         type="text"
         placeholder={placeholder}
         value={value}
         onChange={onChange}
         onKeyPress={(e) => e.key === 'Enter' && onSearch?.()}
-        className="w-full pl-10 pr-4 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring focus:border-primary transition-all"
+        className="w-full pl-12 pr-4 py-3 border border-input rounded-xl bg-background focus:ring-2 focus:ring-ring focus:border-primary transition-all shadow-sm focus:shadow-md"
       />
     </div>
   );
@@ -198,24 +198,20 @@ interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPage = 'home' }) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const [activePage, setActivePage] = React.useState(currentPage); // 跟踪当前激活的菜单项
+  const [activePage, setActivePage] = React.useState(currentPage);
 
-  // 当外部currentPage变化时，更新内部activePage状态
   React.useEffect(() => {
     setActivePage(currentPage);
   }, [currentPage]);
 
-  // 处理导航点击
   const handleNavClick = (page: string) => {
-    // 不再阻止默认行为，让链接正常跳转
-    setActivePage(page); // 更新当前激活的菜单项
+    setActivePage(page);
     setSidebarOpen(false);
     if (onNavClick) {
       onNavClick(page);
     }
   };
 
-  // 创建菜单项，为每个链接添加正确的href值
   const navLinks = [
     { id: 'concepts', icon: <Book size={20} />, label: '概念库', href: '/concepts' },
     { id: 'tools', icon: <Wrench size={20} />, label: 'AI工具箱', href: '/tools' },
@@ -223,14 +219,10 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
     { id: 'demos', icon: <Grid size={20} />, label: '应用广场', href: '/demos' }
   ];
 
-  // 确保组件在移动设备上正确初始化
   React.useEffect(() => {
-    // 检测屏幕宽度变化
     const handleResize = () => {
-      // 确保在大屏幕切换到小屏幕时，菜单状态正确
-      const isMobile = window.innerWidth < 768; // 假设md断点为768px
+      const isMobile = window.innerWidth < 768;
       if (isMobile && sidebarOpen) {
-        // 保持移动端菜单状态
       }
     };
     
@@ -239,14 +231,12 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
   }, [sidebarOpen]);
 
   return (
-    <div className="flex flex-col bg-background text-foreground">
-      {/* Header - 固定在顶部，包含顶部导航菜单 */}
-      <header className="sticky top-0 z-50 bg-gray-100 backdrop-blur-sm border-b border-border">
-        <div className="container mx-auto px-4 py-3">
-          {/* 移动端布局：左侧菜单按钮，中间标题 */}
+    <div className="flex flex-col bg-background text-foreground min-h-screen">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50 shadow-sm">
+        <div className="container mx-auto px-4 py-4">
           <div className="md:hidden flex items-center justify-between">
             <button
-              className="p-2 rounded-md hover:bg-muted transition-colors z-10"
+              className="p-2 rounded-lg hover:bg-muted/50 transition-colors z-10"
               onClick={() => setSidebarOpen(true)}
               aria-label="打开菜单"
               style={{ display: 'block' }}
@@ -256,29 +246,27 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
             
             <Link 
               href="/" 
-              className="text-xl font-bold"
+              className="flex items-center gap-2"
               onClick={() => handleNavClick('home')}
             >
-              AI 知识库
+              <img src="/logo.svg" alt="AI探索者" className="w-8 h-8" />
+              <span className="text-xl font-bold text-gradient">AI探索者</span>
             </Link>
             
-            {/* 空div用于平衡布局 */}
             <div className="w-10"></div>
           </div>
           
-          {/* 桌面端布局：标题在左侧，菜单在中间 */}
-          <div className="hidden md:flex items-center space-x-4">
-            {/* 标题放在左侧 */}
+          <div className="hidden md:flex items-center space-x-6">
             <Link 
               href="/" 
-              className="text-xl font-bold mr-auto"
+              className="flex items-center gap-3 mr-auto"
               onClick={() => handleNavClick('home')}
             >
-              AI 知识库
+              <img src="/logo.svg" alt="AI探索者" className="w-9 h-9" />
+              <span className="text-2xl font-bold text-gradient">AI探索者</span>
             </Link>
             
-            {/* 菜单放在中间位置 */}
-            <nav className="flex justify-center space-x-1 overflow-x-auto flex-1 max-w-3xl mx-auto">
+            <nav className="flex justify-center space-x-2 overflow-x-auto flex-1 max-w-4xl mx-auto">
               {navLinks.map(link => (
                 <NavLink 
                   key={link.id} 
@@ -291,15 +279,12 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
               ))}
             </nav>
             
-            {/* 右侧占位，确保菜单居中 */}
-            <div className="w-32"></div>
+            <div className="w-40"></div>
           </div>
         </div>
       </header>
 
-      {/* 主内容区域 - 占据剩余空间，实现独立滚动 */}
       <div className="flex-1">
-        {/* Mobile sidebar overlay */}
         {sidebarOpen && (
           <div
             className="fixed inset-0 z-50 bg-background/80 backdrop-blur-sm md:hidden"
@@ -307,11 +292,10 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
           />
         )}
         
-        {/* 移动设备侧边栏 - 提高z-index确保可见 */}
         {sidebarOpen && (
           <div className="md:hidden z-50 relative">
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
-              <nav className="space-y-1">
+              <nav className="space-y-2">
                 {navLinks.map(link => (
                   <NavLink 
                     key={link.id} 
@@ -327,8 +311,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
           </div>
         )}
 
-        {/* 主内容区域 - 确保可以正常滚动 */}
-        <main className="p-4">
+        <main className="p-6 md:p-8">
           {children}
         </main>
       </div>

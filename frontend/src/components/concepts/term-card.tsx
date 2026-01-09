@@ -6,39 +6,36 @@ import { ExternalLink } from 'lucide-react';
 interface TermCardProps {
   term: AITerm;
   onClick: (id: string) => void;
-  showLinks?: boolean; // 是否显示百科链接的开关
+  showLinks?: boolean;
 }
 
 export const TermCard: React.FC<TermCardProps> = ({ term, onClick, showLinks = true }) => {
-  // 创建卡片内容，包括标题、百科链接和描述
   const renderCardContent = () => {
     return (
-      <div className="flex flex-col h-full p-1">
-        {/* 标题部分 - 显示中文名称、简写和英文全称 */}
-        <div className="mb-3 space-y-1">
-          <h4 className="text-xl font-bold">
+      <div className="flex flex-col h-full p-2">
+        <div className="mb-4 space-y-2">
+          <h4 className="text-xl font-bold group-hover:text-primary transition-colors">
             {term.name}
             {term.abbr && 
-              <span>（{term.abbr}）</span>
+              <span className="text-muted-foreground">（{term.abbr}）</span>
             }
           </h4>
           
-          <div className="text-sm text-gray-400">{term.enName}</div>
+          <div className="text-sm text-muted-foreground font-medium">{term.enName}</div>
         </div>
         
-        {/* 百科链接部分 - 带背景色突出显示 */}
         {showLinks && (term.baiduWiki || term.wikiPedia) ? (
-          <div className="flex flex-wrap gap-2 mb-4 pb-3 border-b border-border">
+          <div className="flex flex-wrap gap-2 mb-5 pb-4 border-b border-border/50">
             {term.baiduWiki && (
               <a 
                 href={term.baiduWiki} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium hover:bg-blue-100 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 rounded-full text-sm font-medium hover:from-blue-100 hover:to-blue-200 transition-all"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span>百度百科</span>
-                <ExternalLink size={14} />
+                <ExternalLink size={12} />
               </a>
             )}
             {term.wikiPedia && (
@@ -46,18 +43,17 @@ export const TermCard: React.FC<TermCardProps> = ({ term, onClick, showLinks = t
                 href={term.wikiPedia} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-3 py-1 bg-red-50 text-red-700 rounded-full text-sm font-medium hover:bg-red-100 transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-red-50 to-red-100 text-red-700 rounded-full text-sm font-medium hover:from-red-100 hover:to-red-200 transition-all"
                 onClick={(e) => e.stopPropagation()}
               >
                 <span>维基百科</span>
-                <ExternalLink size={14} />
+                <ExternalLink size={12} />
               </a>
             )}
           </div>
         ) : null}
         
-        {/* 定义部分 - 增加间距和可读性 */}
-        <div className="mb-4">
+        <div className="mb-5 flex-1">
           <p className="text-base text-muted-foreground leading-relaxed">
               {term.definition.length > 100 
                 ? `${term.definition.substring(0, 100)}...` 
@@ -65,10 +61,9 @@ export const TermCard: React.FC<TermCardProps> = ({ term, onClick, showLinks = t
             </p>
         </div>
         
-        {/* 分类标签 */}
         {term.category && (
           <div className="mt-auto">
-            <span className="inline-block text-xs px-3 py-1 bg-secondary rounded-full text-secondary-foreground font-medium">
+            <span className="inline-block text-xs px-3 py-1.5 bg-gradient-primary text-primary-foreground rounded-full font-medium">
               {term.category}
             </span>
           </div>
@@ -79,7 +74,7 @@ export const TermCard: React.FC<TermCardProps> = ({ term, onClick, showLinks = t
 
   return (
     <Card
-      className="h-full hover:shadow-md transition-shadow cursor-pointer"
+      className="h-full card-hover cursor-pointer group"
       onClick={() => onClick(term.id)}
     >
       {renderCardContent()}
