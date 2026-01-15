@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowRight, Zap } from 'lucide-react';
+import { AlertModal } from '../ui/modal';
 
 interface DemoCardData {
   id: string;
@@ -12,6 +13,16 @@ interface DemoCardData {
 }
 
 export const DemosPage: React.FC = () => {
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  
+  // 预定义所有可能的提示词，避免Next.js静态分析失败
+  const demoPrompts: Record<string, string> = {
+    'spring-ai-alibaba': (process.env.NEXT_PUBLIC_DEMO_URL_PROMPT_SPRING_AI_ALIBABA || ''),
+    'concept-explainer': (process.env.NEXT_PUBLIC_DEMO_URL_PROMPT_CONCEPT_EXPLAINER || ''),
+    'more-apps': (process.env.NEXT_PUBLIC_DEMO_URL_PROMPT_MORE_APPS || ''),
+  };
+  
   const demos: DemoCardData[] = [
     {
       id: 'concept-explainer',
@@ -60,7 +71,17 @@ export const DemosPage: React.FC = () => {
                 ? 'bg-card border-border cursor-pointer'
                 : 'bg-muted/50 border-border/50 cursor-not-allowed'
             }`}
-            onClick={() => demo.available && demo.url && window.open(demo.url, '_blank')}
+            onClick={() => {
+              if (demo.available) {
+                if (demo.url && demo.url !== '#') {
+                  window.open(demo.url, '_blank');
+                } else {
+                  const promptText = demoPrompts[demo.id] || process.env.NEXT_PUBLIC_DEMO_URL_PROMPT || '该应用的URL未配置，请联系管理员获取访问地址。';
+                  setModalMessage(promptText);
+                  setShowModal(true);
+                }
+              }
+            }}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative z-10">
@@ -97,6 +118,12 @@ export const DemosPage: React.FC = () => {
           </div>
         ))}
       </div>
+      
+      <AlertModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        message={modalMessage}
+      />
     </div>
   );
 };
