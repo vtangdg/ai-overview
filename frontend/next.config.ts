@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
     console.log('BACKEND_API_URL:', apiProxyTarget);
     console.log('==============================');
     return [
+        // 排除前端自己的 API 路由
+        {
+          source: '/api/notes/:path*',
+          destination: '/api/notes/:path*',
+        },
+        // 其他 API 请求代理到后端
         {
           source: '/api/:path*',
           destination: `${apiProxyTarget}/api/:path*`,

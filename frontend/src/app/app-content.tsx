@@ -21,7 +21,7 @@ const AppContent: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
             href="/concepts"
             className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline"
@@ -57,10 +57,27 @@ const AppContent: React.FC = () => {
           </Link>
 
           <Link
-            href="/demos"
+            href="/notes"
             className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative z-10">
+              <h2 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">知识笔记</h2>
+              <p className="text-muted-foreground mb-6 leading-relaxed">
+                记录和整理你的AI学习过程，支持笔记编辑和分类管理。
+              </p>
+              <div className="flex items-center text-primary font-medium group-hover:gap-3 transition-all">
+                <span>查看笔记</span>
+                <ArrowRight size={18} className="ml-2" />
+              </div>
+            </div>
+          </Link>
+
+          <Link
+            href="/demos"
+            className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             <div className="relative z-10">
               <h2 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">应用广场</h2>
               <p className="text-muted-foreground mb-6 leading-relaxed">
@@ -97,25 +114,6 @@ const AppContent: React.FC = () => {
             <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">Spring AI Alibaba</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">体验智能对话、图像生成、文档总结等AI功能</p>
           </a>
-        </div>
-      </div>
-
-      <div className="space-y-8 pt-8 border-t border-border">
-        <div className="flex items-center gap-3">
-          <Sparkles size={24} className="text-primary animate-pulse-slow" />
-          <h2 className="text-3xl font-bold">即将推出</h2>
-        </div>
-        <div className="relative overflow-hidden bg-gradient-to-br from-primary/5 to-secondary/5 border border-border/50 rounded-2xl p-8 max-w-2xl">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-primary opacity-10 rounded-full blur-3xl" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-3 h-3 rounded-full bg-primary animate-pulse" />
-              <h3 className="text-2xl font-bold">知识笔记</h3>
-            </div>
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              记录和整理你的AI学习过程，支持笔记编辑和分类管理。
-            </p>
-          </div>
         </div>
       </div>
     </div>

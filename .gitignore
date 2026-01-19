@@ -87,3 +87,5 @@ target/
 
 # 但可以提交空目录结构
 !db/
+
+doc/techtmp/
