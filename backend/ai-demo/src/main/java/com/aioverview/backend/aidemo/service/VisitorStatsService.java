@@ -2,6 +2,7 @@ package com.aioverview.backend.aidemo.service;
 
 import com.aioverview.backend.aidemo.dao.VisitorStatsMapper;
 import com.aioverview.backend.aidemo.model.VisitorStats;
+import com.aioverview.backend.aidemo.model.VisitorStatsSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -67,5 +68,20 @@ public class VisitorStatsService {
      */
     public Long getTotalVisits() {
         return visitorStatsMapper.getTotalVisits();
+    }
+
+    /**
+     * 获取综合统计数据（一次返回所有统计数据）
+     * @param days 统计天数范围
+     * @param recentLimit 最近记录数量
+     * @return 综合统计数据
+     */
+    public VisitorStatsSummary getSummary(int days, int recentLimit) {
+        Long totalVisits = getTotalVisits();
+        List<Map<String, Object>> pageStats = getPageStats(days);
+        List<Map<String, Object>> dateStats = getDateStats(days);
+        List<VisitorStats> recentVisits = getRecentVisits(recentLimit);
+
+        return new VisitorStatsSummary(totalVisits, pageStats, dateStats, recentVisits);
     }
 }

@@ -1,11 +1,13 @@
 package com.aioverview.backend.aidemo.controller;
 
 import com.aioverview.backend.aidemo.model.VisitorStats;
+import com.aioverview.backend.aidemo.model.VisitorStatsSummary;
 import com.aioverview.backend.aidemo.service.VisitorStatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.cache.annotation.Cacheable;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,20 @@ public class VisitorStatsController {
 
     @Autowired
     private VisitorStatsService visitorStatsService;
+
+    /**
+     * 获取综合统计数据（一次返回所有统计数据）
+     * @param days 统计天数范围，默认7天
+     * @param recentLimit 最近记录数量，默认30条
+     * @return 综合统计数据
+     */
+    @GetMapping("/summary")
+    public ResponseEntity<VisitorStatsSummary> getSummary(
+            @RequestParam(defaultValue = "7") int days,
+            @RequestParam(defaultValue = "30") int recentLimit) {
+        VisitorStatsSummary summary = visitorStatsService.getSummary(days, recentLimit);
+        return ResponseEntity.ok(summary);
+    }
 
     /**
      * 记录访问信息

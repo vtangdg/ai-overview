@@ -8,6 +8,8 @@ services:
       - "8090:8090"
     environment:
       - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+    volumes:
+      - visitor_stats_data:/app/db
     restart: unless-stopped
     networks:
       - monitoring
@@ -52,6 +54,7 @@ services:
       - prometheus
 
 volumes:
+  visitor_stats_data:
   prometheus_data:
   grafana_data:
 
