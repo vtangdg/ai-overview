@@ -24,13 +24,13 @@ const AppContent: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <Link
             href="/concepts"
-            className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline"
+            className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline flex flex-col h-full"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col h-full">
               <h2 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">AI 概念库</h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                探索AI领域的核心概念，建立完整的知识体系。每个概念包含简明定义和相关概念链接，帮助你形成知识网络。
+              <p className="text-muted-foreground mb-6 leading-relaxed flex-1">
+                学习AI领域的核心概念，为深入理解和应用AI技术打下坚实基础。
               </p>
               <div className="flex items-center text-primary font-medium group-hover:gap-3 transition-all">
                 <span>浏览概念库</span>
@@ -41,12 +41,12 @@ const AppContent: React.FC = () => {
 
           <Link
             href="/tools"
-            className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline"
+            className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline flex flex-col h-full"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col h-full">
               <h2 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">AI 工具箱</h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
+              <p className="text-muted-foreground mb-6 leading-relaxed flex-1">
                 发现各种实用的AI工具，从写作助手到设计工具，提升你的工作效率和创造力。
               </p>
               <div className="flex items-center text-primary font-medium group-hover:gap-3 transition-all">
@@ -58,13 +58,13 @@ const AppContent: React.FC = () => {
 
           <Link
             href="/notes"
-            className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline"
+            className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline flex flex-col h-full"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col h-full">
               <h2 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">知识笔记</h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                记录和整理你的AI学习过程，支持笔记编辑和分类管理。
+              <p className="text-muted-foreground mb-6 leading-relaxed flex-1">
+                浏览精心整理的AI相关知识，为你的AI学习之路提供实用参考和启发。
               </p>
               <div className="flex items-center text-primary font-medium group-hover:gap-3 transition-all">
                 <span>查看笔记</span>
@@ -75,13 +75,13 @@ const AppContent: React.FC = () => {
 
           <Link
             href="/demos"
-            className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline"
+            className="group relative overflow-hidden rounded-2xl p-8 bg-card border border-border card-hover no-underline flex flex-col h-full"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col h-full">
               <h2 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors">应用广场</h2>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                展示和体验AI应用示例，包含Demo名称、描述、交互界面和技术细节。
+              <p className="text-muted-foreground mb-6 leading-relaxed flex-1">
+                体验多样化的AI应用示例，直观感受AI技术的实际应用。
               </p>
               <div className="flex items-center text-primary font-medium group-hover:gap-3 transition-all">
                 <span>立即探索</span>
@@ -97,23 +97,24 @@ const AppContent: React.FC = () => {
           <Zap size={24} className="text-primary" />
           <h2 className="text-3xl font-bold">热门资源</h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link href="/concepts/ai" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
-            <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">人工智能 (AI)</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">了解人工智能的基础概念和发展历程</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <Link href="/notes/02-prompt-engineering" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
+            <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">提示词工程指南</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">掌握提示词设计的核心技巧和最佳实践</p>
           </Link>
-          <Link href="/concepts/deep-learning" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
-            <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">深度学习</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">探索深度学习算法和应用场景</p>
+          <Link href="/concepts/agi" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
+            <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">通用人工智能 (AGI)</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">具备与人类相似的全面认知能力的AI系统</p>
           </Link>
-          <Link href="/concepts/aigc" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
-            <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">AIGC</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">了解AI如何创造文本、图像等内容</p>
+          <Link href="/tools/1001" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
+            <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">DeepSeek</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">高性能大语言模型，提供智能对话和编程辅助</p>
           </Link>
-          <a href={process.env.NEXT_PUBLIC_SPRING_AI_ALIBABA_URL || '#'} target="_blank" rel="noopener noreferrer" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
-            <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">Spring AI Alibaba</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">体验智能对话、图像生成、文档总结等AI功能</p>
-          </a>
+          <Link href="/notes/01-machine-learning-basics" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
+            <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">机器学习基础概念</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">掌握机器学习的核心概念和主要类型</p>
+          </Link>
+          
         </div>
       </div>
     </div>
