@@ -6,6 +6,7 @@ endif
 
 ## 变量定义
 DEEPSEEK_API_KEY ?= your_api_key_here_please_set_in_env_file
+GLM_API_KEY ?= your_api_key_here_please_set_in_env_file
 DOCKER_COMPOSE_FILE ?= ../docker-compose.yml
 
 ## 初始化环境文件
@@ -13,7 +14,8 @@ env-init:
 	@if [ ! -f .env ]; then \
 		echo "创建 .env 文件..."; \
 		echo "DEEPSEEK_API_KEY=your_api_key_here_please_set_in_env_file" > .env; \
-		echo "✅ 请编辑 .env 文件设置你的 DEEPSEEK_API_KEY"; \
+		echo "GLM_API_KEY=your_api_key_here_please_set_in_env_file" >> .env; \
+		echo "✅ 请编辑 .env 文件设置你的 DEEPSEEK_API_KEY 和 GLM_API_KEY"; \
 	else \
 		echo "✅ .env 文件已存在"; \
 	fi
@@ -22,6 +24,11 @@ env-init:
 check-env:
 	@if [ "$(DEEPSEEK_API_KEY)" = "your_api_key_here_please_set_in_env_file" ]; then \
 		echo "❌ 错误: 请在 .env 文件中设置 DEEPSEEK_API_KEY"; \
+		echo "💡 运行: make env-init 然后编辑 .env 文件"; \
+		exit 1; \
+	fi
+	@if [ "$(GLM_API_KEY)" = "your_api_key_here_please_set_in_env_file" ]; then \
+		echo "❌ 错误: 请在 .env 文件中设置 GLM_API_KEY"; \
 		echo "💡 运行: make env-init 然后编辑 .env 文件"; \
 		exit 1; \
 	fi

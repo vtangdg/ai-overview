@@ -102,6 +102,10 @@ const AppContent: React.FC = () => {
             <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">提示词工程指南</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">掌握提示词设计的核心技巧和最佳实践</p>
           </Link>
+          <Link href="/prompt-optimizer" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
+            <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">提示词优化器</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">快速生成和优化高质量提示词，提升AI交互效果</p>
+          </Link>
           <Link href="/concepts/agi" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
             <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">通用人工智能 (AGI)</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">具备与人类相似的全面认知能力的AI系统</p>
@@ -110,11 +114,6 @@ const AppContent: React.FC = () => {
             <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">DeepSeek</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">高性能大语言模型，提供智能对话和编程辅助</p>
           </Link>
-          <Link href="/notes/01-machine-learning-basics" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
-            <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">机器学习基础概念</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">掌握机器学习的核心概念和主要类型</p>
-          </Link>
-          
         </div>
       </div>
     </div>

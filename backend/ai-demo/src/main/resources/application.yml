@@ -1,6 +1,14 @@
 # 服务器配置
 server:
   port: 8090
+  # 增加超时设置，适应模型调用的长耗时
+  servlet:
+    context-path: /
+    session:
+      timeout: 60s
+  tomcat:
+    connection-timeout: 60000
+    keep-alive-timeout: 60000
 
 # 缓存配置
 spring:
@@ -11,7 +19,7 @@ spring:
   # 应用名称配置
   application:
     name: ai-overview-backend
-  # Spring AI 配置
+  # Spring AI 配置（默认使用DeepSeek）
   ai:
     openai:
       api-key: ${DEEPSEEK_API_KEY}
@@ -20,7 +28,16 @@ spring:
         options:
           model: deepseek-chat
           temperature: 0.7
-          max-tokens: 1000
+          max-tokens: 8000
+    # GLM 配置（通过环境变量）
+    glm:
+      api-key: ${GLM_API_KEY}
+      base-url: https://open.bigmodel.cn/api/paas/v4
+      chat:
+        options:
+          model: glm-4.7-flash
+          temperature: 0.7
+          max-tokens: 65536
 
 # Prometheus配置
 management:

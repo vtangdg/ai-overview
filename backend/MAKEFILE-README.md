@@ -36,7 +36,7 @@ make env-init
 make check-env
 ```
 
-- **功能**：验证 `.env` 文件中的 `DEEPSEEK_API_KEY` 是否正确设置
+- **功能**：验证 `.env` 文件中的 `DEEPSEEK_API_KEY` 和 `GLM_API_KEY` 是否正确设置
 - **使用场景**：在启动服务前确保 API Key 已配置
 - **输出示例**：
   ```
@@ -45,6 +45,11 @@ make check-env
   或
   ```
   ❌ 错误: 请在 .env 文件中设置 DEEPSEEK_API_KEY
+  💡 运行: make env-init 然后编辑 .env 文件
+  ```
+  或
+  ```
+  ❌ 错误: 请在 .env 文件中设置 GLM_API_KEY
   💡 运行: make env-init 然后编辑 .env 文件
   ```
 

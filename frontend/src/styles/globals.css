@@ -206,4 +206,13 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  .scrollbar-auto {
+    -ms-overflow-style: auto;
+    scrollbar-width: auto;
+  }
+
+  .scrollbar-auto::-webkit-scrollbar {
+    display: block;
+  }
 }
