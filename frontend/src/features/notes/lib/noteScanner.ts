@@ -8,7 +8,7 @@ import path from 'path';
 import { categories, type Category } from './categories';
 import { parseMarkdownFile, type Note, type NoteMeta } from './frontMatter';
 
-const NOTES_BASE_PATH = path.join(process.cwd(), 'public', 'notes');
+const NOTES_BASE_PATH = path.join(process.cwd(), 'public', 'lib', 'notes');
 
 // 缓存扫描结果
 let notesCache: Note[] | null = null;

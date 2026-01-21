@@ -32,7 +32,7 @@ export const DemosPage: React.FC = () => {
       description: '快速生成和优化高质量提示词，提升AI交互效果。',
       available: true,
       tags: ['提示词', '优化', '效率工具'],
-      url: '/prompt-optimizer'
+      url: '/demos/prompt-optimizer'
     },
     {
       id: 'concept-explainer',

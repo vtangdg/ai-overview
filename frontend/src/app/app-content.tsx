@@ -102,7 +102,7 @@ const AppContent: React.FC = () => {
             <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">提示词工程指南</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">掌握提示词设计的核心技巧和最佳实践</p>
           </Link>
-          <Link href="/prompt-optimizer" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
+          <Link href="/demos/prompt-optimizer" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">
             <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">提示词优化器</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">快速生成和优化高质量提示词，提升AI交互效果</p>
           </Link>

@@ -49,8 +49,6 @@ export const promptOptimizerApi = {
       throw new Error('无法获取响应流');
     }
 
-    let fullContent = '';
-
     try {
       let currentData = '';
       while (true) {
