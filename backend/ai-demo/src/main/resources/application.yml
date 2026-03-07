@@ -9,6 +9,10 @@ server:
   tomcat:
     connection-timeout: 60000
     keep-alive-timeout: 60000
+  # 启用404异常抛出，让全局异常处理器捕获
+  error:
+    whitelabel:
+      enabled: false
 
 # 缓存配置
 spring:
@@ -38,6 +42,10 @@ spring:
           model: glm-4.7-flash
           temperature: 0.7
           max-tokens: 65536
+  # Web配置 - 抛出404异常让全局异常处理器捕获
+  web:
+    resources:
+      add-mappings: false
 
 # Prometheus配置
 management:
