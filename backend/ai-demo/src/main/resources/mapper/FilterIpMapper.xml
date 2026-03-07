@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aioverview.backend.aidemo.dao.FilterIpMapper">
+
+    <!-- 结果映射 -->
+    <resultMap id="FilterIpResultMap" type="com.aioverview.backend.aidemo.model.FilterIp">
+        <id property="id" column="id"/>
+        <result property="ip" column="ip"/>
+        <result property="description" column="description"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <!-- 获取所有过滤IP -->
+    <select id="selectAll" resultMap="FilterIpResultMap">
+        SELECT id, ip, description, created_at
+        FROM filter_ip
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 根据ID获取过滤IP -->
+    <select id="selectById" resultMap="FilterIpResultMap">
+        SELECT id, ip, description, created_at
+        FROM filter_ip
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据IP地址获取过滤IP -->
+    <select id="selectByIp" resultMap="FilterIpResultMap">
+        SELECT id, ip, description, created_at
+        FROM filter_ip
+        WHERE ip = #{ip}
+    </select>
+
+    <!-- 新增过滤IP -->
+    <insert id="insert">
+        INSERT INTO filter_ip (ip, description, created_at)
+        VALUES (#{ip}, #{description}, #{createdAt})
+    </insert>
+
+    <!-- 更新过滤IP -->
+    <update id="update">
+        UPDATE filter_ip
+        SET ip = #{ip},
+            description = #{description}
+        WHERE id = #{id}
+    </update>
+
+    <!-- 删除过滤IP -->
+    <delete id="deleteById">
+        DELETE FROM filter_ip
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 获取所有IP地址列表 -->
+    <select id="selectAllIps" resultType="java.lang.String">
+        SELECT ip
+        FROM filter_ip
+    </select>
+
+</mapper>

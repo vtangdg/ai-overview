@@ -15,3 +15,14 @@ CREATE TABLE IF NOT EXISTS visitor_stats (
 CREATE INDEX IF NOT EXISTS idx_page_path ON visitor_stats(page_path);
 CREATE INDEX IF NOT EXISTS idx_visit_time ON visitor_stats(visit_time);
 CREATE INDEX IF NOT EXISTS idx_page_name ON visitor_stats(page_name);
+
+-- 创建IP过滤配置表
+CREATE TABLE IF NOT EXISTS filter_ip (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ip VARCHAR(50) NOT NULL UNIQUE,
+    description VARCHAR(255),
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建IP索引
+CREATE INDEX IF NOT EXISTS idx_filter_ip ON filter_ip(ip);

@@ -84,6 +84,12 @@ export const mockCategories: Category[] = [
     name: "AI办公",
     icon: "🏢",
     subcategories: []
+  },
+  {
+    id: 10,
+    name: "AI智能体",
+    icon: "🤖",
+    subcategories: []
   }
 ];
 
@@ -313,6 +319,16 @@ export const aiTools: AITool[] = [
     subcategoryId: 0,
     icon: '/tool-icon/zhiwen.png',
     breifDesc: '智能办公助手，提供文档生成和会议纪要服务。'
+  },
+  
+  // AI智能体 (categoryId: 10)
+  {
+    id: 10001,
+    name: 'OpenClaw',
+    categoryId: 10,
+    subcategoryId: 0,
+    icon: '/tool-icon/openclaw.svg',
+    breifDesc: '智能AI代理平台，支持自主任务执行和多场景应用。'
   }
 ];
 

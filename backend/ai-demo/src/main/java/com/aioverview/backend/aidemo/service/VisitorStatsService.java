@@ -18,11 +18,20 @@ public class VisitorStatsService {
     @Autowired
     private VisitorStatsMapper visitorStatsMapper;
 
+    @Autowired
+    private FilterIpService filterIpService;
+
     /**
      * 记录访问信息
+     * 在记录时进行IP过滤，被过滤的IP不会写入数据库
      * @param visitorStats 访客统计信息
      */
     public void recordVisit(VisitorStats visitorStats) {
+        // 检查IP是否需要被过滤
+        if (filterIpService.shouldFilterIp(visitorStats.getIpAddress())) {
+            return; // 过滤掉该IP的访问记录，不写入数据库
+        }
+
         // 设置访问时间
         if (visitorStats.getVisitTime() == null) {
             visitorStats.setVisitTime(LocalDateTime.now());

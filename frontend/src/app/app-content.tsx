@@ -2,7 +2,7 @@
 
 import { Layout } from '../components/common';
 import Link from 'next/link';
-import { Sparkles, ArrowRight, Zap } from 'lucide-react';
+import { Sparkles, ArrowRight, Zap, Settings } from 'lucide-react';
 
 const AppContent: React.FC = () => {
   const homeContent = () => (
@@ -93,9 +93,18 @@ const AppContent: React.FC = () => {
       </div>
 
       <div className="space-y-8 pt-8 border-t border-border">
-        <div className="flex items-center gap-3">
-          <Zap size={24} className="text-primary" />
-          <h2 className="text-3xl font-bold">热门资源</h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Zap size={24} className="text-primary" />
+            <h2 className="text-3xl font-bold">热门资源</h2>
+          </div>
+          <Link
+            href="/admin/ip-management"
+            className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
+          >
+            <Settings size={16} />
+            管理后台
+          </Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <Link href="/notes/02-prompt-engineering" className="group bg-card border border-border rounded-xl p-6 card-hover no-underline">

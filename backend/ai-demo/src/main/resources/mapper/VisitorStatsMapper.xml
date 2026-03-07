@@ -27,23 +27,23 @@
 
     <!-- 根据页面路径统计访问次数 -->
     <select id="countByPagePath" resultType="java.util.Map">
-        SELECT 
+        SELECT
             page_path as pagePath,
             page_name as pageName,
             COUNT(*) as visitCount
-        FROM 
+        FROM
             visitor_stats
-        WHERE 
+        WHERE
             visit_time BETWEEN #{startTime} AND #{endTime}
-        GROUP BY 
+        GROUP BY
             page_path, page_name
-        ORDER BY 
+        ORDER BY
             visitCount DESC
     </select>
 
     <!-- 获取最近的访问记录 -->
     <select id="getRecentVisits" resultType="com.aioverview.backend.aidemo.model.VisitorStats">
-        SELECT 
+        SELECT
             id,
             page_path as pagePath,
             page_name as pageName,
@@ -52,25 +52,25 @@
             ip_address as ipAddress,
             session_id as sessionId,
             referrer
-        FROM 
+        FROM
             visitor_stats
-        ORDER BY 
+        ORDER BY
             visit_time DESC
         LIMIT #{limit}
     </select>
 
     <!-- 根据日期统计访问量 -->
     <select id="countByDate" resultType="java.util.Map">
-        SELECT 
+        SELECT
             DATE(visit_time) as date,
             COUNT(*) as visitCount
-        FROM 
+        FROM
             visitor_stats
-        WHERE 
+        WHERE
             visit_time BETWEEN #{startDate} AND #{endDate}
-        GROUP BY 
+        GROUP BY
             DATE(visit_time)
-        ORDER BY 
+        ORDER BY
             date ASC
     </select>
 
