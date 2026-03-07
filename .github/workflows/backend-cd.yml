@@ -1,4 +1,5 @@
 name: Backend CD
+
 on:
   push:
     branches: [ main ]
@@ -6,184 +7,54 @@ on:
       - 'backend/**'
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Print hello world
-      run: echo "Hello, World!"
-
-
-# on:
-#   push:
-#     branches: [ main ]
-#     paths:
-#       - 'backend/**'
-#   workflow_dispatch:           # 添加手动触发
-#     inputs:
-#       skip_tests:
-#         description: '跳过测试'
-#         type: boolean
-#         default: false
-#       clean_images:
-#         description: '清理所有旧镜像'
-#         type: boolean
-#         default: false
-
-# jobs:
-#   build-and-deploy:
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         working-directory: ./backend
-#     steps:
-#     - uses: actions/checkout@v3
-    
-#     - name: Set up JDK 21
-#       uses: actions/setup-java@v3
-#       with:
-#         java-version: '21'
-#         distribution: 'temurin'
-#         cache: maven
-    
-#     - name: Debug - Show working directory
-#       run: |
-#         echo "Current working directory: $(pwd)"
-#         echo "Listing all directories from root:"
-#         ls -la /home/runner/work/ai-overview/ai-overview/
-        
-#     - name: Build with Maven
-#       run: |
-#         echo "Current directory before Maven build: $(pwd)"
-#         ls -la
-#         mvn clean package -DskipTests=${{ github.event.inputs.skip_tests || 'true' }}
-        
-#     - name: Debug - Check build output
-#       run: |
-#         echo "Current directory after Maven build: $(pwd)"
-#         echo "Listing all files in current directory:"
-#         ls -la
-#         echo "Checking for target directories:"
-#         find . -name "target" -type d
-#         echo "Checking for JAR files:"
-#         find . -name "*.jar"
-    
-#     - name: Get JAR file path
-#       id: get_jar
-#       run: |
-#         JAR_FILE=$(find ./ai-demo/target -name "*.jar" | head -1)
-#         JAR_FILENAME=$(basename "$JAR_FILE")
-#         echo "JAR_FILE=$JAR_FILE" >> $GITHUB_OUTPUT
-#         echo "JAR_FILENAME=$JAR_FILENAME" >> $GITHUB_OUTPUT
-#         echo "Found JAR file: $JAR_FILE"
-#         echo "JAR filename: $JAR_FILENAME"
-#         ls -la "$JAR_FILE"
-
-#     - name: Upload JAR to server using SSH
-#       uses: appleboy/ssh-action@master
-#       with:
-#         host: ${{ secrets.SERVER_HOST }}
-#         username: ${{ secrets.SERVER_USERNAME }}
-#         key: ${{ secrets.SERVER_SSH_KEY }}
-#         script: |
-#           # 在服务器上创建目标目录（如果不存在）
-#           mkdir -p /root/myapp/ai-overview/backend/ai-demo/target/
-#           echo "Target directory created"
-
-#     - name: Upload JAR file directly with SCP command
-#       run: |
-#         # 确保SSH密钥权限正确
-#         mkdir -p ~/.ssh
-#         echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
-#         chmod 600 ~/.ssh/id_rsa
-        
-#         # 禁用主机密钥检查以避免交互式提示
-#         echo -e "Host *\n  StrictHostKeyChecking no\n  UserKnownHostsFile=/dev/null" > ~/.ssh/config
-        
-#         # 显示当前工作目录和文件信息
-#         echo "Current directory: $(pwd)"
-#         echo "Uploading ${{ steps.get_jar.outputs.JAR_FILE }} to server..."
-        
-#         # 使用scp命令上传文件
-#         scp -v "${{ steps.get_jar.outputs.JAR_FILE }}" "${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/root/myapp/ai-overview/backend/ai-demo/target/${{ steps.get_jar.outputs.JAR_FILENAME }}"
-    
-#     - name: Verify Dockerfile exists
-#       run: |
-#         echo "Checking Dockerfile location..."
-#         ls -la ./Dockerfile
-#         echo "Current directory: $(pwd)"
-
-#     - name: Upload Dockerfile directly with SCP command
-#       run: |
-#         # 确保SSH密钥权限正确（应该已经在前面的步骤中设置）
-        
-#         # 使用scp命令上传Dockerfile
-#         echo "Uploading Dockerfile to server..."
-#         scp -v "./Dockerfile" "${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/root/myapp/ai-overview/backend/Dockerfile"
-    
-#     - name: Build Docker image and deploy on server
-#       uses: appleboy/ssh-action@master
-#       with:
-#         host: ${{ secrets.SERVER_HOST }}
-#         username: ${{ secrets.SERVER_USERNAME }}
-#         key: ${{ secrets.SERVER_SSH_KEY }}
-#         script: |
-#           # 进入项目目录
-#           cd /root/myapp/ai-overview/backend
+    - name: Deploy to server
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |
+          set -e
           
-#           # 构建Docker镜像
-#           docker build -t ai-overview-backend:${{ github.sha }} .
+          echo "========== 开始部署 =========="
           
-#           # 停止并删除旧容器（如果存在）
-#           docker stop ai-overview-backend 2>/dev/null || true
-#           docker rm ai-overview-backend 2>/dev/null || true
+          # 1. 切换到项目目录
+          cd /root/myapp/ai/ai-overview/backend
+          echo "当前目录: $(pwd)"
           
-#           # 直接使用Docker run启动服务
-#           docker run -d \
-#             --name ai-overview-backend \
-#             -p 8090:8090 \
-#             -e DEEPSEEK_API_KEY=${{ secrets.DEEPSEEK_API_KEY }} \
-#             ai-overview-backend:${{ github.sha }}
+          # 2. 拉取最新代码
+          echo "========== 拉取代码 =========="
+          git pull
           
-#           # 智能清理镜像（根据手动触发选项决定清理程度）
-#           if [ "${{ github.event.inputs.clean_images }}" = "true" ]; then
-#             echo "执行深度清理：删除所有旧镜像..."
-#             # 删除所有ai-overview-backend镜像，除了当前运行的
-#             docker images --filter "reference=ai-overview-backend" --format "{{.ID}}" | \
-#             grep -v $(docker inspect --format='{{.Image}}' ai-overview-backend 2>/dev/null | cut -d: -f2) | \
-#             xargs -r docker rmi -f
-#           else
-#             echo "执行常规清理：保留最新的3个版本..."
-#             # 保留最新的3个版本
-#             old_images=$(docker images --filter "reference=ai-overview-backend" --format "{{.ID}}" | sort -r | tail -n +4)
-#             if [ ! -z "$old_images" ]; then
-#               echo "清理旧镜像："
-#               echo "$old_images"
-#               echo "$old_images" | xargs docker rmi -f || echo "部分镜像可能正在使用，跳过删除"
-#             else
-#               echo "没有需要清理的旧镜像"
-#             fi
-#           fi
+          # 3. 打包项目
+          echo "========== Maven 打包 =========="
+          mvn clean package -DskipTests
           
-#           # 清理悬空镜像（dangling images）
-#           docker image prune -f
+          # 4. 重新构建并启动
+          echo "========== Docker 构建部署 =========="
+          make docker-compose-up-build
+          
+          echo "========== 部署完成 =========="
     
-#     - name: Verify deployment
-#       uses: appleboy/ssh-action@master
-#       with:
-#         host: ${{ secrets.SERVER_HOST }}
-#         username: ${{ secrets.SERVER_USERNAME }}
-#         key: ${{ secrets.SERVER_SSH_KEY }}
-#         script: |
-#           # 等待服务启动
-#           sleep 10
-#           # 在服务器本地检查服务是否健康运行
-#           curl --retry 10 --retry-delay 5 --retry-max-time 60 http://localhost:8090/health || {
-#             echo "健康检查失败，查看服务日志..."
-#             docker logs ai-overview-backend --tail 50
-#             exit 1
-#           }
-#           echo "✅ 部署验证成功！"
+    - name: Verify deployment
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |
+          # 等待服务启动
+          sleep 10
+          
+          # 健康检查
+          curl --retry 10 --retry-delay 5 --retry-max-time 60 http://localhost:8090/actuator/health || {
+            echo "健康检查失败，查看服务日志..."
+            docker logs ai-overview-backend --tail 50
+            exit 1
+          }
+          
+          echo "✅ 部署验证成功！"

@@ -12,6 +12,20 @@ interface VisitorStatsData {
 }
 
 /**
+ * 页面路径和名称映射配置
+ * 新增页面时需要在此处添加映射
+ */
+const PATH_MAP: Record<string, string> = {
+  '/': '首页',
+  '/concepts': '概念库',
+  '/tools': 'AI工具箱',
+  '/notes': '知识笔记',
+  '/demos': '应用广场',
+  '/admin': '管理后台',
+  '/admin/ip-management': 'IP管理',
+};
+
+/**
  * 生成唯一的sessionId
  * @returns 唯一的sessionId字符串
  */
@@ -113,16 +127,8 @@ export const recordPageVisit = (pagePath: string, pageName: string): void => {
  * @returns 页面名称
  */
 export const getPageInfo = (pathname: string): { path: string; name: string } => {
-  const pathMap: Record<string, string> = {
-    '/': '首页',
-    '/concepts': '概念库',
-    '/tools': 'AI工具箱',
-    '/notes': '知识笔记',
-    '/demos': '应用广场',
-  };
-
   // 检查是否是二级页面的子页面
-  for (const [path, name] of Object.entries(pathMap)) {
+  for (const [path, name] of Object.entries(PATH_MAP)) {
     if (path !== '/' && pathname.startsWith(path + '/')) {
       return { path,
         name: `${name} - 详情页`
@@ -132,7 +138,7 @@ export const getPageInfo = (pathname: string): { path: string; name: string } =>
 
   // 返回精确匹配或默认值
   return {
-    path: pathMap[pathname] ? pathname : '/',
-    name: pathMap[pathname] || '未知页面'
+    path: PATH_MAP[pathname] ? pathname : '/',
+    name: PATH_MAP[pathname] || '未知页面'
   };
 };
