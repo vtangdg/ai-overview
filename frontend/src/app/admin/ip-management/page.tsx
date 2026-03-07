@@ -8,7 +8,6 @@ import {
   Search,
   AlertCircle,
   Check,
-  X,
   Shield,
   RefreshCw,
 } from 'lucide-react';

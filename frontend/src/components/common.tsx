@@ -4,6 +4,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Book, Wrench, Edit3, Grid, Menu, X, Search } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface NavLinkProps {
   href: string;
@@ -249,7 +250,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
               className="flex items-center gap-2"
               onClick={() => handleNavClick('home')}
             >
-              <img src="/logo.svg" alt="AI探索者" className="w-8 h-8" />
+              <Image src="/logo.svg" alt="AI探索者" width={32} height={32} />
               <span className="text-xl font-bold text-gradient">AI探索者</span>
             </Link>
             
@@ -262,7 +263,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
               className="flex items-center gap-3 mr-auto"
               onClick={() => handleNavClick('home')}
             >
-              <img src="/logo.svg" alt="AI探索者" className="w-9 h-9" />
+              <Image src="/logo.svg" alt="AI探索者" width={36} height={36} />
               <span className="text-2xl font-bold text-gradient">AI探索者</span>
             </Link>
             

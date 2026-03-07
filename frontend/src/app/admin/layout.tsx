@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Shield, Settings, Menu, X, ChevronLeft } from 'lucide-react';
+import { Shield, Settings, Menu, ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface AdminLayoutProps {
