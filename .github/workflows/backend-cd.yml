@@ -18,8 +18,13 @@ jobs:
         host: ${{ secrets.SERVER_HOST }}
         username: ${{ secrets.SERVER_USERNAME }}
         key: ${{ secrets.SERVER_SSH_KEY }}
+        command_timeout: 30m
         script: |
           set -e
+          
+          # 设置 Maven 环境变量，在服务器上执行`which mvn`命令获取
+          export MAVEN_HOME=/opt/apache-maven-3.9.9
+          export PATH=$MAVEN_HOME/bin:$PATH
           
           echo "========== 开始部署 =========="
           
