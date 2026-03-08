@@ -8,8 +8,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  sync-to-gitee:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Push to Gitee
+      run: |
+        git remote add gitee https://${{ secrets.GITEE_USERNAME }}:${{ secrets.GITEE_TOKEN }}@gitee.com/vtangdg/ai-overview.git
+        git push gitee main --force
+
   deploy:
     runs-on: ubuntu-latest
+    needs: sync-to-gitee
     
     steps:
     - name: Deploy to server
@@ -32,9 +47,9 @@ jobs:
           cd /root/myapp/ai/ai-overview/backend
           echo "当前目录: $(pwd)"
           
-          # 2. 拉取最新代码
+          # 2. 拉取最新代码（优先从 Gitee 拉取，更稳定）
           echo "========== 拉取代码 =========="
-          git pull
+          git pull gitee main || git pull origin main
           
           # 3. 打包项目
           echo "========== Maven 打包 =========="
