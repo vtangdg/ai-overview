@@ -25,10 +25,10 @@ export const NavLink: React.FC<NavLinkProps> = ({
     <a
       href={href}
       className={cn(
-        'flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 whitespace-nowrap',
+        'flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 whitespace-nowrap',
         active
           ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
-          : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+          : 'text-muted-foreground hover:text-primary hover:bg-primary/10 hover:shadow-md hover:shadow-primary/10'
       )}
       onClick={onClick}
     >
@@ -59,9 +59,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       style={{ display: isOpen ? 'block' : 'block' }}
     >
       <div className="p-4 border-b border-border flex items-center justify-between">
-        <h2 className="text-xl font-bold">AI探索者</h2>
+        <h2 className="text-xl font-bold tech-gradient-text">AI探索者</h2>
         <button
-          className="p-2 rounded-md hover:bg-muted transition-colors"
+          className="p-2 rounded-lg hover:bg-muted transition-colors"
           onClick={onClose}
         >
           <X size={20} />
@@ -98,12 +98,12 @@ export const Card: React.FC<CardProps> = ({
   const CardContent = (
     <div
       className={cn(
-        'bg-card border border-border rounded-xl p-6 transition-all duration-300 card-hover',
+        'tech-card p-6',
         className
       )}
     >
       {icon && (
-        <div className="mb-4 p-3 bg-gradient-primary text-primary-foreground rounded-2xl inline-flex">
+        <div className="mb-4 p-3 bg-primary/10 text-primary rounded-xl inline-flex tech-icon-wrapper">
           {icon}
         </div>
       )}
@@ -115,7 +115,7 @@ export const Card: React.FC<CardProps> = ({
           {tags.map((tag, index) => (
             <span
               key={index}
-              className="text-xs px-3 py-1.5 bg-secondary rounded-full text-secondary-foreground font-medium"
+              className="tech-tag"
             >
               {tag}
             </span>
@@ -153,8 +153,7 @@ export const Tag: React.FC<TagProps> = ({ children, className = '' }) => {
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
-        'bg-secondary text-secondary-foreground',
+        'tech-tag',
         className
       )}
     >
@@ -185,7 +184,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         value={value}
         onChange={onChange}
         onKeyPress={(e) => e.key === 'Enter' && onSearch?.()}
-        className="w-full pl-12 pr-4 py-3 border border-input rounded-xl bg-background focus:ring-2 focus:ring-ring focus:border-primary transition-all shadow-sm focus:shadow-md"
+        className="w-full pl-12 pr-4 py-3 border-2 border-border rounded-xl bg-card focus:ring-2 focus:ring-ring focus:border-primary transition-all"
       />
     </div>
   );
@@ -226,60 +225,60 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
       if (isMobile && sidebarOpen) {
       }
     };
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [sidebarOpen]);
 
   return (
     <div className="flex flex-col bg-background text-foreground min-h-screen">
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border/50 shadow-sm">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="md:hidden flex items-center justify-between">
             <button
-              className="p-2 rounded-lg hover:bg-muted/50 transition-colors z-10"
+              className="p-2 rounded-lg hover:bg-muted transition-colors z-10"
               onClick={() => setSidebarOpen(true)}
               aria-label="打开菜单"
               style={{ display: 'block' }}
             >
               <Menu size={24} className="text-foreground" aria-hidden="true" />
             </button>
-            
-            <Link 
-              href="/" 
+
+            <Link
+              href="/"
               className="flex items-center gap-2"
               onClick={() => handleNavClick('home')}
             >
               <Image src="/logo.svg" alt="AI探索者" width={32} height={32} />
-              <span className="text-xl font-bold text-gradient">AI探索者</span>
+              <span className="text-xl font-bold tech-gradient-text">AI探索者</span>
             </Link>
-            
+
             <div className="w-10"></div>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-6">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="flex items-center gap-3 mr-auto"
               onClick={() => handleNavClick('home')}
             >
               <Image src="/logo.svg" alt="AI探索者" width={36} height={36} />
-              <span className="text-2xl font-bold text-gradient">AI探索者</span>
+              <span className="text-2xl font-bold tech-gradient-text">AI探索者</span>
             </Link>
-            
+
             <nav className="flex justify-center space-x-2 overflow-x-auto flex-1 max-w-4xl mx-auto">
               {navLinks.map(link => (
-                <NavLink 
-                  key={link.id} 
-                  href={link.href} 
-                  icon={link.icon} 
-                  label={link.label} 
-                  active={activePage === link.id} 
-                  onClick={() => handleNavClick(link.id)} 
+                <NavLink
+                  key={link.id}
+                  href={link.href}
+                  icon={link.icon}
+                  label={link.label}
+                  active={activePage === link.id}
+                  onClick={() => handleNavClick(link.id)}
                 />
               ))}
             </nav>
-            
+
             <div className="w-40"></div>
           </div>
         </div>
@@ -292,19 +291,19 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
             onClick={() => setSidebarOpen(false)}
           />
         )}
-        
+
         {sidebarOpen && (
           <div className="md:hidden z-50 relative">
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
               <nav className="space-y-2">
                 {navLinks.map(link => (
-                  <NavLink 
-                    key={link.id} 
-                    href={link.href} 
-                    icon={link.icon} 
-                    label={link.label} 
-                    active={activePage === link.id} 
-                    onClick={() => handleNavClick(link.id)} 
+                  <NavLink
+                    key={link.id}
+                    href={link.href}
+                    icon={link.icon}
+                    label={link.label}
+                    active={activePage === link.id}
+                    onClick={() => handleNavClick(link.id)}
                   />
                 ))}
               </nav>
