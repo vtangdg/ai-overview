@@ -36,11 +36,17 @@ jobs:
         command_timeout: 30m
         script: |
           set -e
-          
-          # 设置 Maven 环境变量，在服务器上执行`which mvn`命令获取
-          export MAVEN_HOME=/opt/apache-maven-3.9.9
-          export PATH=$MAVEN_HOME/bin:$PATH
-          
+          # 强制指定 JAVA_HOME 为 JDK 21 的安装路径（与 mvn -v 中的 runtime 路径一致）
+          export JAVA_HOME=/www/server/java/jdk-21.0.2
+          # 将 JDK 的 bin 目录添加到 PATH 最前面，确保优先使用
+          export PATH=$JAVA_HOME/bin:$PATH
+
+          # 打印环境信息以便调试（这会在 GitHub Actions 日志中显示）
+          echo "========== 环境信息 =========="
+          echo "JAVA_HOME: $JAVA_HOME"
+          java -version
+          mvn -v
+
           echo "========== 开始部署 =========="
           
           # 1. 切换到项目目录
