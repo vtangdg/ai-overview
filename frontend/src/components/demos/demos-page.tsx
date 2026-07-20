@@ -43,15 +43,15 @@ export const DemosPage: React.FC = () => {
       tags: ['概念', '解释', 'DeepSeek'],
       url: '/demos/concept-explainer'
     },
-    {
-      id: 'spring-ai-alibaba',
-      icon: <Wrench className="w-6 h-6" />,
-      title: 'Spring AI Alibaba Playground',
-      description: '探索Spring AI Alibaba框架的强大功能，包括智能对话、图像生成、文档总结、Tool Calling、RAG和MCP等。',
-      available: true,
-      tags: ['Spring AI', 'Spring AI Alibaba'],
-      url: process.env.NEXT_PUBLIC_SPRING_AI_ALIBABA_URL || '#'
-    },
+    // {
+    //   id: 'spring-ai-alibaba',
+    //   icon: <Wrench className="w-6 h-6" />,
+    //   title: 'Spring AI Alibaba Playground',
+    //   description: '探索Spring AI Alibaba框架的强大功能，包括智能对话、图像生成、文档总结、Tool Calling、RAG和MCP等。',
+    //   available: true,
+    //   tags: ['Spring AI', 'Spring AI Alibaba'],
+    //   url: process.env.NEXT_PUBLIC_SPRING_AI_ALIBABA_URL || '#'
+    // },
     {
       id: 'more-apps',
       icon: <Zap className="w-6 h-6" />,
