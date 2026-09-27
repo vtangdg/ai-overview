@@ -121,6 +121,27 @@ public class XxxService {
 - [ ] 配置路由
 - [ ] **更新 `visitorStats.ts` 中的 `PATH_MAP`**
 
+### 添加新的AI工具箱条目
+
+数据源：`frontend/data/tools.json`（分类 + 工具列表）。详情文件放 `frontend/public/lib/tools/{工具名}.md`，文件名必须与工具 name 完全一致。图标放 `frontend/public/tool-icon/`。
+
+**智能体（WorkBuddy / Trae 等）执行本任务的标准流程**：
+
+方式A（推荐，走同步脚本保证数据一致性）：
+1. 把用户提供的工具清单写入 `scripts/tools-sync/input/pending-tools.md`（格式见文件内注释）
+2. 从 `backend/.env` 读取 `DEEPSEEK_API_KEY`，运行 `node scripts/tools-sync/sync.mjs`
+3. 校验：`frontend/data/tools.json` 可被 JSON.parse、详情文件名与工具 name 一致、`cd frontend && npx tsc --noEmit` 通过
+4. 向用户汇报新增的工具、生成的文件和图标情况，完成后清空 pending-tools.md
+
+方式B（小改动直接编辑）：
+1. 编辑 `frontend/data/tools.json`：ID 按 `categoryId * 1000` 起段递增分配；`icon` 填 `/tool-icon/xxx.png` 或 emoji
+2. 按 `doc/prompt/tool-detail.md` 模板生成详情写入 `frontend/public/lib/tools/{name}.md`
+3. 同样执行上述第 3、4 步校验
+
+**移除工具**：运行 `node scripts/tools-sync/sync.mjs --remove 工具名`（忽略大小写，无需 API key），脚本会自动清理数据条目、详情 md 和不再被引用的图标，并按 id 重新排序。
+
+详见 `doc/tools-sync.md`。
+
 ### 添加新的知识笔记
 
 1. 创建文件: `frontend/public/lib/notes/分类/文件名.md`

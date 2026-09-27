@@ -1,0 +1,49 @@
+name: AI Tools Sync
+
+on:
+  # 手动触发：填好 scripts/tools-sync/input/pending-tools.md 后运行
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Run tools sync
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: node scripts/tools-sync/sync.mjs
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: auto/tools-sync
+          delete-branch: true
+          title: 'chore(tools): AI工具箱自动更新'
+          body: |
+            本 PR 由 tools-sync 自动生成。
+
+            ## 变更内容
+            - `frontend/data/tools.json`：新增工具与分类数据
+            - `frontend/public/lib/tools/*.md`：新增工具详情介绍
+            - `frontend/public/tool-icon/*`：自动抓取的工具图标
+
+            ## 审核要点
+            - [ ] 工具分类归属是否正确
+            - [ ] 简介与详情描述是否准确（AI 生成，注意核实官网地址）
+            - [ ] 图标是否正常（抓取失败时会使用 emoji 兜底）
+          commit-message: 'chore(tools): auto sync AI tools'
+          labels: |
+            automated
+            tools

@@ -1,6 +1,7 @@
 *.iml
 .idea/
 .trae/
+.workbuddy/
 
 # Logs
 logs
