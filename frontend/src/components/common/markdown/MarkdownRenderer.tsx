@@ -6,6 +6,29 @@ interface MarkdownRendererProps {
 }
 
 /**
+ * 链接渲染：外部链接在新窗口打开，避免丢失当前浏览上下文
+ */
+const MarkdownLink = ({
+  node,
+  href,
+  children,
+  ...props
+}: React.ComponentPropsWithoutRef<'a'> & { node?: unknown }) => {
+  const isExternal = href ? /^https?:\/\//i.test(href) : false;
+  return (
+    <a
+      href={href}
+      {...props}
+      {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+    >
+      {children}
+    </a>
+  );
+};
+
+const markdownComponents = { a: MarkdownLink };
+
+/**
  * 可重用的Markdown渲染组件
  * 封装了ReactMarkdown和通用的Markdown样式
  */
@@ -123,7 +146,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
           font-weight: 600;
         }
       `}</style>
-      <ReactMarkdown>{content}</ReactMarkdown>
+      <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>
     </div>
   );
 };

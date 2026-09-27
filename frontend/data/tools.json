@@ -30,6 +30,10 @@
         {
           "id": 402,
           "name": "背景移除"
+        },
+        {
+          "id": 403,
+          "name": "平面设计"
         }
       ]
     },
@@ -76,6 +80,14 @@
     }
   ],
   "tools": [
+    {
+      "name": "Claude",
+      "categoryId": 1,
+      "subcategoryId": 0,
+      "icon": "/tool-icon/claude.ico",
+      "breifDesc": "Anthropic开发的AI助手，Claude Code智能体编程能力业界领先。",
+      "id": 1000
+    },
     {
       "id": 1001,
       "name": "DeepSeek",
@@ -125,12 +137,28 @@
       "breifDesc": "阿里云开发的大语言模型，提供智能问答和创意生成。"
     },
     {
-      "id": 1007,
-      "name": "文心一言",
+      "name": "Gemini",
       "categoryId": 1,
       "subcategoryId": 0,
-      "icon": "/tool-icon/yiyan.png",
-      "breifDesc": "百度开发的智能对话助手，支持多模态交互。"
+      "icon": "/tool-icon/gemini.png",
+      "breifDesc": "Google旗舰AI助手，深度集成搜索与Workspace生态。",
+      "id": 1007
+    },
+    {
+      "name": "Grok",
+      "categoryId": 1,
+      "subcategoryId": 0,
+      "icon": "/tool-icon/grok.png",
+      "breifDesc": "xAI开发的AI助手，擅长实时信息与X平台联动。",
+      "id": 1008
+    },
+    {
+      "name": "Muse",
+      "categoryId": 1,
+      "subcategoryId": 0,
+      "icon": "/tool-icon/muse.ico",
+      "breifDesc": "Meta推出的AI助手，深度集成于Facebook、Instagram与WhatsApp。",
+      "id": 1009
     },
     {
       "id": 2001,
@@ -157,12 +185,12 @@
       "breifDesc": "一站式AIGC内容生成平台，支持多种内容形式。"
     },
     {
-      "id": 3003,
-      "name": "aibiye",
-      "categoryId": 3,
-      "subcategoryId": 0,
-      "icon": "📝",
-      "breifDesc": "AI辅助写作工具，提供文案创作和内容生成服务。"
+      "name": "Canva",
+      "categoryId": 4,
+      "subcategoryId": 403,
+      "icon": "/tool-icon/canva.ico",
+      "breifDesc": "AI驱动的设计平台，一键生成海报、演示与品牌物料。",
+      "id": 4000
     },
     {
       "id": 4001,
@@ -189,12 +217,12 @@
       "breifDesc": "科大讯飞开发的语音识别和转写服务。"
     },
     {
-      "id": 6001,
-      "name": "Veo3",
+      "name": "可灵AI",
       "categoryId": 6,
       "subcategoryId": 601,
-      "icon": "🎬",
-      "breifDesc": "AI视频生成工具，支持文本到视频的转换。"
+      "icon": "/tool-icon/klingai.png",
+      "breifDesc": "快手推出的AI视频生成工具，支持文生视频与图生视频。",
+      "id": 6000
     },
     {
       "id": 6002,
@@ -265,7 +293,7 @@
       "name": "n8n",
       "categoryId": 8,
       "subcategoryId": 0,
-      "icon": "/tool-icon/n8n.png",
+      "icon": "/tool-icon/n8n.ico",
       "breifDesc": "开源的工作流自动化工具，连接各种应用和服务。"
     },
     {
@@ -283,6 +311,14 @@
       "subcategoryId": 0,
       "icon": "/tool-icon/zhiwen.png",
       "breifDesc": "智能办公助手，提供文档生成和会议纪要服务。"
+    },
+    {
+      "name": "WorkBuddy",
+      "categoryId": 10,
+      "subcategoryId": 0,
+      "icon": "/tool-icon/workbuddy.svg",
+      "breifDesc": "面向办公场景的AI智能体助手，自动处理日常任务。",
+      "id": 10000
     },
     {
       "id": 10001,

@@ -127,16 +127,13 @@ public class XxxService {
 
 **智能体（WorkBuddy / Trae 等）执行本任务的标准流程**：
 
-方式A（推荐，走同步脚本保证数据一致性）：
-1. 把用户提供的工具清单写入 `scripts/tools-sync/input/pending-tools.md`（格式见文件内注释）
-2. 从 `backend/.env` 读取 `DEEPSEEK_API_KEY`，运行 `node scripts/tools-sync/sync.mjs`
-3. 校验：`frontend/data/tools.json` 可被 JSON.parse、详情文件名与工具 name 一致、`cd frontend && npx tsc --noEmit` 通过
-4. 向用户汇报新增的工具、生成的文件和图标情况，完成后清空 pending-tools.md
+方式A（智能体本地执行，推荐）：智能体自带模型能力，直接编辑，无需 API key：
+1. 编辑 `frontend/data/tools.json`：新增条目的 ID 按 `categoryId * 1000` 起段递增分配（跳过已占用）；`icon` 优先用 curl/wget 从 icon.horse 或 Google favicon 抓取（存入 `frontend/public/tool-icon/`，文件名用工具名小写去掉非字母数字），失败用 emoji 兜底
+2. 按 `doc/prompt/tool-detail.md` 模板生成详情，写入 `frontend/public/lib/tools/{name}.md`（文件名必须与 name 完全一致）
+3. 校验：`frontend/data/tools.json` 可被 JSON.parse、条目按 id 升序、`cd frontend && npx tsc --noEmit` 通过
+4. 向用户汇报新增/修改的内容，完成后清空 pending-tools.md（如有）
 
-方式B（小改动直接编辑）：
-1. 编辑 `frontend/data/tools.json`：ID 按 `categoryId * 1000` 起段递增分配；`icon` 填 `/tool-icon/xxx.png` 或 emoji
-2. 按 `doc/prompt/tool-detail.md` 模板生成详情写入 `frontend/public/lib/tools/{name}.md`
-3. 同样执行上述第 3、4 步校验
+方式B（脚本模式，仅用于 CI 或本地无智能体场景）：把清单写入 `scripts/tools-sync/input/pending-tools.md`，从 `backend/.env` 读取 `DEEPSEEK_API_KEY`，运行 `node scripts/tools-sync/sync.mjs`——脚本会自己调 LLM 生成内容并更新文件。
 
 **移除工具**：运行 `node scripts/tools-sync/sync.mjs --remove 工具名`（忽略大小写，无需 API key），脚本会自动清理数据条目、详情 md 和不再被引用的图标，并按 id 重新排序。
 

@@ -79,6 +79,20 @@ async function fetchWithTimeout(url, ms = 15000) {
 }
 
 /**
+ * 通过文件头（magic bytes）判断图片真实格式，避免服务器 content-type 不准导致后缀错误
+ */
+function detectImageExt(buf) {
+  if (buf.length < 12) return null;
+  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'png';
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'jpg';
+  if (buf[0] === 0x00 && buf[1] === 0x00 && buf[2] === 0x01 && buf[3] === 0x00) return 'ico';
+  const head = buf.subarray(0, 300).toString('utf-8').trim().toLowerCase();
+  if (head.startsWith('<svg') || head.startsWith('<?xml')) return 'svg';
+  if (head.startsWith('riff') && buf.toString('utf-8', 8, 12) === 'WEBP') return 'webp';
+  return null;
+}
+
+/**
  * 抓取工具图标。优先 icon.horse，其次 Google favicon 服务。
  * 返回 public 下的图标路径（如 /tool-icon/xxx.png），失败返回 null。
  */
@@ -103,7 +117,11 @@ async function downloadIcon(name, website) {
       if (!type.startsWith('image/')) continue;
       const buf = Buffer.from(await res.arrayBuffer());
       if (buf.length < 512) continue; // 太小多半是占位图
-      const ext = type.includes('svg') ? 'svg' : type.includes('jpeg') ? 'jpg' : type.includes('png') ? 'png' : type.includes('webp') ? 'webp' : 'ico';
+      const ext = detectImageExt(buf);
+      if (!ext) {
+        log(`提示: ${name} 的图标格式无法识别 (${type})，跳过该源`);
+        continue;
+      }
       const file = path.join(ICON_DIR, `${base}.${ext}`);
       await fs.writeFile(file, buf);
       return `/tool-icon/${base}.${ext}`;
