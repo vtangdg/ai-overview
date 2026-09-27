@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Zap, Brain, Sparkles, Wrench } from 'lucide-react';
+import { ArrowRight, Zap, Brain, Sparkles, Wrench, TrendingUp } from 'lucide-react';
 import { AlertModal } from '../ui/modal';
 
 interface DemoCardData {
@@ -53,13 +53,13 @@ export const DemosPage: React.FC = () => {
     //   url: process.env.NEXT_PUBLIC_SPRING_AI_ALIBABA_URL || '#'
     // },
     {
-      id: 'more-apps',
-      icon: <Zap className="w-6 h-6" />,
-      title: '更多应用',
-      description: '我们正在开发更多AI应用，敬请期待！',
-      available: false,
-      tags: ['开发中', '敬请期待'],
-      comingSoon: true
+      id: 'stock-analysis',
+      icon: <TrendingUp className="w-6 h-6" />,
+      title: '股票智能分析',
+      description: 'LLM 驱动的多市场股票分析系统，支持行情聚合、AI 决策报告、策略问股与自动推送。',
+      available: true,
+      tags: ['股票', 'LLM', '决策分析'],
+      url: process.env.NEXT_PUBLIC_STOCK_ANALYSIS_URL || 'http://43.136.183.152:8866'
     }
   ];
 
@@ -87,7 +87,12 @@ export const DemosPage: React.FC = () => {
             onClick={() => {
               if (demo.available) {
                 if (demo.url && demo.url !== '#') {
-                  window.location.href = demo.url;
+                  // 外部链接（独立部署的应用）在新标签页打开
+                  if (/^https?:\/\//.test(demo.url)) {
+                    window.open(demo.url, '_blank', 'noopener,noreferrer');
+                  } else {
+                    window.location.href = demo.url;
+                  }
                 } else {
                   const promptText = demoPrompts[demo.id] || process.env.NEXT_PUBLIC_DEMO_URL_PROMPT || '该应用的URL未配置，请联系管理员获取访问地址。';
                   setModalMessage(promptText);
