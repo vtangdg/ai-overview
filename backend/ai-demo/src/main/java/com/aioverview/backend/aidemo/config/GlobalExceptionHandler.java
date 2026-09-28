@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.Map;
@@ -36,6 +37,17 @@ public class GlobalExceptionHandler {
                         "error", "API不存在",
                         "message", "请求的资源不存在: " + request.getRequestURI()
                 ));
+    }
+
+    /**
+     * 处理流式（SSE）请求过程中客户端主动断开的情况
+     * 属于正常场景（用户点了「停止生成」、关闭页面等），只记 DEBUG 日志，避免刷屏
+     */
+    @ExceptionHandler(AsyncRequestNotUsableException.class)
+    public ResponseEntity<?> handleClientDisconnected(AsyncRequestNotUsableException ex,
+                                                      HttpServletRequest request) {
+        log.debug("流式请求客户端已断开: {} {}", request.getMethod(), request.getRequestURI());
+        return null;
     }
 
     /**

@@ -5,15 +5,25 @@ import com.aioverview.backend.aidemo.model.dto.OptimizeRequest;
 import com.aioverview.backend.aidemo.model.dto.PromptResponse;
 import com.aioverview.backend.aidemo.service.PromptOptimizerService;
 import com.aioverview.backend.aidemo.service.strategy.ChatModelStrategyFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+
+import java.time.Duration;
 
 /**
  * 提示词优化器服务实现
  */
+@Slf4j
 @Service
 public class PromptOptimizerServiceImpl implements PromptOptimizerService {
+
+    /**
+     * 模型无响应时的兜底超时时间，避免流式请求长时间挂起
+     */
+    private static final Duration STREAM_TIMEOUT = Duration.ofSeconds(120);
 
     private final ChatModelStrategyFactory strategyFactory;
 
@@ -87,31 +97,25 @@ public class PromptOptimizerServiceImpl implements PromptOptimizerService {
             """;
 
     @Override
-  public PromptResponse generatePrompt(GenerateRequest request) {
-    try {
-      // 默认使用glm模型
-      String model = request.model() != null ? request.model() : "glm";
-      ChatClient client = getChatClient(model);
-      String prompt = String.format(GENERATE_PROMPT_TEMPLATE, request.task());
-      String content = client.prompt()
-              .user(prompt)
-              .call()
-              .content();
+    public PromptResponse generatePrompt(GenerateRequest request) {
+        try {
+            // 默认使用glm模型
+            String model = request.model() != null ? request.model() : "glm";
+            ChatClient client = getChatClient(model);
+            String prompt = String.format(GENERATE_PROMPT_TEMPLATE, request.task());
+            String content = client.prompt()
+                    .user(prompt)
+                    .call()
+                    .content();
 
-      // 添加日志
-      System.out.println("=== 提示词生成结果 ===");
-      System.out.println("任务: " + request.task());
-      System.out.println("使用模型: " + model);
-      System.out.println("生成内容长度: " + content.length());
-      System.out.println("生成内容前500字符: " + content.substring(0, Math.min(500, content.length())));
-      System.out.println("====================");
+            log.info("提示词生成完成，模型: {}，内容长度: {}", model, content == null ? 0 : content.length());
 
-      return PromptResponse.success(content);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return PromptResponse.error("生成失败: " + e.getMessage());
+            return PromptResponse.success(content);
+        } catch (Exception e) {
+            log.error("提示词生成失败", e);
+            return PromptResponse.error("生成失败: " + e.getMessage());
+        }
     }
-  }
 
     @Override
     public PromptResponse optimizePrompt(OptimizeRequest request) {
@@ -126,10 +130,59 @@ public class PromptOptimizerServiceImpl implements PromptOptimizerService {
                     .user(prompt)
                     .call()
                     .content();
+
+            log.info("提示词优化完成，模型: {}，内容长度: {}", model, content == null ? 0 : content.length());
+
             return PromptResponse.success(content);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("提示词优化失败", e);
             return PromptResponse.error("优化失败: " + e.getMessage());
         }
+    }
+
+    @Override
+    public Flux<String> generatePromptStream(GenerateRequest request) {
+        String model = request.model() != null ? request.model() : "glm";
+        String prompt = String.format(GENERATE_PROMPT_TEMPLATE, request.task());
+        return streamChat(model, prompt);
+    }
+
+    @Override
+    public Flux<String> optimizePromptStream(OptimizeRequest request) {
+        String model = request.model() != null ? request.model() : "glm";
+        String prompt = String.format(OPTIMIZE_PROMPT_TEMPLATE,
+                request.currentPrompt(),
+                request.feedback());
+        return streamChat(model, prompt);
+    }
+
+    /**
+     * 调用模型并以增量片段的流式方式返回内容
+     *
+     * @param model  模型名称
+     * @param prompt 完整的提示词
+     * @return 增量文本流（每个元素是本次新增的文本片段）
+     */
+    private Flux<String> streamChat(String model, String prompt) {
+        ChatClient client;
+        try {
+            client = getChatClient(model);
+        } catch (Exception e) {
+            return Flux.error(e);
+        }
+
+        if (client == null) {
+            return Flux.error(new IllegalStateException("模型 " + model + " 不可用，请检查 API Key 配置"));
+        }
+
+        log.info("开始流式生成，模型: {}", model);
+        return client.prompt()
+                .user(prompt)
+                .stream()
+                .content()
+                .filter(chunk -> chunk != null && !chunk.isEmpty())
+                .timeout(STREAM_TIMEOUT)
+                .doOnComplete(() -> log.info("流式生成结束，模型: {}", model))
+                .doOnError(e -> log.error("流式生成异常，模型: {}", model, e));
     }
 }
