@@ -31,13 +31,6 @@ export const categories: Category[] = [
     description: 'LangChain、向量数据库等工具',
     icon: '🛠️',
     order: 3
-  },
-  {
-    id: 'practical-cases',
-    name: '实战案例',
-    description: '实际项目案例和代码',
-    icon: '💡',
-    order: 4
   }
 ];
 

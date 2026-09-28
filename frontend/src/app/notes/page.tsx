@@ -24,6 +24,8 @@ export default function NotesPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTag, setSelectedTag] = useState<string>('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('');
+  const [sortMode, setSortMode] = useState<'grouped' | 'recent'>('grouped');
 
   const fetchNotes = useCallback(async () => {
     setLoading(true);
@@ -34,6 +36,9 @@ export default function NotesPage() {
       }
       if (selectedTag) {
         params.append('tag', selectedTag);
+      }
+      if (selectedDifficulty) {
+        params.append('difficulty', selectedDifficulty);
       }
       if (searchQuery) {
         params.append('q', searchQuery);
@@ -47,7 +52,7 @@ export default function NotesPage() {
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, selectedTag, searchQuery]);
+  }, [selectedCategory, selectedTag, selectedDifficulty, searchQuery]);
 
   useEffect(() => {
     fetchNotes();
@@ -122,6 +127,50 @@ export default function NotesPage() {
           </div>
         </div>
 
+        {/* 难度筛选 + 排序工具栏 */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">难度</span>
+            <div className="flex flex-wrap gap-1.5">
+              {['', '入门', '进阶', '高级'].map(level => (
+                <button
+                  key={level || 'all'}
+                  onClick={() => setSelectedDifficulty(level)}
+                  className={`px-3 py-1 rounded-full text-sm transition-colors ${
+                    selectedDifficulty === level
+                      ? 'bg-primary text-primary-foreground font-medium'
+                      : 'bg-muted hover:bg-muted/80'
+                  }`}
+                >
+                  {level || '全部'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 sm:ml-auto">
+            <span className="text-sm text-muted-foreground">排序</span>
+            <div className="flex rounded-lg border border-border overflow-hidden">
+              <button
+                onClick={() => setSortMode('grouped')}
+                className={`px-3 py-1.5 text-sm transition-colors ${
+                  sortMode === 'grouped' ? 'bg-primary text-primary-foreground' : 'bg-card hover:bg-muted/80'
+                }`}
+              >
+                按体系分组
+              </button>
+              <button
+                onClick={() => setSortMode('recent')}
+                className={`px-3 py-1.5 text-sm border-l border-border transition-colors ${
+                  sortMode === 'recent' ? 'bg-primary text-primary-foreground' : 'bg-card hover:bg-muted/80'
+                }`}
+              >
+                最新优先
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* 标签云 */}
         {data && data.tags.length > 0 && (
           <div>
@@ -159,11 +208,10 @@ export default function NotesPage() {
             <p className="text-muted-foreground">加载中...</p>
           </div>
         ) : data && data.notes.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data.notes.map(note => (
-              <NoteCard key={note.slug} note={note} />
-            ))}
-          </div>
+          <NotesList
+            notes={data.notes}
+            grouped={selectedCategory === 'all' && sortMode === 'grouped'}
+          />
         ) : (
           <div className="text-center py-12">
             <p className="text-xl text-muted-foreground mb-2">没有找到匹配的笔记</p>
@@ -177,15 +225,91 @@ export default function NotesPage() {
   );
 }
 
+// 导航枢纽笔记（在「按体系分组」视图中置顶展示）
+const FEATURED_SLUG = '00-learning-path';
+
+// 难度徽章配色（卡片通用）
+const difficultyClass: Record<string, string> = {
+  '入门': 'bg-green-500/20 text-green-600 dark:text-green-400',
+  '进阶': 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400',
+  '高级': 'bg-red-500/20 text-red-600 dark:text-red-400'
+};
+
+/**
+ * 笔记列表容器：分组视图（按分类分节、导航笔记置顶）/ 平铺视图（最新优先）
+ */
+function NotesList({ notes, grouped }: { notes: NoteMeta[]; grouped: boolean }) {
+  if (!grouped) {
+    const sorted = [...notes].sort(
+      (a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {sorted.map(note => (
+          <NoteCard key={note.slug} note={note} />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-10">
+      {categories.map(cat => {
+        const groupNotes = notes.filter(n => n.category === cat.id);
+        if (groupNotes.length === 0) return null;
+
+        const featured = groupNotes.find(n => n.slug === FEATURED_SLUG);
+        const rest = groupNotes.filter(n => n.slug !== FEATURED_SLUG);
+
+        return (
+          <section key={cat.id}>
+            <div className="flex items-baseline gap-2 mb-4">
+              <h2 className="text-lg font-bold">
+                <span className="mr-1.5">{cat.icon}</span>
+                {cat.name}
+              </h2>
+              <span className="text-sm text-muted-foreground truncate">· {cat.description}</span>
+              <span className="text-sm text-muted-foreground">({groupNotes.length})</span>
+            </div>
+            {featured && <FeaturedCard note={featured} />}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {rest.map(note => (
+                <NoteCard key={note.slug} note={note} />
+              ))}
+            </div>
+          </section>
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * 导航枢纽置顶卡：全宽、强调样式，引导新读者从学习路径入手
+ */
+function FeaturedCard({ note }: { note: NoteMeta }) {
+  return (
+    <Link href={`/notes/${note.slug}`} className="block mb-6">
+      <div className="group bg-primary/5 border border-primary/40 rounded-xl p-5 hover:border-primary hover:shadow-md transition-all cursor-pointer">
+        <div className="flex flex-wrap items-center gap-2 mb-1.5">
+          <span className="px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground text-xs font-medium shrink-0">
+            导航 ★
+          </span>
+          <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
+            {note.title}
+          </h3>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          {note.description} —— 不知道从哪读起，先看这篇。
+        </p>
+      </div>
+    </Link>
+  );
+}
+
 // 笔记卡片组件
 function NoteCard({ note }: { note: NoteMeta }) {
   const category = categories.find(c => c.id === note.category);
-
-  const difficultyClass = {
-    '入门': 'bg-green-500/20 text-green-600 dark:text-green-400',
-    '进阶': 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400',
-    '高级': 'bg-red-500/20 text-red-600 dark:text-red-400'
-  }[note.difficulty] || 'bg-muted';
 
   return (
     <Link href={`/notes/${note.slug}`}>
@@ -226,7 +350,7 @@ function NoteCard({ note }: { note: NoteMeta }) {
 
         {/* 元信息 */}
         <div className="flex items-center gap-4 text-sm text-muted-foreground">
-          <span className={`px-2 py-1 rounded ${difficultyClass}`}>
+          <span className={`px-2 py-1 rounded ${difficultyClass[note.difficulty] || 'bg-muted'}`}>
             {note.difficulty}
           </span>
           <span className="flex items-center gap-1">

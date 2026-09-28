@@ -8,6 +8,7 @@ import {
   scanNotes,
   getNotesByCategory,
   getNotesByTag,
+  getNotesByDifficulty,
   searchNotes,
   getAllTags,
   getCategoryStats
@@ -20,6 +21,7 @@ export async function GET(request: Request) {
     const category = searchParams.get('category');
     const query = searchParams.get('q');
     const tag = searchParams.get('tag');
+    const difficulty = searchParams.get('difficulty');
 
     // 扫描所有笔记
     const allNotes = await scanNotes();
@@ -33,6 +35,10 @@ export async function GET(request: Request) {
 
     if (tag) {
       filtered = getNotesByTag(filtered, tag);
+    }
+
+    if (difficulty) {
+      filtered = getNotesByDifficulty(filtered, difficulty);
     }
 
     if (query) {

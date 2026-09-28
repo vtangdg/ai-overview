@@ -108,6 +108,13 @@ export function getNotesByCategory(notes: Note[], categoryId: string): Note[] {
 }
 
 /**
+ * 根据难度筛选笔记
+ */
+export function getNotesByDifficulty(notes: Note[], difficulty: string): Note[] {
+  return notes.filter(note => note.difficulty === difficulty);
+}
+
+/**
  * 根据标签筛选笔记
  */
 export function getNotesByTag(notes: Note[], tag: string): Note[] {

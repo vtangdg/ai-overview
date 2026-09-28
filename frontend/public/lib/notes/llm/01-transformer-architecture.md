@@ -27,32 +27,24 @@ Transformer通过**自注意力机制（Self-Attention）**解决了这些问题
 ## Transformer整体架构
 
 ```
-        编码器 (Encoder)              解码器 (Decoder)
-┌─────────────────────┐      ┌─────────────────────┐
-│                     │      │                     │
-│  ┌───────────────┐  │      │  ┌───────────────┐  │
-│  │  自注意力层    │  │      │  │  掩码注意力    │  │
-│  └───────┬───────┘  │      │  └───────┬───────┘  │
-│          │          │      │          │          │
-│  ┌───────▼───────┐  │      │  ┌───────▼───────┐  │
-│  │  前馈神经网络  │  │      │  │  前馈神经网络  │  │
-│  └───────┬───────┘  │      │  └───────┬───────┘  │
-│          │          │      │          │          │
-│  ┌───────▼───────┐  │      │  ┌───────▼───────┐  │
-│  │ 添加残差&归一化 │  │      │  │ 添加残差&归一化 │  │
-│  └───────┬───────┘  │      │  └───────┬───────┘  │
-│          │          │      │          │          │
-│  ┌───────▼───────┐  │      │  ┌───────▼───────┐  │
-│  │   重复 N×      │  │      │  │   重复 N×      │  │
-│  └───────┬───────┘  │      │  └───────┬───────┘  │
-│          │          │      │          │          │
-└──────────┼──────────┘      └──────────┼──────────┘
-           │                            │
-           │        ┌──────────┐        │
-           └───────▶│ 编码-解码 │◀───────┘
-                    │  注意力  │
-                    └──────────┘
+         编码器 (Encoder)                         解码器 (Decoder)
+┌────────────────────────────┐      ┌──────────────────────────────────┐
+│  自注意力 (Self-Attention)  │      │  掩码自注意力 (Masked Attention)   │
+│             ↓              │      │              ↓                   │
+│  前馈网络 + 残差 & 归一化    │      │  编码-解码注意力 ←───────────────┼── 编码器输出
+│             ↓              │      │  (Cross-Attention)               │
+│         重复 N×            │      │              ↓                   │
+└─────────────┬──────────────┘      │  前馈网络 + 残差 & 归一化         │
+              │                     │              ↓                   │
+              └────────────────────▶│          重复 N×                 │
+                                    └──────────────┬───────────────────┘
+                                                   ↓
+                                           线性层 + Softmax
+                                                   ↓
+                                             输出概率分布
 ```
+
+编码器处理输入序列并产出表示，解码器在此基础上生成目标序列。解码器每个块里有**三个子层**：掩码自注意力（防止看到未来 Token）、编码-解码注意力（从编码器输出取信息）、前馈网络。
 
 ## 自注意力机制（Self-Attention）
 
@@ -93,6 +85,7 @@ Attention(Q, K, V) = softmax(QK^T / √d_k) × V
 ### 代码实现
 
 ```python
+import math
 import torch
 import torch.nn.functional as F
 
@@ -146,6 +139,10 @@ def scaled_dot_product_attention(query, key, value, mask=None):
 ### 代码实现
 
 ```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_model, num_heads):
         super().__init__()
@@ -196,6 +193,10 @@ PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
 ```
 
 ```python
+import math
+import torch
+import torch.nn as nn
+
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, max_len=5000):
         super().__init__()
@@ -231,12 +232,19 @@ class PositionwiseFFN(nn.Module):
 
 ## 残差连接和层归一化
 
+残差连接让梯度能绕过子层直接回流，是深层网络可训练的关键；层归一化则稳定每层的数值分布。**两者的先后顺序有两种排法，别搞混**：
+
 ```
-Output = LayerNorm(Input + SubLayer(Input))
+Post-LN（原论文用的）：   Output = LayerNorm(Input + SubLayer(Input))
+Pre-LN （现代大模型主流）：Output = Input + SubLayer(LayerNorm(Input))
 ```
+
+Pre-LN 把归一化提到子层之前，残差通路全程无归一化干扰，训练更稳定、更容易堆深——GPT 系模型基本都用这一版。
 
 ```python
 class AddNorm(nn.Module):
+    """Pre-LN 实现：先归一化进子层，残差从原始输入直连"""
+
     def __init__(self, size):
         super().__init__()
         self.norm = nn.LayerNorm(size)
@@ -261,6 +269,8 @@ class AddNorm(nn.Module):
 
 ```python
 class TransformerBlock(nn.Module):
+    """Pre-LN 版 Transformer 块（现代大模型的主流写法）"""
+
     def __init__(self, d_model, num_heads, d_ff, dropout=0.1):
         super().__init__()
         self.attention = MultiHeadAttention(d_model, num_heads)
@@ -270,15 +280,12 @@ class TransformerBlock(nn.Module):
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x, mask=None):
-        # 自注意力 + 残差 + 归一化
-        attn_output = self.attention(x, x, x, mask)
-        x = x + self.dropout(attn_output)
-        x = self.norm1(x)
+        # 自注意力：先归一化再进子层，残差从原始 x 直连
+        normed = self.norm1(x)
+        x = x + self.dropout(self.attention(normed, normed, normed, mask))
 
-        # 前馈网络 + 残差 + 归一化
-        ffn_output = self.ffn(x)
-        x = x + self.dropout(ffn_output)
-        x = self.norm2(x)
+        # 前馈网络：同样先归一化
+        x = x + self.dropout(self.ffn(self.norm2(x)))
 
         return x
 ```

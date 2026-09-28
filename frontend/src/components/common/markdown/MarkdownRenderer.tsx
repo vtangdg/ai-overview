@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import rehypeSlug from 'rehype-slug';
 
 interface MarkdownRendererProps {
@@ -154,7 +155,12 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
           font-weight: 600;
         }
       `}</style>
-      <ReactMarkdown components={markdownComponents} rehypePlugins={[rehypeSlug]}>
+      {/* remark-gfm 启用表格、删除线、任务列表等 GitHub 扩展语法 */}
+      <ReactMarkdown
+        components={markdownComponents}
+        remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeSlug]}
+      >
         {content}
       </ReactMarkdown>
     </div>
