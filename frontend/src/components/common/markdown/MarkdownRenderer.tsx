@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import rehypeSlug from 'rehype-slug';
 
 interface MarkdownRendererProps {
   content: string;
@@ -40,6 +41,13 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
     }}>
       <style jsx global>{`
         /* 通用Markdown样式 */
+        /* 锚点跳转时预留顶部 sticky header 的空间 */
+        .markdown-renderer h1,
+        .markdown-renderer h2,
+        .markdown-renderer h3,
+        .markdown-renderer h4 {
+          scroll-margin-top: 6rem;
+        }
         .markdown-renderer h1 {
           font-size: 2rem;
           font-weight: 700;
@@ -146,7 +154,9 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
           font-weight: 600;
         }
       `}</style>
-      <ReactMarkdown components={markdownComponents}>{content}</ReactMarkdown>
+      <ReactMarkdown components={markdownComponents} rehypePlugins={[rehypeSlug]}>
+        {content}
+      </ReactMarkdown>
     </div>
   );
 };
