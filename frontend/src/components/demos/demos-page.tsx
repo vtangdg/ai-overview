@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Zap, Brain, Sparkles, Wrench, TrendingUp } from 'lucide-react';
+import { ArrowRight, Zap, Brain, Sparkles, Wrench, TrendingUp, BookMarked } from 'lucide-react';
 import { AlertModal } from '../ui/modal';
 
 interface DemoCardData {
@@ -25,6 +25,16 @@ export const DemosPage: React.FC = () => {
   };
 
   const demos: DemoCardData[] = [
+    {
+      id: 'rag-qa',
+      icon: <BookMarked className="w-6 h-6" />,
+      title: '知识问答助手',
+      description:
+        '基于站内知识笔记的 RAG 问答：检索增强生成 + 可点击的来源引用，问题超出知识库范围时会明确拒答。',
+      available: true,
+      tags: ['RAG', '引用溯源', '流式输出'],
+      url: '/qa'
+    },
     {
       id: 'prompt-optimizer',
       icon: <Sparkles className="w-6 h-6" />,

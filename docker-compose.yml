@@ -11,6 +11,8 @@ services:
       - GLM_API_KEY=${GLM_API_KEY}
     volumes:
       - visitor_stats_data:/app/db
+      # 站内知识笔记：只读挂载进容器，供 RAG 索引服务扫描（笔记更新后调 POST /api/rag/index/rebuild 重建索引）
+      - ./frontend/public/lib/notes:/app/notes:ro
     restart: unless-stopped
     networks:
       - monitoring

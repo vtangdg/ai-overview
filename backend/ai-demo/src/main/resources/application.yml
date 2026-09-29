@@ -62,6 +62,26 @@ management:
     health:
       show-details: always
 
+# RAG 知识问答配置（默认值面向 Docker 容器，本地开发在 application-dev.yml 覆盖路径）
+rag:
+  # 笔记根目录（容器内由 docker-compose 只读挂载 frontend/public/lib）
+  notes-paths: /app/notes
+  # 向量索引持久化文件
+  store-path: /app/db/rag-store.json
+  # 检索参数（阈值依据实测分数分布标定：库内问题普遍 >0.45，库外 <0.2，取分离带中点）
+  top-k: 4
+  similarity-threshold: 0.35
+  # Embedding：智谱 OpenAI 兼容端点（复用 GLM_API_KEY）
+  embedding-base-url: https://open.bigmodel.cn/api/paas
+  embedding-api-key: ${GLM_API_KEY:}
+  embedding-model: embedding-3
+  embedding-dimensions: 2048
+  # 生成回答的对话模型（对应策略工厂模型名）
+  chat-model: deepseek
+  # 切块参数
+  max-section-chars: 1200
+  min-chunk-chars: 30
+
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: com.aioverview.backend.aidemo.model

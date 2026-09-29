@@ -2,7 +2,7 @@
 
 import { Layout } from '../components/common';
 import Link from 'next/link';
-import { ArrowRight, BookOpen, Wrench, FileText, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Wrench, FileText, Sparkles, BookMarked } from 'lucide-react';
 
 const AppContent: React.FC = () => {
   const homeContent = () => (
@@ -26,6 +26,30 @@ const AppContent: React.FC = () => {
             探索人工智能的世界，从概念学习到工具应用，一站式AI知识及应用平台
           </p>
         </div>
+
+        {/* 知识问答是站点的招牌能力，也是唯一一个「不是栏目」的入口，
+            因此在首页单给一条醒目横幅：与顶部导航的强调按钮呼应，
+            避免访客只看四个栏目而漏掉问答 */}
+        <Link
+          href="/qa"
+          className="group flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-6 rounded-2xl border-2 border-primary/30 bg-primary/5 hover:border-primary/60 hover:bg-primary/10 transition-all no-underline animate-slide-up stagger-3"
+        >
+          <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-primary text-primary-foreground flex items-center justify-center">
+            <BookMarked size={24} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-xl font-bold mb-1 group-hover:text-primary transition-colors">
+              有问题？直接问站内知识库
+            </h2>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              基于站内知识笔记的 RAG 问答：回答只依据站内内容生成，每条都能溯源到原文，超出知识库范围会明确拒答。
+            </p>
+          </div>
+          <div className="flex-shrink-0 flex items-center gap-2 text-primary font-semibold">
+            <span>开始提问</span>
+            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+          </div>
+        </Link>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-slide-up stagger-3">
           <Link

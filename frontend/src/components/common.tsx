@@ -2,9 +2,10 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Book, Wrench, Edit3, Grid, Menu, X, Search } from 'lucide-react';
+import { Book, Wrench, Edit3, Grid, Menu, X, Search, BookMarked } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 interface NavLinkProps {
   href: string;
@@ -25,10 +26,10 @@ export const NavLink: React.FC<NavLinkProps> = ({
     <a
       href={href}
       className={cn(
-        'flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 whitespace-nowrap',
+        'flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 whitespace-nowrap',
         active
-          ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
-          : 'text-muted-foreground hover:text-primary hover:bg-primary/10 hover:shadow-md hover:shadow-primary/10'
+          ? 'bg-primary/10 text-primary ring-1 ring-inset ring-primary/25'
+          : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
       )}
       onClick={onClick}
     >
@@ -196,39 +197,66 @@ interface LayoutProps {
   currentPage?: string;
 }
 
+/**
+ * 顶部导航的四个栏目。它们都是「容器」——各自下辖多条内容或多个工具，因此保持等权。
+ * 「知识问答」是单个应用，与它们不同级，刻意不放进这个数组，见 Layout 内的 askCta。
+ */
+const NAV_LINKS = [
+  { id: 'concepts', icon: <Book size={20} />, label: '概念库', href: '/concepts' },
+  { id: 'tools', icon: <Wrench size={20} />, label: 'AI工具箱', href: '/tools' },
+  { id: 'notes', icon: <Edit3 size={20} />, label: '知识笔记', href: '/notes' },
+  { id: 'demos', icon: <Grid size={20} />, label: '应用广场', href: '/demos' },
+];
+
 export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPage = 'home' }) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
-  const [activePage, setActivePage] = React.useState(currentPage);
+  const pathname = usePathname();
 
-  React.useEffect(() => {
-    setActivePage(currentPage);
-  }, [currentPage]);
+  // 当前栏目高亮以路由为准：NavLink 渲染的是原生 <a>，点击即整页刷新，
+  // 靠点击瞬间的 state 记录高亮在刷新后必然丢失（此前也没有任何页面传 currentPage，等于高亮一直没生效）。
+  const matchedNav = NAV_LINKS.find(
+    (link) => pathname === link.href || pathname.startsWith(`${link.href}/`)
+  );
+  const activePage = matchedNav ? matchedNav.id : currentPage;
+  const isQaActive = pathname === '/qa';
 
   const handleNavClick = (page: string) => {
-    setActivePage(page);
     setSidebarOpen(false);
     if (onNavClick) {
       onNavClick(page);
     }
   };
 
-  const navLinks = [
-    { id: 'concepts', icon: <Book size={20} />, label: '概念库', href: '/concepts' },
-    { id: 'tools', icon: <Wrench size={20} />, label: 'AI工具箱', href: '/tools' },
-    { id: 'notes', icon: <Edit3 size={20} />, label: '知识笔记', href: '/notes' },
-    { id: 'demos', icon: <Grid size={20} />, label: '应用广场', href: '/demos' }
-  ];
-
-  React.useEffect(() => {
-    const handleResize = () => {
-      const isMobile = window.innerWidth < 768;
-      if (isMobile && sidebarOpen) {
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [sidebarOpen]);
+  /**
+   * 「知识问答」入口。
+   *
+   * 它是站内唯一的 RAG 能力入口，也是这个项目最想被访客看到的能力，所以不能只沉在应用广场里；
+   * 但它和提示词优化器、AI 概念解释器一样，只是「应用广场里的一个应用」，与四个栏目不同级，
+   * 于是做成实心强调按钮：视觉权重最高，同时和「栏目」相比在语义上就不一样。
+   *
+   * 视觉语言上与品牌同源：logo 图形、logo 字标、tech-card 顶边用的都是「青→紫」渐变，
+   * CTA 也用同一配方（135deg primary→accent），否则横条两端的两个彩色点一个渐变一个平涂，
+   * 色相对不上，看起来像两个来源的组件。圆角用 rounded-lg（= var(--radius)，与卡片一致），
+   * 不再用 rounded-xl（20px，在 40px 高的按钮上正好是全胶囊），阴影收敛到 shadow-md。
+   * 应用广场里 /qa 的卡片保留——广场是完整目录，这里是快捷入口，两者不冲突。
+   */
+  const askCta = (extraClassName = '') => (
+    <Link
+      href="/qa"
+      onClick={() => handleNavClick('qa')}
+      className={cn(
+        'flex items-center gap-2 px-4 py-2.5 text-sm font-semibold rounded-lg whitespace-nowrap',
+        'text-primary-foreground bg-gradient-to-br from-primary to-accent',
+        'shadow-md shadow-primary/20',
+        'hover:shadow-lg hover:shadow-primary/25 hover:brightness-105 transition-all duration-200',
+        isQaActive && 'ring-2 ring-primary/40 ring-offset-2 ring-offset-background',
+        extraClassName
+      )}
+    >
+      <BookMarked size={20} />
+      <span>知识问答</span>
+    </Link>
+  );
 
   return (
     <div className="flex flex-col bg-background text-foreground min-h-screen">
@@ -253,7 +281,16 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
               <span className="text-xl font-bold tech-gradient-text">AI探索者</span>
             </Link>
 
-            <div className="w-10"></div>
+            {/* 移动端头部空间有限，知识问答只放一个图标按钮，与左侧汉堡按钮对称，抽屉里另有一份完整入口。
+                视觉语言与桌面端 askCta 一致：品牌渐变 + rounded-lg + 轻阴影 */}
+            <Link
+              href="/qa"
+              onClick={() => handleNavClick('qa')}
+              aria-label="知识问答"
+              className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-accent text-primary-foreground shadow-md shadow-primary/20"
+            >
+              <BookMarked size={20} />
+            </Link>
           </div>
 
           <div className="hidden md:flex items-center space-x-6">
@@ -267,7 +304,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
             </Link>
 
             <nav className="flex justify-center space-x-2 overflow-x-auto flex-1 max-w-4xl mx-auto">
-              {navLinks.map(link => (
+              {NAV_LINKS.map(link => (
                 <NavLink
                   key={link.id}
                   href={link.href}
@@ -279,7 +316,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
               ))}
             </nav>
 
-            <div className="w-40"></div>
+            {askCta()}
           </div>
         </div>
       </header>
@@ -296,7 +333,8 @@ export const Layout: React.FC<LayoutProps> = ({ children, onNavClick, currentPag
           <div className="md:hidden z-50 relative">
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}>
               <nav className="space-y-2">
-                {navLinks.map(link => (
+                {askCta('w-full justify-center')}
+                {NAV_LINKS.map(link => (
                   <NavLink
                     key={link.id}
                     href={link.href}

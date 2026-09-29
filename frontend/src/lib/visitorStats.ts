@@ -20,6 +20,7 @@ const PATH_MAP: Record<string, string> = {
   '/concepts': '概念库',
   '/tools': 'AI工具箱',
   '/notes': '知识笔记',
+  '/qa': '知识问答',
   '/demos': '应用广场',
   '/admin': '管理后台',
   '/admin/ip-management': 'IP管理',

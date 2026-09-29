@@ -87,6 +87,9 @@ target/
 *.db-shm
 *.db-wal
 
+# RAG 向量索引（启动时按笔记自动重建，不入库）
+rag-store.json*
+
 # 但可以提交空目录结构
 !db/
 

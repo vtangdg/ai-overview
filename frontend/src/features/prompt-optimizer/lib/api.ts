@@ -1,3 +1,4 @@
+import { isAbortError, postSse } from '@/lib/sse';
 import type { GenerateRequest, OptimizeRequest, PromptResponse } from './types';
 
 interface ModelAvailability {
@@ -24,112 +25,16 @@ export interface StreamOptions extends StreamCallbacks {
   signal?: AbortSignal;
 }
 
-/** SSE 事件之间的分隔符（空行） */
-const SSE_BOUNDARY = '\n\n';
-
 /** 服务端约定的事件名，与后端 PromptOptimizerController 保持一致 */
 const EVENT_DELTA = 'delta';
 const EVENT_ERROR = 'error';
 const EVENT_DONE = 'done';
 
-/**
- * 判断异常是否由主动中断（AbortController）引起
- */
-export function isAbortError(error: unknown): boolean {
-  return (error as { name?: string } | null)?.name === 'AbortError';
-}
+export { isAbortError };
 
 /**
- * 解析单个 SSE 事件块，返回事件名与拼接后的 data 内容；没有 data 字段时返回 null
- */
-function parseSseEvent(block: string): { event: string; data: string } | null {
-  let event = 'message';
-  const dataLines: string[] = [];
-
-  for (const rawLine of block.split('\n')) {
-    const line = rawLine.endsWith('\r') ? rawLine.slice(0, -1) : rawLine;
-    // 空行与以 ":" 开头的注释行（心跳）直接跳过
-    if (!line || line.startsWith(':')) continue;
-
-    const colon = line.indexOf(':');
-    const field = colon === -1 ? line : line.slice(0, colon);
-    let value = colon === -1 ? '' : line.slice(colon + 1);
-    if (value.startsWith(' ')) value = value.slice(1);
-
-    if (field === 'event') {
-      event = value;
-    } else if (field === 'data') {
-      dataLines.push(value);
-    }
-  }
-
-  if (dataLines.length === 0) return null;
-  return { event, data: dataLines.join('\n') };
-}
-
-/**
- * 逐块消费 SSE 响应流。
- * 不能按 chunk 直接切分：一个事件可能被拆到多个 chunk，一个 chunk 也可能包含多个事件，
- * 因此这里先累积到缓冲区，再按空行（事件边界）切分。
- */
-async function consumeSse(response: Response, options: StreamOptions): Promise<void> {
-  const reader = response.body?.getReader();
-  if (!reader) {
-    throw new Error('当前浏览器不支持流式响应');
-  }
-
-  const decoder = new TextDecoder('utf-8');
-  let buffer = '';
-  let serverError: string | null = null;
-  let finished = false;
-
-  try {
-    while (!finished) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      buffer = buffer.replace(/\r\n/g, '\n');
-
-      let boundary = buffer.indexOf(SSE_BOUNDARY);
-      while (boundary !== -1) {
-        const parsed = parseSseEvent(buffer.slice(0, boundary));
-        buffer = buffer.slice(boundary + SSE_BOUNDARY.length);
-
-        if (parsed) {
-          if (parsed.event === EVENT_ERROR) {
-            serverError = parsed.data || '生成失败，请稍后重试';
-          } else if (parsed.event === EVENT_DONE) {
-            finished = true;
-          } else if (parsed.event === EVENT_DELTA && parsed.data) {
-            options.onDelta?.(parsed.data);
-          }
-        }
-
-        if (finished) break;
-        boundary = buffer.indexOf(SSE_BOUNDARY);
-      }
-    }
-
-    // 处理没有以空行结尾的残留事件
-    buffer += decoder.decode();
-    const tail = parseSseEvent(buffer);
-    if (tail && tail.event === EVENT_DELTA && tail.data) {
-      options.onDelta?.(tail.data);
-    }
-
-    if (serverError) {
-      options.onError?.(serverError);
-    } else {
-      options.onDone?.();
-    }
-  } finally {
-    reader.releaseLock();
-  }
-}
-
-/**
- * 以 POST 方式发起 SSE 请求并消费响应流
+ * 以 POST 方式发起 SSE 请求并消费响应流，把增量文本回调给调用方。
+ * 通用解析逻辑见 `@/lib/sse`，与知识问答共用。
  */
 async function postStream(
   url: string,
@@ -137,28 +42,28 @@ async function postStream(
   options: StreamOptions,
   errorLabel: string
 ): Promise<void> {
-  let response: Response;
+  let serverError: string | null = null;
 
-  try {
-    response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'text/event-stream'
-      },
-      body: JSON.stringify(body),
-      signal: options.signal
-    });
-  } catch (error) {
-    if (isAbortError(error)) throw error;
-    throw new Error(`${errorLabel}：网络请求失败，请确认后端服务是否已启动`);
+  await postSse(
+    url,
+    body,
+    (event) => {
+      if (event.event === EVENT_ERROR) {
+        serverError = event.data || '生成失败，请稍后重试';
+      } else if (event.event === EVENT_DONE) {
+        return 'stop';
+      } else if (event.event === EVENT_DELTA && event.data) {
+        options.onDelta?.(event.data);
+      }
+    },
+    { signal: options.signal, errorLabel }
+  );
+
+  if (serverError) {
+    options.onError?.(serverError);
+  } else {
+    options.onDone?.();
   }
-
-  if (!response.ok) {
-    throw new Error(`${errorLabel}：${response.status} ${response.statusText}`.trim());
-  }
-
-  await consumeSse(response, options);
 }
 
 /**

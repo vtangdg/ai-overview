@@ -128,10 +128,19 @@ public class PromptOptimizerController {
                         event(EVENT_DONE, "[DONE]")));
     }
 
+    /**
+     * 构造 SSE 事件。
+     * <p>
+     * data 统一补一个前导空格，是为了绕开 SSE 协议的一个歧义点：
+     * 规范要求客户端剥掉 data 冒号后的第一个空格，而 Spring 的 ServerSentEvent
+     * 是「冒号后直接跟原文、不额外补空格」。两者叠加后，恰好只有一个空格的增量
+     * 会写出成 `data: ` 并被解析成空串——流式生成里词与词之间的空格会被静默吞掉。
+     * 服务端主动补一个空格后，客户端按规范剥离，拿到的即为原始内容。
+     */
     private ServerSentEvent<String> event(String name, String data) {
         return ServerSentEvent.<String>builder()
                 .event(name)
-                .data(data)
+                .data(" " + data)
                 .build();
     }
 

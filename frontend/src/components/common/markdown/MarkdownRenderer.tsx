@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkCjkFriendly from 'remark-cjk-friendly';
 import rehypeSlug from 'rehype-slug';
 
 interface MarkdownRendererProps {
@@ -155,10 +156,13 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) =
           font-weight: 600;
         }
       `}</style>
-      {/* remark-gfm 启用表格、删除线、任务列表等 GitHub 扩展语法 */}
+      {/* remark-gfm 启用表格、删除线、任务列表等 GitHub 扩展语法
+          remark-cjk-friendly 修正中文强调解析：CommonMark 的「左右邻接」规则会把
+          **检索阶段（在线）**的 这类写法判为不能闭合（收尾 ** 前是全角标点、后跟汉字），
+          导致粗体失效。该插件按中日韩排版习惯放宽邻接判定，不影响英文强调。 */}
       <ReactMarkdown
         components={markdownComponents}
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkCjkFriendly]}
         rehypePlugins={[rehypeSlug]}
       >
         {content}
