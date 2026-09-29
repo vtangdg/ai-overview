@@ -4,9 +4,13 @@ import com.aioverview.backend.aidemo.config.RagProperties;
 import com.aioverview.backend.aidemo.model.dto.RagQaRequest;
 import com.aioverview.backend.aidemo.model.dto.RagSource;
 import com.aioverview.backend.aidemo.service.strategy.ChatModelStrategyFactory;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.metadata.Usage;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.stereotype.Service;
@@ -16,6 +20,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * RAG 问答服务：检索 → 拒答判定 → Prompt 组装 → 流式生成
@@ -34,12 +39,14 @@ public class RagQaService {
     private final SimpleVectorStore vectorStore;
     private final RagProperties props;
     private final ChatModelStrategyFactory strategyFactory;
+    private final MeterRegistry meterRegistry;
 
     public RagQaService(SimpleVectorStore vectorStore, RagProperties props,
-                        ChatModelStrategyFactory strategyFactory) {
+                        ChatModelStrategyFactory strategyFactory, MeterRegistry meterRegistry) {
         this.vectorStore = vectorStore;
         this.props = props;
         this.strategyFactory = strategyFactory;
+        this.meterRegistry = meterRegistry;
     }
 
     /**
@@ -153,21 +160,62 @@ public class RagQaService {
     }
 
     /**
-     * 调用对话模型流式生成回答
+     * 调用对话模型流式生成回答。
+     * <p>
+     * 不用 .stream().content() 而用 .stream().chatResponse()：content 捷径只吐字符串，
+     * 会把流式响应里的 usage 元数据丢掉，token 就没法计量了。
+     * usage 由上游在最后一个 chunk 返回（需 stream_options.include_usage，
+     * 通过 rag.usage-in-stream 控制，兼容不支持该参数的端点时可关闭）。
      */
     public Flux<String> streamAnswer(String prompt) {
         ChatClient client = strategyFactory.getStrategy(props.getChatModel()).getChatClient();
         if (client == null) {
             return Flux.error(new IllegalStateException("模型 " + props.getChatModel() + " 不可用，请检查 API Key 配置"));
         }
+        String model = props.getChatModel();
+        AtomicBoolean usageRecorded = new AtomicBoolean(false);
         return client.prompt()
                 .user(prompt)
+                .options(OpenAiChatOptions.builder().streamUsage(props.isUsageInStream()).build())
                 .stream()
-                .content()
-                .filter(chunk -> chunk != null && !chunk.isEmpty())
+                .chatResponse()
+                .doOnNext(resp -> recordUsage(resp, model, usageRecorded))
+                .mapNotNull(this::extractText)
+                .filter(chunk -> !chunk.isEmpty())
                 .timeout(STREAM_TIMEOUT)
                 .doOnComplete(() -> log.info("RAG 回答流式生成结束"))
                 .doOnError(e -> log.error("RAG 回答生成异常", e));
+    }
+
+    /** 取出增量文本；usage-only 的尾包没有内容，返回 null 被 mapNotNull 过滤。注意不要 trim——单个空格的增量是有意义的内容，strip 会复现「跨 chunk 空格丢失」的老 bug */
+    private String extractText(ChatResponse resp) {
+        if (resp.getResult() == null || resp.getResult().getOutput() == null) {
+            return null;
+        }
+        String text = resp.getResult().getOutput().getText();
+        return (text == null || text.isEmpty()) ? null : text;
+    }
+
+    /**
+     * 记录 token 消耗：ai_llm_tokens_total{scene, model, type=prompt|completion}。
+     * usage 只在流末尾出现一次，用 usageRecorded 防重复累计。
+     */
+    private void recordUsage(ChatResponse resp, String model, AtomicBoolean usageRecorded) {
+        if (resp.getMetadata() == null || resp.getMetadata().getUsage() == null
+                || !usageRecorded.compareAndSet(false, true)) {
+            return;
+        }
+        Usage usage = resp.getMetadata().getUsage();
+        Integer promptTokens = usage.getPromptTokens();
+        Integer completionTokens = usage.getCompletionTokens();
+        if (promptTokens != null && promptTokens > 0) {
+            meterRegistry.counter("ai.llm.tokens", "scene", "rag-qa", "model", model, "type", "prompt")
+                    .increment(promptTokens);
+        }
+        if (completionTokens != null && completionTokens > 0) {
+            meterRegistry.counter("ai.llm.tokens", "scene", "rag-qa", "model", model, "type", "completion")
+                    .increment(completionTokens);
+        }
     }
 
     private String snippet(String text) {

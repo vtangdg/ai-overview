@@ -1,11 +1,51 @@
 # Prometheus 和 Grafana 监控配置
 
-本项目集成了 Prometheus 和 Grafana，用于监控后端服务的运行状态。
+本项目集成了 Prometheus 和 Grafana，用于监控后端服务的运行状态。监控栈在 `docker-compose.yml` 中归属于 `monitoring` profile，**默认 `docker compose up` 不启动**（避免日常占用资源），按需一条命令拉起。
 
 ## 版本信息
 
 - Prometheus: v3.8.0
 - Grafana: 12.3
+
+## 启动方式
+
+```bash
+# 日常：只启动后端（不启动监控）
+docker compose up -d
+
+# 需要监控时：一键拉起 Prometheus + Grafana
+docker compose --profile monitoring up -d
+
+# 只想看某个服务
+docker compose up -d prometheus
+```
+
+## 自定义业务指标（RAG + LLM）
+
+除 Micrometer 默认的 JVM / HTTP 指标外，RAG 链路额外暴露以下业务指标：
+
+| 指标（Prometheus 名称） | 类型 | 含义 |
+| --- | --- | --- |
+| `ai_rag_questions_total{outcome="answered\|rejected\|error"}` | Counter | 问答请求计数，按结果维度区分（成功流式回答 / 库外拒答 / 异常） |
+| `ai_rag_retrieval_seconds` | Timer | 向量检索耗时分布（p50/p95 可用 `histogram_quantile` 查询） |
+| `ai_rag_ttft_seconds` | Timer | **首字延迟**（TTFT）：从进入处理逻辑到第一个回答增量到达，流式体验的核心感知指标 |
+| `ai_rag_sources` | DistributionSummary | 每次问答检索命中的知识片段数（反映 topK 命中质量） |
+| `ai_rag_score` | DistributionSummary | 检索命中片段的相似度分数分布，整体下移说明检索质量在漂移 |
+| `ai_rag_ratelimited_total` | Counter | 限流触发次数（用于评估 20 次/小时阈值是否合理） |
+| `ai_llm_tokens_total{scene="rag-qa", model, type="prompt\|completion"}` | Counter | **Token 消耗**，输入输出分开计，按模型与场景打 tag，Grafana 中乘单价即成本面板 |
+
+Token 计量实现说明：
+- 流式链路不用 `.stream().content()`（该捷径会丢掉 usage 元数据），改为 `.stream().chatResponse()`，从流末尾的 usage chunk 读取 prompt/completion tokens；
+- 请求侧通过 `OpenAiChatOptions.streamUsage(true)` 要求上游返回 usage（`rag.usage-in-stream` 配置项可关——个别 OpenAI 兼容端点不支持 `stream_options` 参数时会 400，此时关闭该项，代价是没有 token 指标）；
+- usage 用 `AtomicBoolean` 防重复累计。
+
+已随仓库提供自动装配的 Grafana 看板（`grafana/provisioning/dashboards/ai-overview.json`，文件夹 "AI Overview"），9 个面板：问答速率（按结果）、拒答率、命中片段数、检索耗时 p50/p95、HTTP 请求速率、**首字延迟 p50/p95、Token 消耗速率、限流触发、命中分数均值**。
+
+常用 PromQL：
+- 拒答率：`sum(rate(ai_rag_questions_total{outcome="rejected"}[30m])) / sum(rate(ai_rag_questions_total[30m]))`
+- 检索 p95：`histogram_quantile(0.95, sum(rate(ai_rag_retrieval_seconds_bucket[5m])) by (le))`
+- 首 token p95：`histogram_quantile(0.95, sum(rate(ai_rag_ttft_seconds_bucket[5m])) by (le))`
+- 单次问答平均输入 token：`rate(ai_llm_tokens_total{type="prompt"}[5m]) / rate(ai_rag_questions_total{outcome="answered"}[5m])`
 
 ## 配置说明
 

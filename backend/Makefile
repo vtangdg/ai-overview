@@ -59,8 +59,7 @@ docker-compose-up:
 	@echo "✅ 所有服务已启动"
 	@echo "📊 查看日志: docker compose -f $(DOCKER_COMPOSE_FILE) logs -f"
 	@echo "🌐 后端访问地址: http://localhost:8090"
-	@echo "📈 Prometheus访问地址: http://localhost:9090"
-	@echo "📊 Grafana访问地址: http://localhost:3000"
+	@echo "ℹ️  监控栈（Prometheus/Grafana）按需启动: make docker-compose-monitoring"
 
 ## Docker Compose 构建并启动服务（一步完成）
 docker-compose-up-build:
@@ -69,8 +68,15 @@ docker-compose-up-build:
 	@echo "✅ 所有服务已构建并启动"
 	@echo "📊 查看日志: docker compose -f $(DOCKER_COMPOSE_FILE) logs -f"
 	@echo "🌐 后端访问地址: http://localhost:8090"
+	@echo "ℹ️  监控栈（Prometheus/Grafana）按需启动: make docker-compose-monitoring"
+
+## 启动监控栈（Prometheus + Grafana，monitoring profile，按需占用资源）
+docker-compose-monitoring:
+	@echo "=== 启动监控栈 ==="
+	@docker compose -f $(DOCKER_COMPOSE_FILE) --profile monitoring up -d
+	@echo "✅ 监控栈已启动"
 	@echo "📈 Prometheus访问地址: http://localhost:9090"
-	@echo "📊 Grafana访问地址: http://localhost:3000"
+	@echo "📊 Grafana访问地址: http://localhost:3000（看板已自动装配，文件夹 AI Overview）"
 
 ## Docker Compose 查看日志
 docker-compose-logs:
@@ -99,4 +105,4 @@ docker-clean-images-unused:
 	@docker image prune -af
 	@echo "✅ 未使用的镜像已清理"
 
-.PHONY: env-init check-env docker-compose-stop docker-compose-clean docker-compose-clean-full docker-compose-up docker-compose-up-build docker-compose-logs docker-compose-status docker-clean-images-dangling docker-clean-images-unused
+.PHONY: env-init check-env docker-compose-stop docker-compose-clean docker-compose-clean-full docker-compose-up docker-compose-up-build docker-compose-monitoring docker-compose-logs docker-compose-status docker-clean-images-dangling docker-clean-images-unused

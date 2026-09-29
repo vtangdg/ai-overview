@@ -7,9 +7,13 @@ import com.aioverview.backend.aidemo.service.RateLimiterService;
 import com.aioverview.backend.aidemo.service.rag.RagIndexService;
 import com.aioverview.backend.aidemo.service.rag.RagQaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.core.instrument.DistributionSummary;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.ai.document.Document;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.ServerSentEvent;
@@ -18,6 +22,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * RAG 站内知识问答控制器
@@ -42,17 +47,26 @@ public class RagController {
     private final RateLimiterService rateLimiterService;
     private final ObjectMapper objectMapper;
     private final RagProperties props;
+    private final MeterRegistry meterRegistry;
+
+    /** 检索命中分数分布（构造器中注册：字段初始化时 meterRegistry 尚未注入） */
+    private final DistributionSummary ragScoreSummary;
 
     public RagController(RagQaService ragQaService,
                          RagIndexService ragIndexService,
                          RateLimiterService rateLimiterService,
                          ObjectMapper objectMapper,
-                         RagProperties props) {
+                         RagProperties props,
+                         MeterRegistry meterRegistry) {
         this.ragQaService = ragQaService;
         this.ragIndexService = ragIndexService;
         this.rateLimiterService = rateLimiterService;
         this.objectMapper = objectMapper;
         this.props = props;
+        this.meterRegistry = meterRegistry;
+        this.ragScoreSummary = DistributionSummary.builder("ai.rag.score")
+                .description("检索命中片段的相似度分数分布（用于监测检索质量漂移）")
+                .register(meterRegistry);
     }
 
     @GetMapping("/test")
@@ -120,15 +134,35 @@ public class RagController {
             return Flux.just(errorEvent("问题不能为空"), doneEvent());
         }
         if (!rateLimiterService.isAllowed("rag-qa:" + httpRequest.getRemoteAddr())) {
+            meterRegistry.counter("ai.rag.ratelimited").increment();
             return Flux.just(errorEvent("提问太频繁了，请稍后再试"), doneEvent());
         }
 
+        // 首字延迟（TTFT）：从进入处理逻辑到第一个回答增量到达，是流式体验的核心感知指标
+        Timer.Sample ttftSample = Timer.start(meterRegistry);
+        AtomicBoolean firstChunk = new AtomicBoolean(false);
+
         return Flux.defer(() -> {
             // 检索查询融合了最近一轮问题，解决多轮追问中代词无语义的问题
-            RagQaService.RetrievalResult result = ragQaService.retrieve(ragQaService.buildRetrievalQuery(request));
+            Timer.Sample retrievalSample = Timer.start(meterRegistry);
+            RagQaService.RetrievalResult result =
+                    ragQaService.retrieve(ragQaService.buildRetrievalQuery(request));
+            retrievalSample.stop(meterRegistry.timer("ai.rag.retrieval"));
+            DistributionSummary.builder("ai.rag.sources")
+                    .description("每次问答检索命中的知识片段数")
+                    .register(meterRegistry)
+                    .record(result.sources().size());
+            // 命中分数分布：整体下移说明检索质量在漂移（如笔记内容结构变化）
+            for (Document doc : result.documents()) {
+                Double score = doc.getScore();
+                if (score != null) {
+                    ragScoreSummary.record(score);
+                }
+            }
 
             // 库外未命中：直接拒答，不调用 LLM（宁可拒答，不可瞎答）
             if (result.isEmpty()) {
+                ragQuestion("rejected");
                 return Flux.just(
                         event("rejected", "该问题超出了本站知识库的覆盖范围。你可以浏览知识笔记，或换一个与 AI 技术相关的问题。"),
                         doneEvent());
@@ -140,12 +174,27 @@ public class RagController {
             return Flux.concat(
                     Flux.just(event("sources", sourcesJson)),
                     ragQaService.streamAnswer(prompt)
-                            .map(chunk -> event("message", normalizeLineBreaks(chunk))),
-                    Flux.just(doneEvent()));
+                            .map(chunk -> {
+                                if (firstChunk.compareAndSet(false, true)) {
+                                    ttftSample.stop(meterRegistry.timer("ai.rag.ttft"));
+                                }
+                                return event("message", normalizeLineBreaks(chunk));
+                            }),
+                    Flux.just(doneEvent()))
+                    .doOnComplete(() -> ragQuestion("answered"));
         }).onErrorResume(error -> {
             log.error("RAG 问答处理异常", error);
+            ragQuestion("error");
             return Flux.just(errorEvent("回答生成失败，请稍后重试"), doneEvent());
         });
+    }
+
+    /**
+     * RAG 问答业务指标：按结果维度计数（answered / rejected / error），
+     * 经 Prometheus 暴露为 ai_rag_questions_total，支撑拒答率、问答量等看板。
+     */
+    private void ragQuestion(String outcome) {
+        meterRegistry.counter("ai.rag.questions", "outcome", outcome).increment();
     }
 
     private void prepareSseResponse(HttpServletResponse response) {

@@ -45,4 +45,11 @@ public class RagProperties {
 
     /** 片段最小字符数，过短的片段不入库 */
     private int minChunkChars = 30;
+
+    /**
+     * 流式请求是否要求上游返回 usage（stream_options.include_usage），
+     * 用于 token 计量。DeepSeek 支持该参数；若切换到不兼容 stream_options
+     * 的模型端点导致请求 400，把该项置为 false 即可（代价是拿不到 token 指标）。
+     */
+    private boolean usageInStream = true;
 }
