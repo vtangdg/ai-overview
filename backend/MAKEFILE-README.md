@@ -18,12 +18,12 @@
 make env-init
 ```
 
-- **功能**：创建 `.env` 文件并设置默认值
+- **功能**：创建仓库根目录 `../.env` 文件并设置默认值（与 docker-compose.yml 同级，compose 原生可读）
 - **使用场景**：首次使用项目时初始化环境配置
 - **输出示例**：
   ```
-  创建 .env 文件...
-  ✅ 请编辑 .env 文件设置你的 DEEPSEEK_API_KEY
+  创建 ../.env 文件...
+  ✅ 请编辑仓库根目录的 .env 文件设置你的 DEEPSEEK_API_KEY 和 GLM_API_KEY
   ```
   或
   ```
@@ -36,7 +36,7 @@ make env-init
 make check-env
 ```
 
-- **功能**：验证 `.env` 文件中的 `DEEPSEEK_API_KEY` 和 `GLM_API_KEY` 是否正确设置
+- **功能**：验证仓库根目录 `.env` 中的 `DEEPSEEK_API_KEY` 和 `GLM_API_KEY` 是否正确设置
 - **使用场景**：在启动服务前确保 API Key 已配置
 - **输出示例**：
   ```
@@ -44,13 +44,13 @@ make check-env
   ```
   或
   ```
-  ❌ 错误: 请在 .env 文件中设置 DEEPSEEK_API_KEY
-  💡 运行: make env-init 然后编辑 .env 文件
+  ❌ 错误: 请在仓库根目录 .env 中设置 DEEPSEEK_API_KEY
+  💡 运行: make env-init 然后编辑 ../.env 文件
   ```
   或
   ```
-  ❌ 错误: 请在 .env 文件中设置 GLM_API_KEY
-  💡 运行: make env-init 然后编辑 .env 文件
+  ❌ 错误: 请在仓库根目录 .env 中设置 GLM_API_KEY
+  💡 运行: make env-init 然后编辑 ../.env 文件
   ```
 
 ## Docker Compose 服务管理
@@ -202,7 +202,7 @@ make docker-clean-images-unused
 
 ```bash
 make env-init
-# 编辑 .env 文件设置 DEEPSEEK_API_KEY
+# 编辑仓库根目录的 .env 文件设置 DEEPSEEK_API_KEY
 make check-env
 make docker-compose-up-build
 ```

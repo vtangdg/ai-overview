@@ -10,7 +10,7 @@ echo "=== AI Overview 本地开发环境启动 ==="
 # 检查是否已设置DEEPSEEK_API_KEY环境变量
 if [ -z "$DEEPSEEK_API_KEY" ]; then
     echo "⚠️  警告: DEEPSEEK_API_KEY环境变量未设置"
-    echo "请设置此环境变量或创建backend/.env文件"
+    echo "请设置此环境变量（export 到 shell）或创建仓库根目录 .env 文件"
     echo "示例: export DEEPSEEK_API_KEY=your_api_key_here"
     echo ""
 fi

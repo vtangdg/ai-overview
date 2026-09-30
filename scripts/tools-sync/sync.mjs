@@ -31,7 +31,8 @@ const ICON_DIR = path.join(ROOT, 'frontend', 'public', 'tool-icon');
 const INPUT_FILE = path.join(__dirname, 'input', 'pending-tools.md');
 
 const LLM_API_URL = process.env.LLM_API_URL || 'https://api.deepseek.com/chat/completions';
-const LLM_MODEL = process.env.LLM_MODEL || 'deepseek-chat';
+// 2026-09 官方文档：当前模型名为 deepseek-flash；deepseek-chat 为旧别名，随时可能退役
+const LLM_MODEL = process.env.LLM_MODEL || 'deepseek-flash';
 const LLM_API_KEY = process.env.DEEPSEEK_API_KEY || process.env.LLM_API_KEY;
 
 const log = (...args) => console.log('[tools-sync]', ...args);

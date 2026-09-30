@@ -44,3 +44,12 @@ doc/
 
 # Docker相关
 .dockerignore
+# 精确控制构建上下文：只保留要 COPY 进镜像的 fat jar
+# （注意 /target 只匹配 backend 根目录，ai-demo/target 的 classes 等中间产物会全量进上下文）
+ai-demo/target/*
+!ai-demo/target/backend-ai-demo-0.0.1-SNAPSHOT.jar
+
+# 运行时通过 volume/挂载提供，不需要进镜像与上下文
+ai-demo/db/
+ai-demo/logs/
+**/logs/

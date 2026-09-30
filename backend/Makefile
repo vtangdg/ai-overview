@@ -1,21 +1,25 @@
-## 条件导入环境变量（如果文件存在）
-ifneq (,$(wildcard .env))
-include .env
-export
+## 条件导入环境变量（统一放仓库根目录，与 docker-compose.yml 同级，compose 原生可读）
+ifneq (,$(wildcard ../.env))
+include ../.env
 endif
+
+## 显式导出白名单变量给子进程（docker compose）。
+## 不要用裸 export：那会把 CURDIR/SHELL 等 make 内建变量一并导出污染容器环境，
+## 且 .env 里若出现 PATH 等名字会覆盖 make 自身运行环境
+export DEEPSEEK_API_KEY GLM_API_KEY
 
 ## 变量定义
 DEEPSEEK_API_KEY ?= your_api_key_here_please_set_in_env_file
 GLM_API_KEY ?= your_api_key_here_please_set_in_env_file
 DOCKER_COMPOSE_FILE ?= ../docker-compose.yml
 
-## 初始化环境文件
+## 初始化环境文件（仓库根目录）
 env-init:
-	@if [ ! -f .env ]; then \
-		echo "创建 .env 文件..."; \
-		echo "DEEPSEEK_API_KEY=your_api_key_here_please_set_in_env_file" > .env; \
-		echo "GLM_API_KEY=your_api_key_here_please_set_in_env_file" >> .env; \
-		echo "✅ 请编辑 .env 文件设置你的 DEEPSEEK_API_KEY 和 GLM_API_KEY"; \
+	@if [ ! -f ../.env ]; then \
+		echo "创建 ../.env 文件..."; \
+		echo "DEEPSEEK_API_KEY=your_api_key_here_please_set_in_env_file" > ../.env; \
+		echo "GLM_API_KEY=your_api_key_here_please_set_in_env_file" >> ../.env; \
+		echo "✅ 请编辑仓库根目录的 .env 文件设置你的 DEEPSEEK_API_KEY 和 GLM_API_KEY"; \
 	else \
 		echo "✅ .env 文件已存在"; \
 	fi
@@ -23,13 +27,13 @@ env-init:
 ## 检查 API Key
 check-env:
 	@if [ "$(DEEPSEEK_API_KEY)" = "your_api_key_here_please_set_in_env_file" ]; then \
-		echo "❌ 错误: 请在 .env 文件中设置 DEEPSEEK_API_KEY"; \
-		echo "💡 运行: make env-init 然后编辑 .env 文件"; \
+		echo "❌ 错误: 请在仓库根目录 .env 中设置 DEEPSEEK_API_KEY"; \
+		echo "💡 运行: make env-init 然后编辑 ../.env 文件"; \
 		exit 1; \
 	fi
 	@if [ "$(GLM_API_KEY)" = "your_api_key_here_please_set_in_env_file" ]; then \
-		echo "❌ 错误: 请在 .env 文件中设置 GLM_API_KEY"; \
-		echo "💡 运行: make env-init 然后编辑 .env 文件"; \
+		echo "❌ 错误: 请在仓库根目录 .env 中设置 GLM_API_KEY"; \
+		echo "💡 运行: make env-init 然后编辑 ../.env 文件"; \
 		exit 1; \
 	fi
 	@echo "✅ 环境变量检查通过"
@@ -52,8 +56,8 @@ docker-compose-clean-full:
 	@docker compose -f $(DOCKER_COMPOSE_FILE) down -v --remove-orphans
 	@echo "✅ 所有资源（包括卷）已清理"
 
-## Docker Compose 启动服务
-docker-compose-up:
+## Docker Compose 启动服务（先校验 API Key，避免占位符被静默传进容器）
+docker-compose-up: check-env
 	@echo "=== 启动服务 ==="
 	@docker compose -f $(DOCKER_COMPOSE_FILE) up -d
 	@echo "✅ 所有服务已启动"
@@ -62,7 +66,7 @@ docker-compose-up:
 	@echo "ℹ️  监控栈（Prometheus/Grafana）按需启动: make docker-compose-monitoring"
 
 ## Docker Compose 构建并启动服务（一步完成）
-docker-compose-up-build:
+docker-compose-up-build: check-env
 	@echo "=== 构建并启动服务（一步完成） ==="
 	@docker compose -f $(DOCKER_COMPOSE_FILE) up --build -d
 	@echo "✅ 所有服务已构建并启动"
@@ -71,7 +75,7 @@ docker-compose-up-build:
 	@echo "ℹ️  监控栈（Prometheus/Grafana）按需启动: make docker-compose-monitoring"
 
 ## 启动监控栈（Prometheus + Grafana，monitoring profile，按需占用资源）
-docker-compose-monitoring:
+docker-compose-monitoring: check-env
 	@echo "=== 启动监控栈 ==="
 	@docker compose -f $(DOCKER_COMPOSE_FILE) --profile monitoring up -d
 	@echo "✅ 监控栈已启动"

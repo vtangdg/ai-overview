@@ -31,7 +31,7 @@ frontend/public/tool-icon/*       # 工具图标
 ## 方式二：本地运行
 
 ```bash
-export DEEPSEEK_API_KEY=sk-xxx   # 或写在 backend/.env 中复用
+export DEEPSEEK_API_KEY=sk-xxx   # 或写在仓库根目录 .env 中复用
 node scripts/tools-sync/sync.mjs
 ```
 
@@ -51,7 +51,7 @@ node scripts/tools-sync/sync.mjs
 智能体应遵循的标准流程（已写入 `CLAUDE.md`，Trae 见 `.trae/rules/project_rules.md`）：
 
 1. **方式A（智能体本地执行，推荐）**：智能体自带模型能力，直接编辑 `frontend/data/tools.json` + 生成详情 md + 抓图标，无需 API key，也不需要跑脚本
-2. **方式B（脚本模式）**：把清单写入 `scripts/tools-sync/input/pending-tools.md` → 从 `backend/.env` 读取 `DEEPSEEK_API_KEY` → 执行 `node scripts/tools-sync/sync.mjs`（脚本自己调 LLM）。适用于 CI 或本地没有智能体的场景
+2. **方式B（脚本模式）**：把清单写入 `scripts/tools-sync/input/pending-tools.md` → 从仓库根目录 `.env` 读取 `DEEPSEEK_API_KEY` → 执行 `node scripts/tools-sync/sync.mjs`（脚本自己调 LLM）。适用于 CI 或本地没有智能体的场景
 
 两种方式的收尾都一样：校验通过后由你确认，再提交部署。
 

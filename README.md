@@ -92,7 +92,7 @@ cd backend
 
 ```bash
 make env-init
-# 编辑 .env 文件设置 DEEPSEEK_API_KEY
+# 编辑仓库根目录的 .env 文件设置 DEEPSEEK_API_KEY
 make check-env
 make docker-compose-up-build
 ```

@@ -202,7 +202,7 @@ Docker 集成：`docker-compose` 将 `./frontend/public/lib` 只读挂载到后�
 
 **本地调试要点（IDEA / CLI）**：
 - `mvn spring-boot:run` 的 fork 工作目录固定是模块目录 `backend/ai-demo/`，而 IDEA 运行配置的工作目录若是 `backend/`，则 dev 配置里相对路径（`./ai-demo/db`、`../frontend/...`）按 `backend/` 解析——**两种启动方式的相对路径基准不同**，命令行验证时用 `--spring.datasource.url` / `--rag.notes-paths` 等启动参数覆盖即可；
-- IDEA 跑 RAG 需要环境变量 `GLM_API_KEY`（运行配置手动加，或装 EnvFile 插件读 `backend/.env`）；
+- IDEA 跑 RAG 需要环境变量 `GLM_API_KEY`（运行配置手动加，或装 EnvFile 插件读仓库根目录 `.env`）；
 - 检索是纯本地计算，索引文件生成后可零成本反复断点调试检索质量。
 
 ### 2.10 前端实现落点（2026-09-29 更新）

@@ -198,16 +198,25 @@ public class RagQaService {
 
     /**
      * 记录 token 消耗：ai_llm_tokens_total{scene, model, type=prompt|completion}。
-     * usage 只在流末尾出现一次，用 usageRecorded 防重复累计。
+     * 注意顺序：内容 chunk 的 getUsage() 通常不是 null 而是全 0 的空 Usage 对象，
+     * 必须先判断"有真实 token 数"再 CAS，否则第一个内容 chunk 就会占用掉
+     * usageRecorded 开关，流末尾真正的 usage 包反而被挡掉（曾导致指标一直缺失）。
      */
     private void recordUsage(ChatResponse resp, String model, AtomicBoolean usageRecorded) {
-        if (resp.getMetadata() == null || resp.getMetadata().getUsage() == null
-                || !usageRecorded.compareAndSet(false, true)) {
+        if (resp.getMetadata() == null || resp.getMetadata().getUsage() == null) {
             return;
         }
         Usage usage = resp.getMetadata().getUsage();
         Integer promptTokens = usage.getPromptTokens();
         Integer completionTokens = usage.getCompletionTokens();
+        boolean hasRealUsage = (promptTokens != null && promptTokens > 0)
+                || (completionTokens != null && completionTokens > 0);
+        if (!hasRealUsage) {
+            return;
+        }
+        if (!usageRecorded.compareAndSet(false, true)) {
+            return;
+        }
         if (promptTokens != null && promptTokens > 0) {
             meterRegistry.counter("ai.llm.tokens", "scene", "rag-qa", "model", model, "type", "prompt")
                     .increment(promptTokens);

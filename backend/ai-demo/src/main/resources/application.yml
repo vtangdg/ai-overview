@@ -30,7 +30,8 @@ spring:
       base-url: https://api.deepseek.com
       chat:
         options:
-          model: deepseek-chat
+          # 2026-09 官方文档：当前模型名为 deepseek-flash（旧别名 deepseek-chat 已不在文档 model 列表）
+          model: deepseek-flash
           temperature: 0.7
           max-tokens: 8000
     # GLM 配置（通过环境变量）
@@ -76,7 +77,7 @@ rag:
   embedding-api-key: ${GLM_API_KEY:}
   embedding-model: embedding-3
   embedding-dimensions: 2048
-  # 生成回答的对话模型（对应策略工厂模型名）
+  # 生成回答的对话模型（对应策略工厂模型名）：glm=glm-4.7-flash（免费），deepseek=deepseek-flash（质量更好）
   chat-model: deepseek
   # 切块参数
   max-section-chars: 1200

@@ -1,8 +1,9 @@
 # 基础镜像
 FROM eclipse-temurin:21-jre-alpine
 
-# 设置时区
-RUN apk add --no-cache tzdata && \
+# 设置时区（apk 换阿里云源：官方 dl-cdn 在国内/受限网络下常挂起导致构建卡死）
+RUN sed -i 's#https://dl-cdn.alpinelinux.org#https://mirrors.aliyun.com#g' /etc/apk/repositories && \
+    apk add --no-cache tzdata && \
     ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
     echo "Asia/Shanghai" > /etc/timezone
 

@@ -133,7 +133,7 @@ public class XxxService {
 3. 校验：`frontend/data/tools.json` 可被 JSON.parse、条目按 id 升序、`cd frontend && npx tsc --noEmit` 通过
 4. 向用户汇报新增/修改的内容，完成后清空 pending-tools.md（如有）
 
-方式B（脚本模式，仅用于 CI 或本地无智能体场景）：把清单写入 `scripts/tools-sync/input/pending-tools.md`，从 `backend/.env` 读取 `DEEPSEEK_API_KEY`，运行 `node scripts/tools-sync/sync.mjs`——脚本会自己调 LLM 生成内容并更新文件。
+方式B（脚本模式，仅用于 CI 或本地无智能体场景）：把清单写入 `scripts/tools-sync/input/pending-tools.md`，从仓库根目录 `.env` 读取 `DEEPSEEK_API_KEY`，运行 `node scripts/tools-sync/sync.mjs`——脚本会自己调 LLM 生成内容并更新文件。
 
 **移除工具**：运行 `node scripts/tools-sync/sync.mjs --remove 工具名`（忽略大小写，无需 API key），脚本会自动清理数据条目、详情 md 和不再被引用的图标，并按 id 重新排序。
 
@@ -162,7 +162,7 @@ date: 2024-01-01
 - `application-dev.yml` - 开发环境
 - `application-prod.yml` - 生产环境
 
-**环境变量**: `backend/.env`
+**环境变量**: 仓库根目录 `.env`（与 docker-compose.yml 同级；compose 原生读取，`backend/Makefile` 通过 `include ../.env` 读取。IDEA/mvn 裸跑后端时环境变量来自 `~/.zshrc` export，需与 .env 保持一致）
 ```bash
 DEEPSEEK_API_KEY=sk-xxxxx
 GLM_API_KEY=xxxxx

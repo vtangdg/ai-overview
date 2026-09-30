@@ -1,9 +1,17 @@
 apiVersion: 1
 
+# 先删除同名旧数据源再重建：Grafana 不允许原地修改已存在数据源的 uid，
+# volume 里残留过不带 uid 的旧记录时，直接重启会 crash-loop 报
+# "Datasource provisioning error: data source not found"（报错有误导性）
+deleteDatasources:
+  - name: Prometheus
+    orgId: 1
+
 datasources:
   - name: Prometheus
-    type: prometheus
+    # 必须与 dashboards/ai-overview.json 里面板引用的 uid 一致
     uid: prometheus
+    type: prometheus
     access: proxy
     url: http://prometheus:9090
     isDefault: true
