@@ -98,7 +98,7 @@
     },
     {
       "id": 6,
-      "title": "首字延迟（TTFT）p50 / p95",
+      "title": "RAG 首字延迟（TTFT）p50 / p95",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
@@ -119,14 +119,14 @@
     },
     {
       "id": 7,
-      "title": "Token 消耗速率（按模型 / 类型）",
+      "title": "Token 消耗速率（按场景 / 模型 / 类型）",
       "type": "timeseries",
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
-          "expr": "sum(rate(ai_llm_tokens_total[5m])) by (model, type)",
-          "legendFormat": "{{model}}/{{type}}"
+          "expr": "sum(rate(ai_llm_tokens_total[5m])) by (scene, model, type)",
+          "legendFormat": "{{scene}} · {{model}}/{{type}}"
         }
       ],
       "fieldConfig": {

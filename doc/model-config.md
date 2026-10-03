@@ -135,6 +135,7 @@ curl -s http://localhost:8090/actuator/prometheus | grep -E "^ai_optimizer|^ai_l
 
 ## 七、已知限制
 
-- **前端没有模型选择开关**。`frontend/src/features/prompt-optimizer/lib/templates.ts` 里的 `modelOptions` / `availableModels`，以及 `api.ts` 的 `getAvailableModels()` 是**死代码**（无组件引用）；界面上切换模型需要先把这几个文件复活并接上 `/api/prompt-optimizer/models`。
+- **前端没有模型选择开关**。界面上切换模型需要新建下拉控件、把 `model` 透传进 `generate-stream` / `optimize-stream`；后端 `GET /api/prompt-optimizer/models` 端点现成可用（返回 `{模型id: 是否可用}`），直接复用即可。
+  > 此前 `templates.ts` 的 `modelOptions` / `availableModels`、`api.ts` 的 `getAvailableModels()` 一直是无组件引用的死代码，已于 2026-10-03 连同 `types.ts` 的 `ModelOption` / `SavedPrompt` 一起删除。设计方案里的同名示例仍在 [design/prompt-optimizer-simple.md](design/prompt-optimizer-simple.md)（属设计留痕，不是当前代码）。
 - **概念解释器没有独立模型配置**，固定使用 `spring.ai.openai.chat.options.model`（见第二节说明）。
 - 智谱 `glm-4.7-flash` 是免费档位，质量低于 DeepSeek，适合提示词优化这类对质量不敏感的场景。

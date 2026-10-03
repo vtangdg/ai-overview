@@ -99,38 +99,39 @@ pnpm dev        # http://localhost:3010
 BACKEND_API_URL=http://192.168.1.10:8090 pnpm dev
 ```
 
-## 四、让监控看到本地的后端
-
-后端跑在本地、监控跑在容器时，Prometheus 必须用 `host.docker.internal` 才能抓到宿主机：
-
-| 后端跑在哪 | Prometheus 配置 | 目标地址 |
-| --- | --- | --- |
-| 容器内 | `prometheus/prometheus.yml` | `backend:8090`（容器网络内） |
-| 宿主机（IDEA / mvn） | `prometheus/prometheus-local.yml` | `host.docker.internal:8090` |
-
-`docker-compose-local.yml` 本来就是为此准备的（挂载 `prometheus-local.yml`），但**它里面的 prometheus 和 grafana 服务目前全被注释掉了**，直接 `up` 起不来任何东西。两种做法：
+## 四、启动监控栈
 
 ```bash
-# 做法一（推荐）：用主编排的 monitoring profile —— 后端也一起进容器
-cd backend && make docker-compose-monitoring
-
-# 做法二：后端本地跑，只把监控放容器 —— 需要先把 docker-compose-local.yml 里注释的服务取消注释
-docker compose -f docker-compose-local.yml up -d
+cd backend
+make docker-compose-monitoring        # = docker compose --profile monitoring up -d
 ```
 
-Grafana 在两种做法下都由 `grafana/provisioning/` 自动装配数据源与看板。
+- Prometheus：http://localhost:9090
+- Grafana：http://localhost:3000（数据源与看板由 `grafana/provisioning/` 自动装配）
+
+抓取目标写死在 `prometheus/prometheus.yml` 里：`backend:8090`，指的是**容器网络内的后端**。`make docker-compose-monitoring` 会把后端容器一并拉起（default profile + monitoring profile），所以它和 IDEA 里跑的后端**抢同一个 8090**，同时只能存在一个。
+
+⚠️ **后端跑在宿主机（IDEA / mvn）时，容器里的 Prometheus 抓不到它**——`backend` 这个主机名解析到的是后端容器，与宿主机的 `localhost:8090` 是两回事。需要在 IDEA 里调试后端又想看指标，就得自己临时起一个 Prometheus：
+
+```bash
+cat > /tmp/prom-local.yml <<'EOF'
+global:
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: ai-overview-backend
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['host.docker.internal:8090']
+EOF
+docker run -d --name prom-local -p 9090:9090 \
+  --add-host host.docker.internal:host-gateway \
+  -v /tmp/prom-local.yml:/etc/prometheus/prometheus.yml \
+  prom/prometheus:v3.8.0
+```
+
+用完 `docker rm -f prom-local` 清掉；9090 被主监控栈占用时把 `-p` 改成 `9091:9090`。
 
 > 指标口径与看板说明见 [monitoring.md](monitoring.md)。
-
-## 五、`start-dev.sh` 的现状（暂不可用）
-
-根目录的 `start-dev.sh` 是早期的一键脚本，**目前跑不通**，原因有三：
-
-1. 它执行 `docker compose -f docker-compose-local.yml up -d`，而该文件里的服务全被注释 → 起不来监控，但脚本仍会打印「✅ 监控服务启动成功」；
-2. 它提示的 `./mvnw spring-boot:run` 不存在（`backend/` 下没有 Maven Wrapper）；
-3. 它提示的 `make docker-run` 这个 target 在 `backend/Makefile` 里也没有。
-
-需要修的话，按第二节方式 B + 第四节的监控做法替换即可。
 
 ## 六、常见问题
 

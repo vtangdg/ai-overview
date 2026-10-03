@@ -1,4 +1,4 @@
-import type { PromptTemplate, ModelOption } from './types';
+import type { PromptTemplate } from './types';
 
 /**
  * Prompt 示例库
@@ -94,17 +94,3 @@ export const templates: PromptTemplate[] = [
     task: '请根据下面的表结构和查询需求，写一条{数据库类型}查询语句，并说明实现思路和可能的性能问题'
   }
 ];
-
-/**
- * 支持的AI模型列表
- */
-export const modelOptions: ModelOption[] = [
-  { id: 'glm', name: '智谱GLM', description: '清华大语言模型' },
-  { id: 'deepseek', name: 'DeepSeek', description: '高性能大语言模型' },
-  { id: 'doubao', name: '豆包', description: '字节跳动AI助手（暂不可用）' }
-];
-
-/**
- * 可用模型列表
- */
-export const availableModels: string[] = ['glm', 'deepseek'];

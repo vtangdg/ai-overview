@@ -1,10 +1,6 @@
 import { isAbortError, postSse } from '@/lib/sse';
 import type { GenerateRequest, OptimizeRequest, PromptResponse } from './types';
 
-interface ModelAvailability {
-  [key: string]: boolean;
-}
-
 /**
  * 流式回调
  */
@@ -70,18 +66,6 @@ async function postStream(
  * 提示词优化器 API 封装
  */
 export const promptOptimizerApi = {
-  /**
-   * 获取可用的模型列表
-   */
-  async getAvailableModels(): Promise<ModelAvailability> {
-    const response = await fetch('/api/prompt-optimizer/models');
-    if (!response.ok) {
-      throw new Error(`获取模型列表失败: ${response.statusText}`);
-    }
-    const data = await response.json();
-    return data.models;
-  },
-
   /**
    * 流式生成提示词：模型每产出一段文本就通过 onDelta 回调
    * @param task 任务描述

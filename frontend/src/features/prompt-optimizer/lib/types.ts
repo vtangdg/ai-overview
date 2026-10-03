@@ -28,15 +28,6 @@ export interface PromptResponse {
 }
 
 /**
- * 模型选项
- */
-export interface ModelOption {
-  id: string;
-  name: string;
-  description: string;
-}
-
-/**
  * 提示词模板
  */
 export interface PromptTemplate {
@@ -45,15 +36,4 @@ export interface PromptTemplate {
   category: string;
   task: string;
   icon: string;
-}
-
-/**
- * 保存的提示词（本地存储）
- */
-export interface SavedPrompt {
-  id: string;
-  title: string;
-  content: string;
-  model: string;
-  createdAt: string;
 }

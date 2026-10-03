@@ -57,6 +57,23 @@ management:
     export:
       prometheus:
         enabled: true
+    # Timer 直方图桶（分位数必需）：不开的话 Prometheus 只导出 _count/_sum/_max，
+    # 看板里所有 histogram_quantile(xxx_bucket) 都会静默查不出数据（面板空白，不报错）。
+    # 开关粒度是「meter 名」，与代码里 meterRegistry.timer("xxx") 的字符串一致。
+    distribution:
+      percentiles-histogram:
+        ai.optimizer.ttft: true
+        ai.rag.retrieval: true
+        ai.rag.ttft: true
+      # 收敛桶边界：默认按 1ms~30s 生成整套桶，对这些指标过宽（序列数白涨）
+      minimum-expected-value:
+        ai.optimizer.ttft: 100ms
+        ai.rag.retrieval: 10ms
+        ai.rag.ttft: 100ms
+      maximum-expected-value:
+        ai.optimizer.ttft: 60s
+        ai.rag.retrieval: 10s
+        ai.rag.ttft: 60s
   # Actuator端点配置
   endpoints:
     web:

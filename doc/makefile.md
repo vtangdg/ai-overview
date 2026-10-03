@@ -86,7 +86,7 @@ docker compose -f ../docker-compose.yml up -d prometheus
 
 > ⚠️ 8090 端口被占用时会启动失败（比如本地 IDEA 里也跑着一份后端）；先停掉其中一个再启容器。
 >
-> ⚠️ `docker-compose-local.yml`（配套 `prometheus/prometheus-local.yml`）里的监控服务**当前全部被注释掉**，所以它起不来任何东西。本地方案已统一到 `docker-compose.yml` 的 `monitoring` profile，详见 [local-dev.md](local-dev.md)。
+> 本地监控统一在 `docker-compose.yml` 的 `monitoring` profile 里，详见 [local-dev.md](local-dev.md) 第四节。
 
 ## 清理与重置
 
