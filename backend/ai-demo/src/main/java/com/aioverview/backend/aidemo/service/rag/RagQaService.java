@@ -13,6 +13,7 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.SimpleVectorStore;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
@@ -40,6 +41,13 @@ public class RagQaService {
     private final RagProperties props;
     private final ChatModelStrategyFactory strategyFactory;
     private final MeterRegistry meterRegistry;
+
+    /**
+     * 问答生成所用模型 id（如 deepseek-flash / glm-4.7-flash），
+     * 可被环境变量 AI_MODEL_RAG_QA 覆盖
+     */
+    @Value("${app.ai.rag-qa-model:deepseek-flash}")
+    private String qaModelId;
 
     public RagQaService(SimpleVectorStore vectorStore, RagProperties props,
                         ChatModelStrategyFactory strategyFactory, MeterRegistry meterRegistry) {
@@ -168,18 +176,21 @@ public class RagQaService {
      * 通过 rag.usage-in-stream 控制，兼容不支持该参数的端点时可关闭）。
      */
     public Flux<String> streamAnswer(String prompt) {
-        ChatClient client = strategyFactory.getStrategy(props.getChatModel()).getChatClient();
+        String modelId = strategyFactory.normalizeModelId(qaModelId);
+        ChatClient client = strategyFactory.getStrategyForModel(modelId).getChatClient();
         if (client == null) {
-            return Flux.error(new IllegalStateException("模型 " + props.getChatModel() + " 不可用，请检查 API Key 配置"));
+            return Flux.error(new IllegalStateException("模型 " + modelId + " 不可用，请检查 API Key 配置"));
         }
-        String model = props.getChatModel();
         AtomicBoolean usageRecorded = new AtomicBoolean(false);
         return client.prompt()
                 .user(prompt)
-                .options(OpenAiChatOptions.builder().streamUsage(props.isUsageInStream()).build())
+                .options(OpenAiChatOptions.builder()
+                        .model(modelId)
+                        .streamUsage(props.isUsageInStream())
+                        .build())
                 .stream()
                 .chatResponse()
-                .doOnNext(resp -> recordUsage(resp, model, usageRecorded))
+                .doOnNext(resp -> recordUsage(resp, modelId, usageRecorded))
                 .mapNotNull(this::extractText)
                 .filter(chunk -> !chunk.isEmpty())
                 .timeout(STREAM_TIMEOUT)

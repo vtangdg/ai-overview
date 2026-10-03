@@ -30,13 +30,16 @@ spring:
       base-url: https://api.deepseek.com
       chat:
         options:
-          # 2026-09 官方文档：当前模型名为 deepseek-flash（旧别名 deepseek-chat 已不在文档 model 列表）
+          # 2026-10-03：deepseek-flash（V4.1-Flash，当前官方模型名）默认开启思考模式，
+          # 思考模式会让提示词生成/RAG 问答这类轻任务首字延迟成倍增加（当日实测）。
+          # 由 DeepSeekThinkingModeConfig 在请求体注入 {"thinking":{"type":"disabled"}} 关闭，
+          # 开关见下方 deepseek.thinking-disabled。
           model: deepseek-flash
           temperature: 0.7
           max-tokens: 8000
-    # GLM 配置（通过环境变量）
+    # GLM 配置（通过环境变量；key 缺省为空时 GlmStrategy 不可用、回退 DeepSeek）
     glm:
-      api-key: ${GLM_API_KEY}
+      api-key: ${GLM_API_KEY:}
       base-url: https://open.bigmodel.cn/api/paas/v4
       chat:
         options:
@@ -77,8 +80,6 @@ rag:
   embedding-api-key: ${GLM_API_KEY:}
   embedding-model: embedding-3
   embedding-dimensions: 2048
-  # 生成回答的对话模型（对应策略工厂模型名）：glm=glm-4.7-flash（免费），deepseek=deepseek-flash（质量更好）
-  chat-model: deepseek
   # 切块参数
   max-section-chars: 1200
   min-chunk-chars: 30
@@ -88,6 +89,22 @@ mybatis:
   type-aliases-package: com.aioverview.backend.aidemo.model
   configuration:
     map-underscore-to-camel-case: true
+
+# DeepSeek 思考模式开关：true = 对 api.deepseek.com 的 /chat/completions 请求体
+# 注入 {"thinking":{"type":"disabled"}}（见 DeepSeekThinkingModeConfig），false = 保持默认（开启思考）
+deepseek:
+  thinking-disabled: true
+
+# 各场景使用的对话模型（模型 id，按前缀路由供应商：deepseek-* → DeepSeek，glm-* → 智谱）。
+# 默认值可被环境变量覆盖，在 .env / 启动环境里设置即可切换，无需改代码：
+#   AI_MODEL_PROMPT_OPTIMIZER=glm-4.7-flash   # 提示词优化器用免费 GLM
+#   AI_MODEL_RAG_QA=deepseek-flash            # RAG 问答用 DeepSeek
+# 注意：glm-* 需要 GLM_API_KEY 可用，否则自动回退 DeepSeek；智谱端点不支持
+# stream_options.include_usage，RAG 场景切到 glm-* 时需把 rag.usage-in-stream 置 false。
+app:
+  ai:
+    prompt-optimizer-model: ${AI_MODEL_PROMPT_OPTIMIZER:deepseek-flash}
+    rag-qa-model: ${AI_MODEL_RAG_QA:deepseek-flash}
 
 # 日志配置
 logging:

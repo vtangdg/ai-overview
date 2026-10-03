@@ -12,7 +12,8 @@ public record GenerateRequest(
             throw new IllegalArgumentException("任务描述不能为空");
         }
         if (model == null || model.trim().isEmpty()) {
-            model = "glm";
+            // 留空由服务层用场景配置（app.ai.prompt-optimizer-model）解析
+            model = "";
         }
     }
 }

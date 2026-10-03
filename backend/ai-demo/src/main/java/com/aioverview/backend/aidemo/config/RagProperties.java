@@ -37,9 +37,6 @@ public class RagProperties {
     /** 向量维度（必须与索引文件一致，否则需重建索引） */
     private int embeddingDimensions = 2048;
 
-    /** 生成回答所用的对话模型（对应策略工厂里的模型名） */
-    private String chatModel = "deepseek";
-
     /** 单个标题章节超过该字符数时按段落二次切分 */
     private int maxSectionChars = 1200;
 
