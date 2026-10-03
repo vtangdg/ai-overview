@@ -1,7 +1,10 @@
+# 前端部署：Vercel + 自有域名
 
-## 前端
-域名配置，这里以在腾讯云购买的域名为例
-将你在腾讯云购买的域名 `example.com` 指向 Vercel 部署的前端项目，主要分为在 Vercel 上绑定域名和在腾讯云配置 DNS 解析两步。操作不难，下面为你梳理详细步骤和注意事项。
+> 最后核对：2026-10-03。本文只覆盖**前端**（Vercel + 腾讯云 DNS）。后端部署见 [../makefile.md](../makefile.md) 与 `.github/workflows/backend-cd.yml`。
+
+## 域名绑定
+
+以在腾讯云购买的域名为例：将域名 `example.com` 指向 Vercel 部署的前端项目，分为「在 Vercel 绑定域名」和「在腾讯云配置 DNS 解析」两步。
 
 ### 🌐 在 Vercel 中添加自定义域名
 

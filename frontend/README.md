@@ -1,64 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# frontend
 
-## Getting Started
+AI Overview 的前端：Next.js 15（App Router）+ React 19 + TypeScript + Tailwind CSS 4。
 
-First, run the development server:
+## 开发
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev      # http://localhost:3010（端口在 package.json 的 dev 脚本里，不是默认 3000）
+pnpm build    # 生产构建
+pnpm lint     # ESLint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+后端接口通过 `next.config.ts` 的 rewrites 代理：`/api/**` → `BACKEND_API_URL`（默认 `http://localhost:8090`），其中 `/api/notes/**` 例外，由 Next.js 自己的路由处理。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+BACKEND_API_URL=http://192.168.1.10:8090 pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 目录约定
 
-## Learn More
+```
+src/
+├── app/                  # 路由与页面组装
+│   ├── concepts/         # 概念库
+│   ├── tools/            # AI 工具箱
+│   ├── notes/            # 知识笔记（含 [slug] 详情）
+│   ├── demos/            # 应用广场（[id] 动态路由）
+│   ├── qa/               # 知识问答
+│   ├── stats/  admin/    # 访问统计与后台
+│   └── api/              # Next.js 自有 API 路由（如 notes）
+├── components/
+│   ├── common/           # 通用组件
+│   ├── demos/            # 应用广场组件（demos-page.tsx 是应用卡片的数据源）
+│   └── qa/               # 知识问答组件
+├── features/             # 按功能组织的业务逻辑（如 features/prompt-optimizer/lib/）
+└── lib/                  # 工具函数（sse.ts 为通用 SSE 解析，问答与优化器共用）
+data/tools.json           # AI 工具箱数据源（唯一真相来源）
+public/lib/notes/         # 知识笔记 Markdown（后端 RAG 索引的输入）
+public/lib/tools/         # 工具详情 Markdown（文件名须与工具 name 完全一致）
+public/tool-icon/         # 工具图标
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 约定
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-
-## 配置项
-
-- `BACKEND_API_URL`：后端API的基础URL，默认值为 `http://localhost:8081/api`。
-
-## 环境变量配置
-
-### 本地开发环境
-1. 复制 `.env.example` 文件并重命名为 `.env.local`
-2. 根据您的本地环境需求修改 `.env.local` 中的配置值
-3. 启动开发服务器，系统会自动加载 `.env.local` 中的环境变量
-
-### 部署环境配置
-
-#### Vercel部署
-1. 在Vercel控制台中打开您的项目
-2. 导航至 "Settings" > "Environment Variables"
-3. 添加所需的环境变量，例如：
-   - `BACKEND_API_URL`：设置为您的生产API基础URL
-
-#### 其他部署方式
-1. 根据您使用的部署平台或CI/CD工具，设置相应的环境变量
-2. 确保所有以 `NEXT_PUBLIC_` 开头的变量都被正确设置，这样它们才能在客户端JavaScript中访问
-
-### 注意事项
-- `.env`、`.env.local` 等环境变量文件已添加到 `.gitignore` 中，不会被提交到代码仓库
-- 请务必使用 `.env.example` 文件作为参考，确保所有必要的环境变量都已配置
-- 生产环境中，请使用正式的API端点，而不是本地开发服务器地址 
+- **Markdown 渲染统一走 `src/components/common/markdown/MarkdownRenderer.tsx`**，不要各自引 react-markdown。该组件必须保留 `remark-cjk-friendly` 插件：它修复中文强调解析（否则 `**术语（说明）**后接汉字` 的粗体静默失效）。
+- **`/qa` 页面内的跳转用原生 `<a target="_blank">`，不要用 `next/link`**：会话消息只存在组件内存里，客户端路由跳转会清空整轮问答记录。
+- 改动后跑 `npx tsc --noEmit` 验证类型。
+- 新增页面需同步更新 `visitorStats.ts` 里的 `PATH_MAP`。
+- 往 AI 工具箱加/删工具见根目录 [doc/tools-sync.md](../doc/tools-sync.md)。

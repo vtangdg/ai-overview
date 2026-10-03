@@ -2,7 +2,7 @@
 
 本项目是一个综合性人工智能技术概览与学习平台，帮助开发者了解和掌握AI技术。
 
-**技术栈**: Next.js 15 + Spring Boot 3.5.9 | **架构**: 前后端分离
+**技术栈**: Next.js 15.5.9 + React 19 + Tailwind 4 | Spring Boot 3.5.9 + Spring AI 1.0.3 + Java 21 | **架构**: 前后端分离
 
 ---
 
@@ -26,9 +26,12 @@
 
 **后端**:
 ```bash
-cd backend/ai-demo
-mvn spring-boot:run -Dspring-boot.run.profiles=dev
+cd backend
+mvn spring-boot:run -pl ai-demo -Dspring-boot.run.profiles=dev \
+  -Dspring-boot.run.workingDirectory=$(pwd)
 ```
+
+> 两个必须项：`-pl ai-demo`（父 pom 没有 mainClass，不加会报找不到主类）；`workingDirectory=$(pwd)`（`spring-boot:run` 默认 fork 在**模块目录 ai-demo/** 下，`application-dev.yml` 里的相对路径会漂移——SQLite、笔记目录、向量索引全都会指错地方）。IDEA 里运行配置的工作目录是 `backend/`，所以 IDE 启动不需要这一项。详见 `doc/local-dev.md`。
 
 **前端**:
 ```bash
@@ -38,9 +41,21 @@ pnpm dev
 ```
 
 **访问地址**:
-- 前端: http://localhost:3000
+- 前端: http://localhost:3010（端口在 `frontend/package.json` 的 `dev` 脚本里，不是 Next.js 默认的 3000）
 - 后端API: http://localhost:8090
 - 健康检查: http://localhost:8090/actuator/health
+- Prometheus / Grafana: http://localhost:9090 / http://localhost:3000（需 `monitoring` profile）
+
+### 文档在哪
+
+全部文档在 `doc/`，入口是 **`doc/README.md`**（文档地图）。改代码前先扫一眼这张表：
+
+| 改到…… | 同步更新 |
+| --- | --- |
+| 配置项、模型、思考模式 | `doc/model-config.md` |
+| 命令、端口、启动方式 | `doc/local-dev.md`、`doc/makefile.md`、本文件 |
+| 指标名、监控栈 | `doc/monitoring.md` |
+| 目录结构、技术栈 | `README.md`、`doc/README.md` |
 
 ---
 
@@ -63,11 +78,25 @@ pnpm dev
 
 ### 多模型策略模式
 
-通过策略模式支持多AI模型切换：
-- **DeepSeek**: 默认模型，通用对话
-- **智谱GLM**: 长文本处理，提示词优化默认使用
+两个供应商策略（`service/strategy/impl/`），由 `ChatModelStrategyFactory` 按**模型 id 前缀**路由：
 
-新增模型只需实现 `ChatModelStrategy` 接口并注册到工厂。
+| 策略 | 供应商 | 端点 | 可用条件 |
+| --- | --- | --- | --- |
+| `DeepSeekStrategy` | DeepSeek | `spring.ai.openai.*`（api.deepseek.com） | `DEEPSEEK_API_KEY` |
+| `GlmStrategy` | 智谱 | `spring.ai.glm.*`（open.bigmodel.cn） | `GLM_API_KEY` |
+
+- `deepseek-*` / 其他 → DeepSeek；`glm*` → 智谱；历史别名 `deepseek` / `glm` 会被 `normalizeModelId` 归一
+- 目标策略不可用时**静默回退 DeepSeek** 并打 WARN 日志（排查「选了 GLM 怎么没生效」先看这行日志）
+- **Embedding 只能走智谱**（DeepSeek 无 embedding 接口），由 `RagConfig` 单独构建客户端
+
+### 场景级模型与思考模式
+
+- 每个应用用哪个模型由 `app.ai.*` 配置决定，可用环境变量覆盖，**改配置不改代码**：`AI_MODEL_PROMPT_OPTIMIZER`、`AI_MODEL_RAG_QA`（默认均为 `deepseek-flash`）
+- `deepseek-flash`（V4.1-Flash）**默认开启思考模式**，轻任务首字延迟从 ~1s 恶化到 ~11s；由 `DeepSeekThinkingModeConfig` 在 **Jackson 序列化层**注入 `{"thinking":{"type":"disabled"}}` 关闭，开关 `deepseek.thinking-disabled`
+- ⚠️ **不要用 HTTP 客户端拦截器/过滤器改写请求体去注入参数**——实测会触发 DeepSeek 网关 401。注入必须放序列化层
+- 新增模型：实现 `ChatModelStrategy` 接口 → 注册到工厂（Spring 自动收集 `List<ChatModelStrategy>`）→ 在 `application.yml` 补配置
+
+完整说明见 **`doc/model-config.md`**。
 
 ### 代码规范
 
@@ -97,9 +126,9 @@ public class XxxService {
 
 ### 添加新的AI模型
 
-1. 创建策略类: `backend/.../strategy/XxxModelStrategy.java`
-2. 注册到工厂: `ChatModelStrategyFactory`
-3. 更新配置: `application.yml` 添加模型配置
+1. 创建策略类: `backend/ai-demo/.../service/strategy/impl/XxxStrategy.java`，实现 `ChatModelStrategy`（`@Component`，Spring 会自动收集进 `ChatModelStrategyFactory` 的 `List<ChatModelStrategy>`）
+2. 在 `application.yml` 补该供应商的端点与 key 配置，并让 `getModelName()` 返回的路由 key 与 `ChatModelStrategyFactory` 的前缀判断一致
+3. 若属于已有供应商（如 DeepSeek 新模型名），**不用新建策略**：直接在 `app.ai.*` 场景配置里写模型 id 即可，前缀路由会自动选中供应商
 
 ### 添加新的应用广场卡片
 
@@ -164,8 +193,10 @@ date: 2024-01-01
 
 **环境变量**: 仓库根目录 `.env`（与 docker-compose.yml 同级；compose 原生读取，`backend/Makefile` 通过 `include ../.env` 读取。IDEA/mvn 裸跑后端时环境变量来自 `~/.zshrc` export，需与 .env 保持一致）
 ```bash
-DEEPSEEK_API_KEY=sk-xxxxx
-GLM_API_KEY=xxxxx
+DEEPSEEK_API_KEY=sk-xxxxx        # 对话模型
+GLM_API_KEY=xxxxx                # 智谱：RAG 的 Embedding 必需；可选 GLM 对话
+AI_MODEL_PROMPT_OPTIMIZER=deepseek-flash   # 可选：提示词优化器用哪个模型
+AI_MODEL_RAG_QA=deepseek-flash             # 可选：RAG 问答用哪个模型
 ```
 
 ---
@@ -175,12 +206,26 @@ GLM_API_KEY=xxxxx
 ### Docker 部署
 
 ```bash
-docker-compose up -d
+cd backend
+make env-init                  # 首次：创建 ../.env
+make docker-compose-up-build   # 构建并启动后端
+make docker-compose-monitoring # 按需拉起 Prometheus + Grafana
 ```
 
 **相关配置**:
-- `docker-compose.yml` - 生产环境编排
+- `docker-compose.yml` - 生产环境编排（监控栈在 `monitoring` profile 里）
 - `backend/Dockerfile` - 后端镜像构建
+
+⚠️ **改完后端代码必须重建镜像**。`Dockerfile` 只 `COPY` 本地已构建好的 fat jar（`ai-demo/target/backend-ai-demo-0.0.1-SNAPSHOT.jar`），**不在容器里跑 maven**，所以顺序是：
+
+```bash
+cd backend
+mvn -pl ai-demo -am package -DskipTests                       # 1. 先在本地打包
+docker compose -f ../docker-compose.yml build backend          # 2. 重建镜像
+docker compose -f ../docker-compose.yml up -d backend          # 3. 用新镜像重建容器
+```
+
+只跑 `make docker-compose-monitoring`（= `docker compose --profile monitoring up -d`，**无 `--build`**）不会更新代码，容器会一直跑旧镜像。详见 `doc/makefile.md`。
 
 ### 数据持久化
 

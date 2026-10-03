@@ -1,7 +1,7 @@
 # 站内知识问答助手（RAG）— 详细设计方案
 
-> 状态：后端 + 前端均已实现，**浏览器端到端实测通过**（空状态 / 流式回答 + 来源卡片 / 库外拒答态 / 多轮追问）。待办：Docker 部署上线
-> 日期：2026-09-29 更新
+> 状态：后端 + 前端均已实现，**浏览器端到端实测通过**（空状态 / 流式回答 + 来源卡片 / 库外拒答态 / 多轮追问）。Docker 部署已上线。
+> 日期：2026-09-29 更新（2026-10-03 补充：监控指标、场景级模型配置；模型/思考模式相关说明以 [../model-config.md](../model-config.md) 为准）
 > 目标：基于站内知识笔记与 AI 概念库构建 RAG 问答能力，MVP 3 天内上线
 
 ---
@@ -152,20 +152,28 @@ frontend/src/lib/sse.ts                      // 通用 SSE 解析与消费（与
 
 ### 2.7 配置项（application.yml / RagProperties）
 
+> 下面是设计期草稿。**实际落地的键名是扁平的**，且「用哪个对话模型」已从 `rag.chat-model` 迁走（2026-10-03 起由场景级配置 `app.ai.rag-qa-model` 决定，见 [../model-config.md](../model-config.md)）。以下为当前实际配置：
+
 ```yaml
 rag:
-  notes-paths: /app/notes           # 容器内挂载路径
+  notes-paths: /app/notes             # 容器内挂载路径（本地开发在 application-dev.yml 覆盖为 ../frontend/public/lib/notes）
+  store-path: /app/db/rag-store.json  # 向量索引持久化文件
   top-k: 4
-  similarity-threshold: 0.35   # 实测标定值，见 2.9
-  embedding:
-    base-url: https://open.bigmodel.cn/api/paas/v4
-    model: embedding-3
-    dimensions: 2048
-  chat-model: glm-4.7-flash
-  store-path: /app/db/rag-store.json # Docker volume 持久化
+  similarity-threshold: 0.35          # 实测标定值，见 2.9
+  embedding-base-url: https://open.bigmodel.cn/api/paas   # 注意不含 /v4/embeddings
+  embedding-api-key: ${GLM_API_KEY:}
+  embedding-model: embedding-3
+  embedding-dimensions: 2048
+  max-section-chars: 1200             # 章节超长时按段落二次切分
+  min-chunk-chars: 30
+  usage-in-stream: true               # 流式是否要上游返回 usage（切 glm-* 对话模型时须置 false）
+
+app:
+  ai:
+    rag-qa-model: ${AI_MODEL_RAG_QA:deepseek-flash}   # RAG 生成用哪个模型
 ```
 
-Docker 集成：`docker-compose` 将 `./frontend/public/lib` 只读挂载到后端 `/app/notes`；`rag-store.json` 放入新 volume（或复用 `visitor_stats_data` 平级新增）。
+Docker 集成：`docker-compose` 将 `./frontend/public/lib/notes` 只读挂载到后端 `/app/notes`；`rag-store.json` 落在 `/app/db`（与 SQLite 同卷）。
 
 ### 2.8 已知坑位（提前规避）
 
@@ -260,7 +268,7 @@ Docker 集成：`docker-compose` 将 `./frontend/public/lib` 只读挂载到后�
 | D1 ✅ | 索引管道：笔记 → 切块 → 向量库；检索 API | curl 验证 top4 命中与相似度分数（已完成：20 篇 / 290 片段） |
 | D2 ✅ | QA 链路：SSE 流式 + 引用 + 拒答判定 | API 全通，拒答边界符合预期（已完成，四类场景实测通过） |
 | D3 ✅ | 前端 UI + 联调 | 浏览器实测四类场景全部通过（见 2.11），剩余：Docker 部署上线 |
-| +0.5 天 | 过面试追问清单；更新 `doc/resume-ai-overview-project.md` | — |
+| +0.5 天 | 过面试追问清单（见第四节） | — |
 
 V1.1（上线后按需）：多轮 query 改写、召回片段展示、混合检索（向量 + 关键词）、Grafana 增加问答质量指标。
 

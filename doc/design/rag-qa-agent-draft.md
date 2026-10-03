@@ -1,4 +1,7 @@
 # 智能问答 Agent 技术方案
+
+> **历史存档**：这是 2025-10 早期的 Agent 版问答设想（原 `backend/doc/temp.md`），其中的 Agent 编排、多模块决策等设计**未落地**。实际实现走的是更轻的纯 RAG 方案，见 [rag-qa.md](rag-qa.md)。本文仅作决策留痕，不要据此改代码。
+
 ### 核心概念
 - **项目名称**: SmartQA Agent - 智能问答助手
 - **技术核心**: RAG (Retrieval-Augmented Generation) + Agent架构 + DeepSeek模型
