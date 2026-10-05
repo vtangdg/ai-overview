@@ -57,7 +57,13 @@ public class DeepSeekThinkingModeConfig {
         if (!thinkingDisabled) {
             return builder -> {};
         }
-        return builder -> builder.modules(new DeepSeekThinkingDisableModule());
+        // 注意必须用 modulesToInstall 而不是 modules：
+        // modules(...) 会整体替换模块列表并禁用 Boot 的 well-known modules 自动注册，
+        // 导致 JavaTimeModule 丢失、所有含 LocalDateTime 的响应体序列化报
+        // HttpMessageConversionException（2026-10-05 /api/visitor-stats/summary
+        // 与 /api/admin/filter-ips 同报此错，根因即此处）。
+        // modulesToInstall 只追加本 module，保留 JavaTimeModule 等默认模块。
+        return builder -> builder.modulesToInstall(new DeepSeekThinkingDisableModule());
     }
 
     /**

@@ -25,18 +25,30 @@
         )
     </insert>
 
-    <!-- 根据页面路径统计访问次数 -->
+    <!-- 根据页面路径统计访问次数
+         注意：只能按 page_path 聚合，不能 GROUP BY page_path, page_name ——
+         同一路径历史上可能写入过多个 page_name（如 /notes 同时存在
+         "知识笔记" 与 "知识笔记 - 详情页"），按 name 二次分组会让前端
+         以 pagePath 为 key 的表格出现重复 key（React duplicate key 警告）。
+         显示名取该路径下最短的 page_name（子查询，同长度再按字典序）：
+         主页面名（"首页"/"知识笔记"）总比 "- 详情页"/"未知页面" 短。 -->
     <select id="countByPagePath" resultType="java.util.Map">
         SELECT
-            page_path as pagePath,
-            page_name as pageName,
+            vs.page_path as pagePath,
+            (
+                SELECT v2.page_name
+                FROM visitor_stats v2
+                WHERE v2.page_path = vs.page_path
+                ORDER BY LENGTH(v2.page_name) ASC, v2.page_name ASC
+                LIMIT 1
+            ) as pageName,
             COUNT(*) as visitCount
         FROM
-            visitor_stats
+            visitor_stats vs
         WHERE
-            visit_time BETWEEN #{startTime} AND #{endTime}
+            vs.visit_time BETWEEN #{startTime} AND #{endTime}
         GROUP BY
-            page_path, page_name
+            vs.page_path
         ORDER BY
             visitCount DESC
     </select>
